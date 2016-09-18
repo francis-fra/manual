@@ -1,0 +1,72 @@
+#------------------------------------------------------------
+# Basic
+#------------------------------------------------------------
+sudo dnf update
+sudo dnf upgrade
+
+# search a package
+dnf search <search_string>
+
+# install package
+sudo dnf install <package>
+sudo dnf install <local_rpm>
+
+# remove a package
+sudo dnf erase <package>
+
+# activate RPMFusion Repository
+rpm -ivh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-24.noarch.rpm
+
+# fedora version
+cat /etc/fedora-release
+
+
+#------------------------------------------------------------
+# Install Dropbox
+#------------------------------------------------------------
+# create repository
+sudo gedit /etc/yum.repos.d/dropbox.repo
+
+# save the following
+[Dropbox]
+name=Dropbox Repository
+baseurl=http://linux.dropbox.com/fedora/24/
+gpgkey=http://linux.dropbox.com/fedora/rpm-public-key.asc
+
+# issue the command
+sudo dnf install nautilus-dropbox
+
+#------------------------------------------------------------
+# Install Packages
+#------------------------------------------------------------
+# download and install
+sudo yum localinstall <rpm_package>
+
+sudo dnf install pidgin
+
+# desktop
+dnf install @cinnamon-desktop
+
+# terminator
+yum install terminator
+
+#------------------------------------------------------------
+# Install adobe flashInstall Packages
+#------------------------------------------------------------
+sudo rpm -ivh http://linuxdownload.adobe.com/adobe-release/adobe-release-i386-1.0-1.noarch.rpm
+
+# import keys
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux
+
+# to install
+sudo dnf install flash-plugin
+
+#------------------------------------------------------------
+# Install Java
+#------------------------------------------------------------
+# rpm command
+rpm -Uvh <package_name>
+
+# edit .bash_profile or .bashrc
+export JAVA_HOME=<path_name>
+

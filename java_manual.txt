@@ -1,0 +1,37 @@
+# javac
+On Unix, we would do this: (in colon)
+javac -classpath dir1:dir2:dir3 ...
+
+# java
+# use -cp to specific path (if not in the global class path)
+# example
+~/FraDir/learn/introcs/out/production/introcs$ 
+java -cp ./:/home/fra/FraDir/learn/introcs/stdlib-package.jar exercise.FindMinMax
+
+
+# package
+# if the java class is part of a package
+# for example in Precedence.java, it begins with the package keyword followed by the structure
+
+package com.operators;
+
+[parent]
+	[com]
+		[operators]
+		
+# in this case, run this command at the parent folder 
+java com.operators.Precedence
+
+# Intellij setup
+javac -cp "C:\Users\m038402\Documents\myWork\Codes\algs4-master\src\main\java" .\edu\princeton\cs\algs4\ThreeSum.java
+
+# standford NLP Core
+java -cp "*" -Xmx1g edu.stanford.nlp.pipeline.StanfordCoreNLP -annotators tokenize,ssplit,pos,lemma,ner,parse,dcoref -file input.txt
+
+java -mx1g -cp "*" edu.stanford.nlp.pipeline.StanfordCoreNLPServer
+http://localhost:9000/
+
+
+# Think in Java
+# for additional libraries, e.g. javaassist and xom, place them under a lib folder (e.g. IdeaProjects/ThinkinJava/lib)
+# To import the libraries, put the lib folder in the Modeules->dependencies 

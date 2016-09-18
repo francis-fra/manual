@@ -1,0 +1,947 @@
+--------------------------------------------------------------------
+NVIDIA driver
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:graphics-drivers/ppa
+sudo apt-get update
+# find out the latest driver or check from nvidia web
+sudo apt-get install nvidia-<version>
+
+--------------------------------------------------------------------
+Check installed packages:
+--------------------------------------------------------------------
+dpkg --get-selections | grep -v deinstall | less
+
+--------------------------------------------------------------------
+install & upgrade packages:
+--------------------------------------------------------------------
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get dist-upgrade
+
+# essentials:
+apt-get install build-essential python3-dev
+
+--------------------------------------------------------------------
+tidy up:
+--------------------------------------------------------------------
+echo "Cleaning Up" &&
+sudo apt-get -f install &&
+sudo apt-get autoremove &&
+sudo apt-get -y autoclean &&
+sudo apt-get -y clean
+
+
+--------------------------------------------------------------------
+Create symbolic link
+--------------------------------------------------------------------
+# syntax: ln -s <source location> <target location>
+ln -s /media/fra/OS/FraDir /home/fra/FraDir
+ln -s /media/fra/OS/FraDir/learn /home/fra/learn
+
+# remove soft links
+unlink <target location>
+
+
+--------------------------------------------------------------------
+install oracle java:
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt update
+sudo apt install oracle-java8-installer
+
+java -version
+
+# set up java path
+# edit /etc/profile
+JAVA_HOME=<path to oracle java>
+JRE_HOME=$JAVA_HOME/jre
+export JAVA_HOME
+export JRE_HOME
+PATH=$JAVA_HOME/bin:$JRE_HOME/bin:/usr/local/go/bin:$PATH
+
+
+
+--------------------------------------------------------------------
+install terminator
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:gnome-terminator
+sudo apt-get update
+sudo apt-get install terminator
+
+# customize via:
+# Preferences -> Layout
+
+# Auto start at login:
+# Run Startup Applications Apps
+# Add new command:
+/usr/bin/terminator -m --layout=myLayout
+config file:
+~/.config/terminator/config
+
+--------------------------------------------------------------------
+install dropbox
+--------------------------------------------------------------------
+sudo apt install nautilus-dropbox
+
+
+--------------------------------------------------------------------
+install emacs
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:ubuntu-elisp/ppa
+sudo apt-get update
+sudo apt-get install emacs24 emacs24-el emacs24-common-non-dfsg ess
+
+
+# emacs config
+# download color-theme-6.6.0.zip
+# download hightlight-current-line
+
+# install elpa
+(M-x eval-buffer)
+M-x package-install RET auto-complete RET
+
+--------------------------------------------------------------------
+Auto mount
+--------------------------------------------------------------------
+# Start Disks app -> Edit mount options
+
+nosuid,nodev,nofail,x-gvfs-show
+#/mnt/EE2CBD652CBD2A0B
+/media/fra/OS
+
+--------------------------------------------------------------------
+Create soft links
+--------------------------------------------------------------------
+ln -s /home/fra/FraDir/java /usr/local/bin
+ln -s /mnt/<src dir>/FraDir /home/fra/FraDir
+ln -s /mnt/<src dir>/FraDir/learn /home/fra/learn
+
+--------------------------------------------------------------------
+Install R
+--------------------------------------------------------------------
+# To use the CRAN repository:
+add apt key:
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+
+# and then edit /etc/apt/source.list
+# add this line to the file:
+
+deb https://cran.csiro.au/bin/linux/ubuntu/xenial/
+
+# also check the source.list section below.
+
+# Last, at the terminal, type:
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install r-base
+sudo apt-get install r-base-dev
+
+# R library:
+# add write permission to this folder:
+cd /usr/local/lib/R
+sudo chmod o+w site-library
+
+# additional packages for RCurl:
+sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libxml2-dev
+sudo apt-get install libssl-dev
+
+# install JAGS for linux
+sudo apt-get install jags
+
+# update packages inside R with SUDO
+sudo R
+update.packages()
+
+
+--------------------------------------------------------------------
+source.list
+--------------------------------------------------------------------
+# Uncomment the deb-src lines and add the following to the file:
+
+deb http://au.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+deb-src http://au.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
+
+deb http://security.ubuntu.com/ubuntu trusty-security main restricted
+deb-src http://security.ubuntu.com/ubuntu trusty-security main restricted
+deb http://security.ubuntu.com/ubuntu trusty-security universe
+deb-src http://security.ubuntu.com/ubuntu trusty-security universe
+deb http://security.ubuntu.com/ubuntu trusty-security multiverse
+deb-src http://security.ubuntu.com/ubuntu trusty-security multiverse
+
+--------------------------------------------------------------------
+nodejs
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:chris-lea/node.js
+sudo apt-get install nodejs
+
+
+# alternatively
+# node.js v6.x
+curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+
+# node js setup (ppa)
+curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+sudo bash nodesource_setup.sh
+sudo apt-get install nodejs
+
+
+--------------------------------------------------------------------
+Mongodb
+--------------------------------------------------------------------
+# add key
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+
+# create sources.list
+echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+
+# install
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+
+# For 16.04 only
+# Create a new file at /lib/systemd/system/mongod.service with the following contents:
+
+[Unit]
+Description=High-performance, schema-free document-oriented database
+After=network.target
+Documentation=https://docs.mongodb.org/manual
+
+[Service]
+User=mongodb
+Group=mongodb
+ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+# to manual start mongodb
+sudo service mongod start
+# to manual stop
+sudo service mongod stop
+# to manual restart
+sudo service mongod restart
+
+# to check if mongo is running
+service mongod status
+# check the log
+/var/log/mongodb/mongod.log
+
+# mongo shell
+mongo
+
+# to create a user inside shell
+# to create root user
+use admin
+db.createUser({user:"admin", pwd:"admin123", roles:[{role:"root", db:"admin"}]
+
+# to login with root
+mongo -u admin -p admin123 --authenticationDatabase admin
+
+
+
+--------------------------------------------------------------------
+Git
+--------------------------------------------------------------------
+sudo apt-get install git
+# sudo apt-get install git-core
+
+# configure git
+git config --global user.name "fra"
+git config --global user.email "fcnchan@yahoo.com"
+
+# config file location:
+~/.gitconfig
+
+# check current config
+git config --list
+
+# user.name=fra
+# user.emai=fcnchan@yahoo.com
+# core.excludesfile=~/.gitignore_global
+
+
+--------------------------------------------------------------------
+Key apps
+--------------------------------------------------------------------
+emacs
+kodi
+synpatic package manager
+
+
+# ibus (chinese input)
+# install ibus-changjie & other input packages
+# to install chinese input method:
+ibus-setup
+# update to take effect:
+ibus restart
+
+sudo apt-get install calibre
+sudo apt-get install variety
+
+# xscreen saver
+# command:
+sudo apt-get remove gnome-screensaver
+sudo apt-get install xscreensaver xscreensaver-gl-extra xscreensaver-data-extra xscreensaver-screensaver-bsod
+
+--------------------------------------------------------------------
+# wine
+# install via package manager, alternatively,
+# wine stable version
+sudo dpkg --add-architecture i386
+sudo add-apt-repository ppa:ubuntu-wine/ppa
+sudo apt-get update
+sudo apt-get install wine
+
+# to configure wine
+winecfg
+
+# config file in ~/.wine
+
+--------------------------------------------------------------------
+# mysql
+--------------------------------------------------------------------
+# export databases
+mysqldump -p -u fra dbname > dump.sql
+
+
+# install mysql
+# to check host name
+hostname
+
+# setup and import database
+sudo apt-get update
+sudo apt-get install mysql-server
+# sudo mysql_secure_installation
+# sudo mysql_install_db
+
+# to check if mysql is running
+sudo netstat -tap | grep mysql
+
+# to check the version
+mysql --version
+
+# create new user
+CREATE USER 'fra'@'localhost' IDENTIFIED BY 'password';
+
+# create database to restore
+create database testdb;
+create database stockdatadb;
+
+# grant privileges
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON testdb.* TO 'fra'@'localhost';
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON stockdatadb.* TO 'fra'@'localhost';
+
+# restore database
+mysql -u root -p [database_name] < [file_name].sql
+mysql -u root -p stockdatadb < stockdatadb.sql
+mysql -u root -p testdb < testdb.sql
+
+
+
+
+--------------------------------------------------------------------
+# vmware player
+--------------------------------------------------------------------
+# download the installer from
+sudo ./VMware-Player*.bundle
+
+
+
+--------------------------------------------------------------------
+# intellij
+--------------------------------------------------------------------
+# ubuntu make
+sudo add-apt-repository ppa:ubuntu-desktop/ubuntu-make
+sudo apt-get update
+sudo apt-get install ubuntu-make
+umake ide idea
+
+# to uninstall
+umake -r ide idea
+
+# alternatively
+sudo apt-add-repository ppa:mmk2410/intellij-idea-community
+sudo apt-get update
+sudo apt-get install intellij-idea-community
+
+--------------------------------------------------------------------
+Intellij project setup
+--------------------------------------------------------------------
+#  project structure
+Ctrl-ALt_Shift-S
+
+# Project:
+# Check SDK : oracle
+# Project level : default
+
+--------------------------------------------------------------------
+# others
+--------------------------------------------------------------------
+Rstudio
+stanford NLP
+arduino
+
+
+# flash player
+sudo apt-get install flashplugin-installer
+
+# VLC
+#sudo add-apt-repository ppa:videolan/stable-daily
+sudo apt-get install vlc
+
+# putty
+sudo apt-get install putty
+
+# splint
+sudo apt-get install splint
+
+# libraries
+libeditline-dev
+
+--------------------------------------------------------------------
+# Code::block
+--------------------------------------------------------------------
+# install via ppa:
+sudo apt-add-repository ppa:damien-moore/codeblocks-stable
+sudo apt-get update
+sudo apt-get install codeblocks
+
+
+--------------------------------------------------------------------
+python library
+--------------------------------------------------------------------
+# PIP:
+sudo apt-get install python-pip python3-pip
+
+# to get a list of installed python packages:
+import pip
+installed_packages = pip.get_installed_distributions()
+installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
+     for i in installed_packages])
+print(installed_packages_list)
+
+--------------------------------------------------------------------
+## IMPORTANT ##
+# Use sudo to pip install
+--------------------------------------------------------------------
+# system lib folder:
+/usr/local/lib/
+# local lib folder:
+~/.local/lib
+# local bin folder:
+~/.local/bin
+
+# To upgrade:
+pip install --upgrade pip
+
+
+# python 2 scipy stack:
+sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
+# for python 3
+sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 ipython3-notebook python3-pandas python3-sympy python3-nose
+
+pip install -U scikit-learn
+
+# TODO:
+# install python3 libraries
+
+# hy
+
+--------------------------------------------------------------------
+Jupyter
+--------------------------------------------------------------------
+pip install jupyter
+pip3 install jupyter
+
+# check jupyter kernel list:
+jupyter kernelspec list
+
+# TODO: to add additional kernel along with python3:
+python2 -m pip install ipykernel
+python2 -m ipykernel install --user
+
+# To check the versions:
+pip -V
+pip3 -V
+python --version
+python3 --version
+
+# show pip package details
+pip show jupyter
+
+
+# TODO: virtualenv:
+pip install virtualenv
+pip3 install virtualenv
+
+# to start jupyter
+jupyter notebook
+
+--------------------------------------------------------------------
+Virtual Environment
+--------------------------------------------------------------------
+# installation
+sudo pip install virtualenv
+sudo pip3 install virtualenv
+sudo pip install virtualenvwrapper
+sudo pip3 install virtualenvwrapper
+
+# make a folder
+mkdir vrt_env
+
+# create virtual environment inside
+virtualenv vrt_env/vt1
+
+# option: without existing packages
+virtualenv vrt_env/vt2 --no-site-packages
+
+# to activate a virtual environment
+source vrt_env/vt1/bin/activate
+
+# to switch off
+deactivate
+
+
+--------------------------------------------------------------------
+MIT-Scheme
+--------------------------------------------------------------------
+sudo apt-get install mit-scheme
+
+# to run in emacs
+M-x run-scheme
+
+--------------------------------------------------------------------
+Go
+--------------------------------------------------------------------
+# install via ppa
+# sudo add-apt-repository ppa:gophers/go
+# sudo apt-get update
+# sudo apt-get install golang-stable
+
+sudo add-apt-repository ppa:ubuntu-lxc/lxd-stable
+sudo apt-get update
+sudo apt-get install golang
+
+# create a workspace
+# mkdir $HOME/work
+
+# add these lines to .profile
+export GOPATH=$HOME/Project/GoProj
+export PATH=$PATH:$GOPATH/bin
+
+# GoCliipse
+# update site:
+http://goclipse.github.io/releases/
+# choose only Goclipse
+
+# Download Tools:
+# these will be installed in $GOPATH/bin
+# gocode
+go get -u github.com/nsf/gocode
+# goguru
+go get golang.org/x/tools/cmd/guru
+# godef
+go get github.com/rogpeppe/godef
+
+# preferences
+# enter the path for gofmt as: /usr/bin/gofmt
+# set the GOROOT as: /usr/
+
+# Run configurations:
+set environment -> select -> check GOPATH
+
+
+
+--------------------------------------------------------------------
+# julia
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:staticfloat/juliareleases
+sudo add-apt-repository ppa:staticfloat/julia-deps
+sudo apt-get update
+sudo apt-get install julia
+
+# install Julia packages
+# https://github.com/JuliaIDE/Juno-LT/blob/master/tutorial.jl
+Pkg.update()
+Pkg.add("Gadfly")
+Pkg.add("Jewel")
+Pkg.add("PyPlot")
+Pkg.add("PyCall")
+Pkg.add("Calendar")
+Pkg.add("Match")
+Pkg.add("LightXML")
+Pkg.add("StatsBase")
+Pkg.add("Pandas")
+Pkg.add("DSP")
+Pkg.add("SunDials")
+Pkg.adad("Roots")
+Pkg.add("JMP")
+Pkg.add("NLPot")
+Pkg.add("PGFPlots")
+Pkg.add("Compose")
+Pkg.add("ImageView")
+
+# install Jupyter for Julia
+Pkg.add("IJulia")
+
+# to start Jupyter inside Julia:
+using IJulia
+notebook()
+
+# start at terminal
+jupyter notebook
+
+--------------------------------------------------------------------
+# Atom + Juno
+--------------------------------------------------------------------
+# http://junolab.org/
+sudo add-apt-repository ppa:webupd8team/atom
+sudo apt-get update
+sudo apt-get install atom
+
+# install Juno
+apm insall uber-juno
+
+# reference:
+# https://github.com/JunoLab/uber-juno/blob/master/setup.md
+# https://github.com/atom/apm
+# http://discuss.junolab.org/t/not-able-to-install-juno-via-atom/562/6
+
+# To update the lastest package:
+apm install https://github.com/JunoLab/atom-ink
+apm install https://github.com/JunoLab/atom-julia-client
+
+# if atom and code tools are not installed
+Pkg.clone("http://github.com/JunoLab/Atom.jl")
+Pkg.clone("http://github.com/JunoLab/CodeTools.jl")
+
+# to pull from github
+Pkg.checkout("Atom")
+Pkg.checkout("CodeTools")
+
+# if problems exists
+Pkg.free("Atom")
+
+# rebuild - install cmake
+sudo apt-get install cmake
+# inside julia
+Pkg.checkout("MbedTLS")
+Pkg.build("MbedTLS")
+Pkg.build("Atom")
+
+# packages
+uber-juno
+minimap
+monokai (theme)
+project-manager
+linter
+autocomplete-modules
+file-icons
+atomic-emacs
+term2
+atom-html-preview
+hightlight line
+script
+
+
+--------------------------------------------------------------------
+# Brackets
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:webupd8team/brackets
+sudo apt-get update
+sudo apt-get install brackets
+
+--------------------------------------------------------------------
+# Android Studio
+--------------------------------------------------------------------
+sudo add-apt-repository ppa:paolorotolo/android-studio
+sudo apt-get update
+sudo apt-get install android-studio
+
+# run android.sh
+
+--------------------------------------------------------------------
+# light table (deprecated)
+--------------------------------------------------------------------
+# Method 1:
+# Download the installer from:
+http://ppa.launchpad.net/dr-akulavich/lighttable/ubuntu/pool/main/l/lighttable-installer/
+
+sudo dpkg -i ~/Downloads/lighttable-installer[version].deb
+sudo add-apt-repository ppa:dr-akulavich/lighttable
+
+
+# Method 2:
+# download the tar gz file:
+tar -xzf LightTableLinux*.tar.gz
+sudo mv LightTable/ /opt
+
+# create a desktop entry as follows:
+sudo mousepad /usr/share/applications/light-table.desktop
+
+# TODO: check the png icon first
+[Desktop Entry]
+Version=1.0
+Name=Light Table
+GenericName=Text Editor
+Exec=/opt/LightTable/LightTable
+Terminal=false
+Icon=/opt/LightTable/core/img/lticon.png
+Type=Application
+Categories=GTK;Utility;TextEditor;Application;IDE;Development;
+
+# create a soft link:
+sudo ln -s /opt/LightTable/LightTable /usr/local/bin/LightTable
+
+# configure Light table
+# Crtl+Space to open plugin manager and choose Juno
+
+
+
+--------------------------------------------------------------------
+eclipse
+--------------------------------------------------------------------
+# Download gz package for Java Developer
+
+# extract to /opt
+# edit desktop entry:
+sudo gedit /usr/share/applications/eclipse.desktop
+
+
+[Desktop Entry]
+Name=Eclipse 4.6
+Type=Application
+Exec=/opt/eclipse4.6/eclipse
+Terminal=false
+Icon=/opt/eclipse4.6/icon.xpm
+Comment=Integrated Development Environment
+NoDisplay=false
+Categories=Development;IDE;
+Name[en]=Eclipse Neon
+
+# install the desktop entry:
+sudo desktop-file-install /usr/share/applications/eclipse-neon.desktop
+
+# create a new symbolic link:
+sudo ln -s /opt/eclipse/eclipse /usr/local/bin/
+
+# edit eclipse.ini
+# add the following lines
+--launcher.GTK_version
+2
+
+
+--------------------------------------------------------------------
+install statET
+--------------------------------------------------------------------
+# For Ubunut 16.04 and Eclipse Mars
+# Edit eclipse.ini:
+# add the following lines (under the section startup):
+--launcher.GTK_version
+2
+
+# Install STATET
+Help -> Install new software
+# Enter site:
+http://download.walware.de/eclipse-4.5
+http://download.walware.de/eclipse-4.6
+
+
+# Set up R run environment
+# Preference -> StatET -> Run/Debug -> R environment
+# Auto detect environment
+The R home should be in : /usr/lib/R
+
+# Set up Run configurations:
+use Rterm not RJ!!
+
+--------------------------------------------------------------------
+pyDev
+--------------------------------------------------------------------
+# Help -> Install new software
+# Enter:
+http://pydev.org/updates
+
+# setup pyDev run envrionment
+Preference .> PyDev -> Interpreters -> Python interpreters
+
+--------------------------------------------------------------------
+Scala
+--------------------------------------------------------------------
+# download deb file
+wget www.scala-lang.org/files/archive/scala-2.11.7.deb
+sudo dpkg -i scala-2.11.7.deb
+sudo apt-get update
+sudo apt-get install scala
+sudo apt-get install scala-library
+
+
+# sbt installation
+echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
+sudo apt-get update
+sudo apt-get install sbt
+
+# java install
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update
+sudo apt-get install oracle-java8-installer
+
+# git install
+sudo apt-get install git
+
+--------------------------------------------------------------------
+Lua Torch
+--------------------------------------------------------------------
+# Install LuaJIT + Torch
+# in a terminal, run the commands WITHOUT sudo
+# download the installer codes to temporary folder
+git clone https://github.com/torch/distro.git ~/torch --recursive
+# start the installation to install LuaJIT and LuaRocks
+cd ~/torch; bash install-deps;
+./install.sh
+
+# add torch to the path
+source ~/.profile
+
+# install packages
+# run luarocks WITHOUT sudo
+luarocks install image
+luarocks list
+
+# torch will be installed in at ~/torch
+# the path is specified in ~/torch/install/bin/torch-activate
+
+
+
+# if using Lua instead (not recommend)
+# Install Lua5.2 + Torch
+git clone https://github.com/torch/distro.git ~/torch --recursive
+cd ~/torch
+./clean.sh
+TORCH_LUA_VERSION=LUA52 ./install.sh
+
+# other method
+# curl -s https://raw.github.com/clementfarabet/torchinstall/master/install-all | bash
+
+--------------------------------------------------------------------
+Eclipse for Lua
+--------------------------------------------------------------------
+# sudo apt-get install lua
+
+# update site:
+http://download.eclipse.org/ldt/releases/milestones/
+http://download.eclipse.org/ldt/releases/releases/stable
+
+# set execution environment
+# Preferences -> Lua -> Execution Environment
+
+# Add torch as default
+# Lua Interpreters -> Add
+# browse to the executable to luajit
+
+
+--------------------------------------------------------------------
+iTorch
+--------------------------------------------------------------------
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install libzmq3-dev libssl-dev python-zmq
+
+# cd to the folder to install iTorch
+git clone https://github.com/facebook/iTorch.git
+cd iTorch
+luarocks make
+
+# check kernel list
+ipython kernelspec list
+
+--------------------------------------------------------------------
+Tex
+--------------------------------------------------------------------
+# install texMaker
+# install missing style
+sudo apt-get install texliv-science
+
+# for math_nltk generation
+sudo pip install CherryPy
+sudo pip install dnspython
+
+--------------------------------------------------------------------
+Edit Path (if python was installed without root permission)
+--------------------------------------------------------------------
+# To add additional run path
+# python local library
+export PATH=$PATH:/home/fra/.local/bin
+
+--------------------------------------------------------------------
+TODO: Install CUDA
+--------------------------------------------------------------------
+# pre-installation actions
+# verify the GPU is CUDA-capable
+lspci | grep -i nvidia
+
+# determine the distribution
+uname -m && cat /etc/*release
+
+uname -r
+4.4.0-28-generic
+
+# check the gcc version
+gcc --version
+
+# install the kernel headers and dev packages
+sudo apt-get install linux-headers-$(uname -r)
+
+# ubuntu package
+sudo dpkg -i cuda-repo-<distro>_<version>_<architecture>.deb
+sudo apt-get update
+sudo apt-get install cuda
+
+--------------------------------------------------------------------
+things to do after installing ubuntu:
+--------------------------------------------------------------------
+download GETDEB & PLAYDEB:
+
+echo "Deleting Downloads" &&
+rm -f getdeb-repository_0.1-1~getdeb1_all.deb &&
+rm -f playdeb_0.3-1~getdeb1_all.deb
+
+--------------------------------------------------------------------
+install deb package:
+--------------------------------------------------------------------
+# to install a package
+sudo dpkg -i <DEB_PACKAGE>
+# run this to resolve dependencies:
+apt-get install -f
+
+--------------------------------------------------------------------
+Virtual machines
+--------------------------------------------------------------------
+# Horton Work sandbox
+# address:
+http://192.168.169.129/
+
+# Kali Linux
+# login: root pwd: toor
+
+
+shutdown -r now
+sudo poweroff
+
+--------------------------------------------------------------------
+Accounts
+--------------------------------------------------------------------
+# cloudera 5.5
+username: cloudera
+password: cloudera
+
+# yahoo vm
+usernname: hadoop-user
+password: hadoop

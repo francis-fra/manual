@@ -1,0 +1,205 @@
+#------------------------------------------------------------------
+# Basics
+#------------------------------------------------------------------
+# to start a new git
+git init
+
+# to check config
+git config --list
+
+# file status
+git status
+
+#------------------------------------------------------------------
+# Commit
+#------------------------------------------------------------------
+# to add files to staging area
+# modified files (not staged to commit)
+git add <filenames>
+
+# to stages deleted files 
+git rm <filenames>
+
+# to remove files from the staging area
+git reset HEAD <filenames>
+
+# moving files
+git mv <file_from> <file_destination>
+
+# to commit all changes
+git commit -m "comment"
+
+
+# To remove the whole repository
+rm -rf .git
+
+# ignore files
+git config --global core.excludesfile ~/.gitignore
+
+# check log file
+git log --stat
+
+# check differences
+git diff old_file new_file
+git diff -- <filename>
+# difference between github and local
+git diff master origin/master
+
+# to restore the previous version
+git checkout old_version_id
+
+#------------------------------------------------------------------
+# github
+#------------------------------------------------------------------
+# to upload to github
+git remote add origin <repository url> (e.g. https://github.com/francis-fra/R_code.git)
+# can replace master with a branch name
+git push -u origin master
+
+# fetch and merge with the repository in github
+git pull origin master
+
+# to save credentials in cache for 1 hour
+git config --global credential.helper 'cache --timeout=3600'
+
+
+# replaces the previous commit
+git commit -- amend
+
+# unstage files
+git reset HEAD <file_name>
+
+# unmodify files (NOTE: this will replace modified files completely without any backup!!)
+git checkout -- <file_name>
+
+
+#------------------------------------------------------------------
+# remote
+#------------------------------------------------------------------
+# to show all URLs that Git stored
+git remote -v
+or
+git remote show origin
+
+# show current remote name
+git remote
+
+# add remote repository as a given remote alias
+# e.g. git remote add origin https//github.com/francis-fra/gitest.git
+git remote add <remote_name> <url>
+
+#------------------------------------------------------------------
+# fetch
+#------------------------------------------------------------------
+# to get the changes from the remote (synchronize)
+# fetching from remote (e.g. origin)
+# it downloads only not merge!!
+git fetch <remote_name>
+
+# pull: automatically fetch and then merge (fetch + merge) with remote branch
+git pull
+
+# publish to the remote
+# e.g. git push origin master
+git push <remote_name> <branch_name>
+
+
+# inspect a remote
+git remote show origin
+
+# rename
+git remote rename <old_name> <new_name>
+
+# remove
+git remote rm <remote_name>
+
+
+#------------------------------------------------------------------
+# branches
+#------------------------------------------------------------------
+# current branch
+git branch
+
+# create a new branch (like creating a pointer)
+git branch <branch_name>
+git checkout <commit-id>
+
+# switch branch
+git checkout <branch_name>
+# e.g. git checkout master
+
+# create a branch and switch to it
+git checkout -b <branch_name>
+
+# fast forward merge
+# suppose a new branch is directly ahead of the master
+# to join the master with the new branch, so they are pointed to the same snapshot
+git checkout master
+git merge <branch_name>
+
+# fork merge
+# merge two branches with a common ancestor
+# the result is that a new snapshot is created by joining the two branches
+git checkout master
+git merge <branch_name>
+
+# graphical merge
+git mergetool
+
+# delete a branch
+git branch -d <branch_name>
+
+#------------------------------------------------------------------
+# branch management
+#------------------------------------------------------------------
+# list all branches
+git branch -a
+
+# list all remote branches
+git branch -r
+
+# last commit
+git branch -v
+
+
+# merge remote git with local git
+# this will create a new branch in the local, called origin/master
+# to synchronize
+git fetch origin
+
+
+# git with saved authentication
+git config --global credential.helper cache.
+
+# delete local branch
+git branch -d <branch_name>
+
+# retrieve old commit and create a new branch
+git checkout -b <new_name> <old_commit>
+
+# rename a branch
+git branch -m <old_name> <new_name>
+
+# git show <commit_id>
+
+
+
+# delete remote branches
+git push <remote_name> --delete <branch_name>
+
+# rebase
+# instead of merging the two branches and create a new one
+# the rebase command merged the changes and pointed to it 
+# the master branch stays where it is
+git checkout <new_branch>
+git rebase master
+
+
+#------------------------------------------------------------------
+# remote git
+#------------------------------------------------------------------
+# to store the git repository to local
+scp -r my_project.git user@git.example.com:/srv/git
+
+
+ 

@@ -1,0 +1,440 @@
+#------------------------------------------------------------
+# Basic
+#------------------------------------------------------------
+w; free; df;
+
+# tty1
+Ctrl+Alt+F1
+
+# shutdown
+shutdown -h now
+
+#------------------------------------------------------------
+# user management
+#------------------------------------------------------------
+# add new user & group
+sudo adduser <user_name>
+sudo groupadd <group_name>
+
+# add user to sudo group
+adduser <usr> sudo
+
+
+# find files
+locate <filename>
+
+find <src_dir> -name <file_name>
+
+# word count
+wc -l ~/Documents/ubuntu_setup.txt
+
+# running process
+ps [-ef]
+
+# sort by the 3rd field
+sort -t: -k3,3 -n /etc/group
+
+# word count
+tr -sc 'A-Za-z' '\n' < <filename> | sort | uniq -c
+
+
+
+#-----------------------------------------------------------
+# admin
+#-----------------------------------------------------------
+# show hostname
+hostnamectl
+
+
+
+#-----------------------------------------------------------
+# some commands
+#-----------------------------------------------------------
+
+# compress and tar a folder
+tar czf <filename> directory
+
+# uncompress
+tar zxf <archive>
+
+# tar uncompress
+tar -zxvf <src_file.tgz> - C <destination>
+
+# issue schedule job
+sudo apt-get install at
+# example
+at now + 7 hours
+
+# cron jobs
+/etc/crontab
+
+# add sudoers
+usermod -aG sudo <username>
+
+# check all sudoers
+grep -Po '^sudo.+:\K.*$' /etc/group
+
+
+#-----------------------------------------------------------
+# Networking
+#-----------------------------------------------------------
+mtr google.com
+
+# config files
+/etc/hosts : list of hostnames
+/etc/services : network service, port
+/etc/resolv.conf : DNS
+/etc/host.conf : network info
+/etc/host.conf : it list the order for hostname resolution
+/etc/dhcp/dhclient.conf : DHCP client config
+
+
+
+#------------------------------------------------------------
+# Emacs setup
+#------------------------------------------------------------
+# install ess
+sudo apt-get install ess
+
+# config file
+.emacs
+
+# start ess
+M-x R
+
+# auto-complete package
+M-x package_install [RET] auto-complete [RET]
+
+# python
+M-x python-mode
+C-c C-p
+
+
+#------------------------------------------------------------
+# Bash
+#------------------------------------------------------------
+# shebang
+#!/bin/bash
+echo "hello."
+
+# run bash script
+bash <file> or source <file>
+
+# shell
+DOC='/home/fra/Documents'
+echo $DOC
+
+comp='fra'
+echo "I am ${comp}"
+
+# back quotes
+echo "There are `wc -l /etc/passwd` lines in the password file."
+
+#------------------------------------------------------------
+# Config files
+#------------------------------------------------------------
+# grub
+/etc/default/grub
+
+# etc...
+/etc/group
+/etc/passwd
+
+/etc/hosts
+/etc/services
+
+#------------------------------------------------------------
+# Networking
+#------------------------------------------------------------
+# to find out the ip
+hostname -I
+# with more details
+ip addr show
+
+localhost : 127.0.0.1
+
+# netmask config
+ifconfig
+# IP routing table
+netstat -rn
+
+# display all env
+env
+
+# group
+/etc/group
+
+# network statistics
+netstat
+
+
+
+#------------------------------------------------------------
+# SSH server
+#------------------------------------------------------------
+sudo apt-get install openssh-server
+sudo apt-get install openssh-client
+# setup firewall
+sudo ufw allow 22
+sudo ufw app list
+sudo ufw status
+
+
+# config file stored at
+/etc/ssh/sshd_config
+
+# edit port number different from 22, e.g.
+Port 2122
+Protocol 2
+LoginGraceTime 120
+PermitRootLogin no
+PasswordAuthenatication no
+AllowUsers user1 user2
+PrintLastlog yes
+IgnoreRhosts yes
+RhostsAuthentication no
+RSAAuthentication yes
+HostbasedAuthentication no
+# ListenAddress 192.168.1.20
+
+
+# welcome message, edit
+/etc/issue.net
+# and then add this line to sshd_config file
+Banner /etc/issue.net
+
+# restart
+sudo service ssh restart
+sudo systemctl reload sshd
+
+#-------------------------------------------------------------
+# SSH client
+#-------------------------------------------------------------
+# LOCAL: SSH key generation
+ssh-keygen -t rsa
+
+# LOCAL: default public key stored in
+~/.ssh/id_rsa.pub
+# LOCAL: default private key
+~/.ssh/id_rsa
+
+# make it private
+chmod 700 .ssh
+chmod 600 .ssh/id_rsa*
+
+# add the SSH key to the ssh-agent (github)
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
+# to place the public key to the remote machine
+# LOCAL: install the public key (id_rsa.pub) to the remote host
+ssh-copy-id username@remotehost
+
+# alternatively,
+scp -p <port_number> ~/.ssh/id_rsa.pub username@serverip:~/.ssh
+# and then append the public key (if missing)
+cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys_copy
+cat ~/id_rsa.pub >> ~/.ssh/authorized_keys
+
+# HOST: check ~/.ssh/authorized_keys in the remote host
+chmod 600 .ssh/authorized_keys
+
+
+# to connect
+# e.g. ssh -p 22 fra@192.168.0.1
+ssh -p <port_number> username@serverip
+
+# login without keys
+ssh -l username ipaddress
+
+# to copy files to remote host, e.g.
+scp myfile.txt username@192.168.2.21:/home/demo
+# to copy from remote host, e.g.
+scp username@192.168.2.21:/home/demo/myfile.txt .
+
+scp -P <port> <filename> <destination>:location
+e.g. scp -P 22 mydoc.txt fra@192.168.1.6:Documents/
+
+
+#-------------------------------------------------------------
+# HTTP Server
+#-------------------------------------------------------------
+sudo apt-get install apache2
+# try
+"http://<local_IP_address>
+
+# check app list
+sudo ufw app list
+# check details
+sudo ufw app info "Apache Full"
+sudo ufw allow in "Apache Full"
+
+# to find the server IP address
+# ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//'
+
+# start, restart and stop
+sudo /etc/init.d/apache2 start   #start apache
+sudo /etc/init.d/apache2 stop   #stop apache
+sudo /etc/init.d/apache2 restart   #restart apache
+# alternatively
+sudo service httpd restart
+sudo service apache2 restart
+
+# to prevent from starting at boot
+sudo update-rc.d -f apache2 remove
+
+# to autostart
+sudo update-rc.d apache2 defaults
+
+# existing hosts
+/etc/hosts
+
+#-------------------------------------------------------------
+# Permissions
+#-------------------------------------------------------------
+# change ownership
+sudo chown -R www-data:www-data /var/www/html
+sudo chmod -R 755 /var/www/html/
+
+
+#-------------------------------------------------------------
+# Default localhost folder
+#-------------------------------------------------------------
+# default location is /var/www/html
+
+# to change another location
+# edit /etc/apache2/sites-enabled/000-default
+# replace the DocumentRoot and Directory to the new location
+
+# manual restart
+sudo /etc/init.d/apache2 restart
+# alternatively
+sudo systemctl restart apache2
+
+
+# optional
+# to create multiple sites
+# config file
+/etc/apache2/apache2.conf
+
+# two subdirectories in /etc/apache2:
+# hosts config files defining virtualHosts
+/etc/apache2/sites-available
+# contain symlinks to sites-available
+/etc/apache2/sites-enabled
+
+# to create a new virtual host
+# create a new file mysite.com.conf under sites-available
+# example:
+<VirtualHost *:80>
+ServerAdmin webmaster@mysite.com
+DocumentRoot /var/www/mysite.com
+ServerName www.mysite.com
+ErrorLog /var/log/apache2/error.log
+</VirtualHost>
+
+
+# to create multiple sites
+cp /etc/apache2/sites-available/default /etc/apache2/sites-available/newsite
+
+# then edit /etc/apache2/sites-available/newsite
+sudo a2dissite default
+sudo a2ensite newsite
+
+
+#-------------------------------------------------------------
+# SSL
+#-------------------------------------------------------------
+# enable SSL
+sudo a2enmod ssl
+
+# setup wordpress db
+CREATE DATABASE wpdb;
+CREATE USER wpuser@localhost IDENTIFIED BY 'new_password_here';
+GRANT ALL ON wpdb.* to wpuser@localhost;
+FLUSH PRIVILEGES;
+
+
+#-------------------------------------------------------------
+# PHP
+#-------------------------------------------------------------
+sudo apt-get install php libapache2-mod-php php-mcrypt php-mysql
+
+
+# default config file:
+/etc/php5/apache2/php.ini
+
+# optional
+sudo apt-get install libapache2-mod-php5 php5-mysql
+php5-curl php5-gd php5-intl php-pear php5-imagick php5-imap
+php5-mcrypt php5-memcache php5-ming php5-ps php5-pspell
+php5-recode php5-sqlite php5-tidy php5-xmlrpc php5-xsl
+
+# default index file
+/etc/apache2/mods-enabled/dir.conf
+
+# to check php modules available
+apt-cache search php- | less
+apt-cache show <package_name>
+
+# edit info.php
+/var/www/html/info.php
+<?php phpinfo(); ?>
+
+# check
+http://localhost/info.php
+
+# install php myadmin
+sudo apt-get install phpmyadmin
+
+# check
+http://localhost/phpmyadmin/
+
+
+#-------------------------------------------------------------
+# Word Press
+#-------------------------------------------------------------
+# create a new mysql database
+# inside mysql:
+CREATE DATABASE wpdb;
+CREATE USER wpuser@localhost IDENTIFIED BY 'password';
+GRANT ALL ON wpdb.* TO wpuser@localhost;
+
+# package
+# sudo apt-get install wordpress
+
+# download
+cd ~/Downloads/ && wget http://wordpress.org/latest.tar.gz
+
+# extract
+tar -xvzf latest.tar.gz
+
+# some setup
+touch wordpress/.htaccess
+chmod 660 wordpress/.htaccess
+cp wordpress/wp-config-sample.php wordpress/wp-config.php
+mkdir wordpress/wp-content/upgrade
+
+# edit this file:
+// ** MySQL settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define('DB_NAME', 'wpdb');
+
+/** MySQL database username */
+define('DB_USER', 'wpuser');
+
+/** MySQL database password */
+define('DB_PASSWORD', 'password');
+
+# copy the wordpress files to /var/www/html
+sudo cp -a wordpress/* /var/www/html
+
+
+# set permission
+sudo chown -R fra:www-data /var/www/html/
+
+sudo chmod g+w /var/www/html/wp-content
+sudo chmod -R g+w /var/www/html/wp-content/themes
+sudo chmod -R g+w /var/www/html/wp-content/plugins
+
+#sudo chmod -R 755 /var/www/html/

@@ -1,0 +1,78 @@
+http://developer.download.nvidia.com/compute/cuda/repos/
+
+CUDA repository for ubuntu 16.04 is missing??
+
+# cuda dev library
+sudo apt-get install -y cuda
+
+# ubuntu repository
+sudo apt install nvidia-cuda-dev nvidia-cuda-toolkit
+
+CUDA 7.5
+
+cuDNN (CUDA Deep learning) cuDNN v4
+# to check nvidia system
+nvidia-smi
+
+
+http://www.r-tutor.com/gpu-computing/cuda-installation/cuda7.5-ubuntu
+------------------------------------------------------------------
+# install packages
+------------------------------------------------------------------
+
+sudo dpkg -i cuda-repo-ubuntu1404_7.5-18_amd64.deb 
+sudo apt-get update
+
+sudo apt-get install cuda
+
+# environment variables
+export CUDA_HOME=/usr/local/cuda-7.5 
+export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
+ 
+PATH=${CUDA_HOME}/bin:${PATH} 
+export PATH
+
+# CUDA SDK samples
+cuda-install-samples-7.5.sh  ~ 
+cd ~/NVIDIA_CUDA-7.5_Samples 
+cd 1_Utilities/deviceQuery 
+make
+
+------------------------------------------------------------------
+Others
+------------------------------------------------------------------
+#apt-get install nvidia-cuda-toolkit
+
+
+# setup GPU and CUDA
+#sudo wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
+#sudo dpkg -i cuda-repo-ubuntu1404_6.5-14_amd64.deb
+#sudo apt-get update
+#sudo apt-get install -y cuda # this takes a while
+#echo -e "\nexport PATH=/usr/local/cuda-6.5/bin:$PATH\n\nexport LD_LIBRARY_PATH=/usr/local/cuda-6.5/lib64" >> .bashrc
+#sudo reboot
+
+------------------------------------------------------------------
+Post installation
+------------------------------------------------------------------
+# The PATH variable needs to include /usr/local/cuda-7.5/bin
+# LD_LIBRARY_PATH variable needs to contain /usr/local/cuda-7.5/lib64
+
+
+export PATH=/usr/local/cuda-7.5/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-7.5/lib64:$LD_LIBRARY_PATH
+
+
+# verify the installation
+# compile some examples
+cuda-install-samples-7.5.sh  ~ 
+cd ~/NVIDIA_CUDA-7.5_Samples 
+cd 1_Utilities/deviceQuery 
+make
+
+
+
+# verify the driver version
+cat /proc/driver/nvidia/version
+# run the testing script under ~/NVIDIA_CUDA-7.5_Samples
+deviceQuery 
