@@ -1,0 +1,304 @@
+#-----------------------------------------------------------------
+# Hadoop single node setup
+#-----------------------------------------------------------------
+sudo apt-get install rsync
+
+# install java 8
+java -version
+
+# check java home
+readlink -f /usr/bin/java
+
+
+# create Hadoop user group
+sudo addgroup hadoop
+# create new user
+sudo adduser --ingroup hadoop hduser
+
+# to check
+groups hduser
+
+#-----------------------------------------------------------------
+# install ssh
+#-----------------------------------------------------------------
+sudo apt-get install openssh-server
+
+# First login with hduser
+sudo su hduser
+
+# Generate ssh key for hduser account
+ssh-keygen -t rsa -P ""
+
+# ssh to the same machine
+# Copy id_rsa.pub to authorized keys from hduser
+cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+# disable ipv6
+# update the file /etc/sysctl.conf by adding:
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+
+# to check...
+ssh localhost
+# check if hdsuser is in sudo group
+sudo -v
+# become a sudoer
+sudo adduser hduser sudo
+
+
+#-----------------------------------------------------------------
+# Download Hadoop
+#-----------------------------------------------------------------
+# download from source
+
+## Extract Hadoop source
+sudo tar -xzvf hadoop-2.6.0.tar.gz
+sudo mkdir -p /usr/local/hadoop
+sudo mv hadoop-2.6.0 /usr/local/hadoop 
+
+## Assign ownership of this folder to Hadoop user
+sudo chown hduser:hadoop -R /usr/local/hadoop
+
+
+## Create Hadoop temp directories for Namenode and Datanode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
+
+## Again assign ownership of this Hadoop temp folder to Hadoop user
+sudo chown hduser:hadoop -R /usr/local/hadoop_tmp/
+
+#-----------------------------------------------------------------
+# config .bashrc
+#-----------------------------------------------------------------
+# update config
+
+## User profile : Update $HOME/.bashrc
+sudo gedit .bashrc
+
+## Update hduser configuration file by appending the 
+## following environment variables at the end of this file.
+
+# Update $HOME/.bashcr
+# -- HADOOP ENVIRONMENT VARIABLES START -- #
+export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
+# -- HADOOP ENVIRONMENT VARIABLES END -- #
+
+# to check
+readlink -f /usr/bin/javac
+which javac
+
+
+#-----------------------------------------------------------------
+Pseudo Distribution Mode
+#-----------------------------------------------------------------
+
+
+
+#-----------------------------------------------------------------
+# hadoop-env.sh
+#-----------------------------------------------------------------
+# Under /usr/local/hadoop/etc/hadoop/
+# Update JAVA_HOME variable in the file
+
+JAVA_HOME=/usr/lib/jvm/java-8-oracle
+
+#-----------------------------------------------------------------
+# config XMLs : core-site.xml
+#-----------------------------------------------------------------
+## To edit file
+/usr/local/hadoop/etc/hadoop/core-site.xml
+
+## Paste these lines into <configuration> tag
+
+<property>
+<name>fs.default.name</name>
+<value>hdfs://localhost:9000</value>
+</property>
+
+#-----------------------------------------------------------------
+# config XMLs : hdfs-site.xml
+#-----------------------------------------------------------------
+## To edit file
+/usr/local/hadoop/etc/hadoop/hdfs-site.xml
+
+## Paste these lines into <configuration> tag
+<property>
+      <name>dfs.replication</name>
+      <value>1</value>
+ </property>
+ <property>
+      <name>dfs.namenode.name.dir</name>
+      <value>file:/usr/local/hadoop_tmp/hdfs/namenode</value>
+ </property>
+ <property>
+      <name>dfs.datanode.data.dir</name>
+      <value>file:/usr/local/hadoop_tmp/hdfs/datanode</value>
+ </property>
+
+#-----------------------------------------------------------------
+# config XMLs : yarn-site.xml
+#-----------------------------------------------------------------
+## To edit file
+/usr/local/hadoop/etc/hadoop/yarn-site.xml
+
+## Paste these lines into <configuration> tag
+<property>
+      <name>yarn.nodemanager.aux-services</name>
+      <value>mapreduce_shuffle</value>
+</property>
+<property>
+      <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+      <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+ 
+
+#-----------------------------------------------------------------
+# config XMLs : mapred-site.xml
+#-----------------------------------------------------------------
+## Make a copy of the template mapred-site.xml.template
+cp /usr/local/hadoop/etc/hadoop/mapred-site.xml.template  /usr/local/hadoop/etc/hadoop/mapred-site.xml
+
+## To edit file
+/usr/local/hadoop/etc/hadoop/mapred-site.xml
+
+## Paste these lines into <configuration> tag
+<property>
+      <name>mapreduce.framework.name</name>
+      <value>yarn</value>
+</property>
+ 
+ 
+#-----------------------------------------------------------------
+# Start daemons
+#-----------------------------------------------------------------
+# format name node
+hdfs namenode -format
+
+# start daemons
+/usr/local/hadoop$ start-dfs.sh
+/usr/local/hadoop$ start-yarn.sh
+
+# to verify
+jps
+netstat -plten | grep java
+
+
+
+# by default the name node is at??
+# NameNode - http://localhost:50070/
+ 
+# resource manager
+http://locahost:8088
+
+#-----------------------------------------------------------------
+# Execution
+#-----------------------------------------------------------------
+bin/hdfs dfs -mkdir /user
+bin/hdfs dfs -mkdir /user/<username>
+
+# copy files to hdfs
+bin/hdfs dfs -put etc/hadoop input
+
+# examples
+bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output 'dfs[a-z.]+'
+bin/hdfs dfs -get output output
+cat output/*
+
+#-----------------------------------------------------------------
+# Stop Hadoop
+#-----------------------------------------------------------------
+stop-dfs.sh
+stop-yarn.sh
+
+
+
+
+
+
+#-----------------------------------------------------------------
+# Hadoop multinode setup
+#-----------------------------------------------------------------
+# Edit the /etc/hosts file in ALL machines
+sudo gedit /etc/hosts
+
+# Add following hostname and their ip in host table
+192.168.2.14    HadoopMaster
+192.168.2.15    HadoopSlave1
+192.168.2.16    HadoopSlave2
+
+# add hadoop users in all machine
+sudo addgroup hadoop 
+sudo adduser --ingroup hadoop hduser
+
+# to add sudoers
+sudo usermod -a -G sudo hduser﻿
+
+# install rsync for sharing hadoop source 
+sudo apt-get install rsync
+
+# need to reboot all machines
+
+#-----------------------------------------------------------------
+# core-site.xml
+#-----------------------------------------------------------------
+<property>
+  <name>fs.default.name</name>
+  <value>hdfs://HadoopMaster:9000</value>
+</property>
+
+
+#-----------------------------------------------------------------
+# hdfs-site.xml
+#-----------------------------------------------------------------
+<property>
+  <name>dfs.replication</name>
+  <value>3</value>
+</property>
+
+#-----------------------------------------------------------------
+# yarn-site.xml
+#-----------------------------------------------------------------
+<property>
+	<name>yarn.resourcemanager.resource-tracker.address</name>
+	<value>HadoopMaster:8025</value>
+</property>
+<property>
+	<name>yarn.resourcemanager.scheduler.address</name>
+	<value>HadoopMaster:8035</value>
+</property>
+<property>
+	<name>yarn.resourcemanager.address</name>
+	<value>HadoopMaster:8050</value>
+</property>
+
+
+#-----------------------------------------------------------------
+# mapred-site.xml
+#-----------------------------------------------------------------
+<property>
+	<name>mapreduce.job.tracker</name>
+	<value>HadoopMaster:5431</value>
+</property>
+<property>
+	<name>mapred.framework.name</name>
+	<value>yarn</value>
+</property>
+
+
+
+
+
+
+
+
+

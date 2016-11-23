@@ -1,0 +1,73 @@
+#---------------------------------------------------------------------
+# generate debug info
+gcc -g filename.c
+
+# lib path
+gcc -I <header folder>
+# output executable name
+gcc -o <output executable>
+
+# generate object file
+gcc -c <src file>
+
+# to get the size of file
+size <object file>
+
+# get a list of symbols
+objdump --syms <object file>
+
+# disassemble
+objdump -d <object file>
+
+
+#---------------------------------------------------------------------
+# to find the location of glibc shared library
+ldd <executatable> | grep libc
+
+# init file
+~/.gdbinit
+
+# TUI mode
+gdb -tui <executable>
+
+
+#---------------------------------------------------------------------
+# gdb debug
+objdump -M intel -D a.out \ grep -A20 main.:
+
+# with debug info
+gcc -g <filename>
+
+# inside GDB:
+info register (i r)
+
+# set intel format
+set disassembly-flavor intel
+
+
+# display assembly code
+disassemble <function>
+
+
+# show content
+x/i (instruction) var
+x/x (hex) var 
+x/d (decimal) var
+x/b (binary) var
+x/o (octal) var
+x/s (string) var
+
+# examine variables
+print &pointer (address)
+print pointer (content)
+
+# display value of var
+p <varName>
+
+
+
+#---------------------------------------------------------------------
+# check intstruction (5 lines) at register rip
+x/5i $rip
+
+
