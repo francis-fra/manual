@@ -35,3 +35,23 @@ http://localhost:9000/
 # Think in Java
 # for additional libraries, e.g. javaassist and xom, place them under a lib folder (e.g. IdeaProjects/ThinkinJava/lib)
 # To import the libraries, put the lib folder in the Modeules->dependencies 
+
+--------------------------------------------------------------------
+Intellij project setup
+--------------------------------------------------------------------
+#  project structure
+Ctrl-ALt_Shift-S
+
+# Project:
+# Check SDK : oracle
+# Project level : default
+
+# SDK
+# setup SDK to the desired java version
+
+# Modules
+# setup project structure
+
+# Modules -> Dependencies
+# add external libraries here
+

@@ -11,6 +11,14 @@ dnf search <search_string>
 sudo dnf install <package>
 sudo dnf install <local_rpm>
 
+# show package
+dnf info <package>
+
+# list installed
+dnf list installed <search-string>
+
+
+
 # remove a package
 sudo dnf erase <package>
 
@@ -19,6 +27,14 @@ rpm -ivh http://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-24.no
 
 # fedora version
 cat /etc/fedora-release
+
+# list all package groups (and desktop environment)
+dnf group list
+
+# install desktop manager
+dnf install @kde-desktop
+
+
 
 
 #------------------------------------------------------------
@@ -44,11 +60,19 @@ sudo yum localinstall <rpm_package>
 
 sudo dnf install pidgin
 
-# desktop
-dnf install @cinnamon-desktop
-
 # terminator
 yum install terminator
+
+# to install
+emacs
+
+R-core
+
+# atom
+# download rpm
+sudo dnf install <rpm_package>
+
+
 
 #------------------------------------------------------------
 # Install adobe flashInstall Packages
@@ -62,7 +86,7 @@ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-adobe-linux
 sudo dnf install flash-plugin
 
 #------------------------------------------------------------
-# Install Java
+# Install Oracle Java??
 #------------------------------------------------------------
 # rpm command
 rpm -Uvh <package_name>

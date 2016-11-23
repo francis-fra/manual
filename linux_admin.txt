@@ -16,14 +16,112 @@ shutdown -h now
 sudo adduser <user_name>
 sudo groupadd <group_name>
 
-# add user to sudo group
-adduser <usr> sudo
+# add user to sudo group (fedora)
+usermod -aG wheel <usename>  (reboot required)
 
+# check all sudoers
+grep -Po '^sudo.+:\K.*$' /etc/group
+cat /etc/sudoers
+
+# change ownership
+chown <new-owner> <files>
+
+# default file mode for newly created files
+umask <code>
+
+
+
+
+#-----------------------------------------------------------
+# admin
+#-----------------------------------------------------------
+# show hostname
+hostnamectl
+
+
+# create a hard link
+ln <existing_file> <new_link>
+
+# how to find out they are linked?? (check the link count?)
+
+# soft link
+ln -s <existing_file_or_directory> <new_link>
+
+# mount
+mount <source_device> <mount_point>
+
+# find command
+# find the matching names
+find . -name \*.txt
+
+# add this to run the command from the output of find
+-exec command {} \;
+
+# example: change user own and gorup
+find /home/chavez -exec chown chavez {} \; \ -exec chgrp physics {} \;
 
 # find files
 locate <filename>
 
 find <src_dir> -name <file_name>
+# xargs??
+
+# see content of zip file
+gzcat
+
+# to examine the content of a tar file
+tar -tf <xxx.tar>
+
+#-----------------------------------------------------------
+# Archive
+#-----------------------------------------------------------
+# archive
+# step 1: compress and tar a folder
+# c for compress
+tar cvf <xxx.tar> <target_directory>
+
+# step 2: to create .gz file
+gzip xxxx.tar
+
+# extract
+# step 1: unzip
+gunzip xxxx.tar.gz
+
+# step 2: uncompress
+# x for extract
+#tar xvf <xxx.tar>
+tar -xvf <xxx.tgz> -C <destination folder>
+
+# to uncompress xxx.tgz
+tar -zxvf <xxx.tgz>
+
+#-----------------------------------------------------------
+# compress tgz file
+tar cvzf <xxx.tgz> <target_dir>
+
+# extract tgz file
+tar xvzf <xxx.tgz> -C <destination_dir>
+
+#-----------------------------------------------------------
+# tar and compress
+#-----------------------------------------------------------
+# one liner (tar and compress)
+tar -cf - <source folder | gzip > <destination folder/xxx.tar.gz>
+
+# one liner (extract)
+gzip -dc <xxxx.tar.gz> | tar -xf - -C <destination folder>
+
+#-----------------------------------------------------------
+# useful commands
+#-----------------------------------------------------------
+# issue schedule job
+sudo apt-get install at
+# example
+at now + 7 hours
+
+# cron jobs 
+/etc/cron.*
+
 
 # word count
 wc -l ~/Documents/ubuntu_setup.txt
@@ -37,42 +135,42 @@ sort -t: -k3,3 -n /etc/group
 # word count
 tr -sc 'A-Za-z' '\n' < <filename> | sort | uniq -c
 
+# file management
+file <filename>
+tree <directory>
+
+# drive mount
+# store at /etc/fstab
+
+# disk space
+df -h
+# disk usage
+du -h
+
+# sorting (descending) the number
+du -h | sort -nr
+
+# grep
+grep -option <string> <file or directory>
+grep -r (recursive)
+grep -n (line num)
+grep -c (count only)
 
 
-#-----------------------------------------------------------
-# admin
-#-----------------------------------------------------------
-# show hostname
-hostnamectl
+
+
+# coproc (putting in background)
+coproc <command>
+
+# excecute command line num from the history list
+!<num>
+
+# alias
+alias li='ls -li'
 
 
 
-#-----------------------------------------------------------
-# some commands
-#-----------------------------------------------------------
 
-# compress and tar a folder
-tar czf <filename> directory
-
-# uncompress
-tar zxf <archive>
-
-# tar uncompress
-tar -zxvf <src_file.tgz> - C <destination>
-
-# issue schedule job
-sudo apt-get install at
-# example
-at now + 7 hours
-
-# cron jobs
-/etc/crontab
-
-# add sudoers
-usermod -aG sudo <username>
-
-# check all sudoers
-grep -Po '^sudo.+:\K.*$' /etc/group
 
 
 #-----------------------------------------------------------

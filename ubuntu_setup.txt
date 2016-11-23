@@ -369,15 +369,10 @@ sudo apt-add-repository ppa:mmk2410/intellij-idea-community
 sudo apt-get update
 sudo apt-get install intellij-idea-community
 
---------------------------------------------------------------------
-Intellij project setup
---------------------------------------------------------------------
-#  project structure
-Ctrl-ALt_Shift-S
+# to remove
+sudo apt-get remove intellij-idea-community
+sudo add-apt-repository --remove ppa:mmk2410/intellij-idea-community
 
-# Project:
-# Check SDK : oracle
-# Project level : default
 
 --------------------------------------------------------------------
 # others

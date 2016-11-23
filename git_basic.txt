@@ -21,7 +21,7 @@ git add <filenames>
 git rm <filenames>
 
 # to remove files from the staging area
-git reset HEAD <filenames>
+git reset <filenames>
 
 # moving files
 git mv <file_from> <file_destination>
