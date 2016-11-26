@@ -47,7 +47,8 @@ set disassembly-flavor intel
 
 # display assembly code
 disassemble <function>
-
+# example:
+disass main
 
 # show content
 x/i (instruction) var
@@ -55,7 +56,7 @@ x/x (hex) var
 x/d (decimal) var
 x/b (binary) var
 x/o (octal) var
-x/s (string) var
+x/s (string) var (pointer)
 
 # examine variables
 print &pointer (address)
@@ -64,10 +65,14 @@ print pointer (content)
 # display value of var
 p <varName>
 
+rbp : frame pointer
+rip : execution pointer
+rsp : stack pointer
+
 
 
 #---------------------------------------------------------------------
 # check intstruction (5 lines) at register rip
 x/5i $rip
 
-
+# register rip points to the current instruction

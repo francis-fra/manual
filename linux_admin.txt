@@ -9,27 +9,6 @@ Ctrl+Alt+F1
 # shutdown
 shutdown -h now
 
-#------------------------------------------------------------
-# user management
-#------------------------------------------------------------
-# add new user & group
-sudo adduser <user_name>
-sudo groupadd <group_name>
-
-# add user to sudo group (fedora)
-usermod -aG wheel <usename>  (reboot required)
-
-# check all sudoers
-grep -Po '^sudo.+:\K.*$' /etc/group
-cat /etc/sudoers
-
-# change ownership
-chown <new-owner> <files>
-
-# default file mode for newly created files
-umask <code>
-
-
 
 
 #-----------------------------------------------------------
@@ -157,8 +136,6 @@ grep -n (line num)
 grep -c (count only)
 
 
-
-
 # coproc (putting in background)
 coproc <command>
 
@@ -169,7 +146,126 @@ coproc <command>
 alias li='ls -li'
 
 
+#------------------------------------------------------------
+# user management
+#------------------------------------------------------------
+# add new user & group
+sudo adduser <user_name>
+sudo groupadd <group_name>
 
+# add user to sudo group (fedora)
+usermod -aG wheel <usename>  (reboot required)
+
+# check all sudoers
+grep -Po '^sudo.+:\K.*$' /etc/group
+cat /etc/sudoers
+
+# change ownership
+chown <new-owner> <files>
+
+# default file mode for newly created files
+umask <code>
+
+
+#-----------------------------------------------------------
+# Environment Variables
+#-----------------------------------------------------------
+# global environment var
+printenv
+# e.g.
+printenv HOME
+printevn USER
+
+# local variable
+my_var=Hello
+my_var="Hello World"
+
+echo $PATH
+
+
+# to remove env variable
+unset <var name>
+
+# some startup files are placed in:
+/etc/profile.d
+
+# varialbe arrays
+mytest=(one tow three)
+echo $mytest
+echo ${mytest[1]}
+echo ${mytest[*]}
+
+#-----------------------------------------------------------
+# File Permission
+#-----------------------------------------------------------
+# add new user and create home directory
+useradd -m <username>
+
+# remove a user
+userdel -r <username>
+
+# change password
+passwd
+# change passwd expiration date
+chage
+
+# account management
+usermod
+
+# groups
+/etc/group
+
+# add new group
+groupadd <name>
+
+# add user to a group
+usermod -G <group_name> <user_name>
+
+# default file permissions
+umask <setting>
+
+# change ownership
+chown <owner> <file>
+chown <owner>.<group> <file>
+
+# change group
+chgrp <group> <file>
+
+# set SGID for directory
+chmod g+s <dir>
+
+# check user ids
+id <user_name>
+
+# file system check
+fsck <option> <fs>
+
+
+#-----------------------------------------------------------
+# Install software
+#-----------------------------------------------------------
+# Debian system
+aptitude
+apt-get
+dkpg
+
+# Red hat system
+yum
+zypper
+
+#-----------------------------------------------------------
+# Shell script
+#-----------------------------------------------------------
+# start of script:
+#!/bin/bash
+
+# do math, example:
+expr 6 * 9
+bc
+scale=4         # set the num of floating pts
+
+# exit status code:
+#?
 
 
 
@@ -320,24 +416,35 @@ ssh-keygen -t rsa
 chmod 700 .ssh
 chmod 600 .ssh/id_rsa*
 
-# add the SSH key to the ssh-agent (github)
-eval "$(ssh-agent -s)"
-ssh-add ~/.ssh/id_rsa
+#-------------------------------------------------------------
+# copy and append the public key to the remote machine
 
-# to place the public key to the remote machine
+# use dropbox!
+
+#-------------------------------------------------------------
+# Does not seem to work...
+#?? add the SSH key to the ssh-agent (github)
+#eval "$(ssh-agent -s)"
+#ssh-add ~/.ssh/id_rsa
+
+#?? to place the public key to the remote machine
 # LOCAL: install the public key (id_rsa.pub) to the remote host
-ssh-copy-id username@remotehost
+#ssh-copy-id username@remotehost
 
-# alternatively,
+# copy via scp (if password authentication allowed)
 scp -p <port_number> ~/.ssh/id_rsa.pub username@serverip:~/.ssh
-# and then append the public key (if missing)
+
+#-------------------------------------------------------------
+# Append the public key (if missing)
+
 cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys_copy
 cat ~/id_rsa.pub >> ~/.ssh/authorized_keys
 
 # HOST: check ~/.ssh/authorized_keys in the remote host
 chmod 600 .ssh/authorized_keys
 
-
+#-------------------------------------------------------------
+# Examples
 # to connect
 # e.g. ssh -p 22 fra@192.168.0.1
 ssh -p <port_number> username@serverip
@@ -345,10 +452,16 @@ ssh -p <port_number> username@serverip
 # login without keys
 ssh -l username ipaddress
 
+#-------------------------------------------------------------
+# File Transfer
+#-------------------------------------------------------------
+scp -P <port_num> <source> <destination>
+
 # to copy files to remote host, e.g.
-scp myfile.txt username@192.168.2.21:/home/demo
+scp -P <port_num> myfile.txt username@192.168.2.21:/home/demo
+
 # to copy from remote host, e.g.
-scp username@192.168.2.21:/home/demo/myfile.txt .
+scp -P <port_num> username@192.168.2.21:/home/demo/myfile.txt .
 
 scp -P <port> <filename> <destination>:location
 e.g. scp -P 22 mydoc.txt fra@192.168.1.6:Documents/
