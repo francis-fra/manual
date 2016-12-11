@@ -442,8 +442,10 @@ sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 ipy
 
 pip install -U scikit-learn
 
-# TODO:
 # install python3 libraries
+# pip install
+in2csv
+
 
 # hy
 
@@ -940,3 +942,37 @@ password: cloudera
 # yahoo vm
 usernname: hadoop-user
 password: hadoop
+
+--------------------------------------------------------------------
+# F#
+--------------------------------------------------------------------
+# install Mono
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+sudo apt-get update
+
+# install mono and fsharp
+sudo apt-get install mono-complete mono-devel fsharp referenceassemblies-pcl
+
+# if this is not included
+sudo apt-get install ca-certificates-mono
+
+
+# install monodevelop via flatpak
+sudo add-apt-repository ppa:alexlarsson/flatpak
+sudo apt-get update
+sudo apt-get install flatpak
+
+# add minimal flatPak repository:
+flatpak remote-add --user --from gnome https://sdk.gnome.org/gnome.flatpakrepo
+
+# to install MonoDevelop:
+flatpak install --user --from https://download.mono-project.com/repo/monodevelop.flatpakref
+
+# to start
+flatpak run com.xamarin.MonoDevelop
+
+
+
+

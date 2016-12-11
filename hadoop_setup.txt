@@ -1,37 +1,79 @@
 #-----------------------------------------------------------------
 # Hadoop single node setup
 #-----------------------------------------------------------------
-sudo apt-get install rsync
+sudo apt-get install rsync (ubuntu)
 
 # install java 8
 java -version
 
 # check java home
-readlink -f /usr/bin/java
+#readlink -f /usr/bin/java
+
+#-----------------------------------------------------------------
+# Install java on CentOS
+#-----------------------------------------------------------------
+# remove java
+yum remove java-1.7.0-openjdk
+
+# download oracle jdk8
+# sudo yum localinstall jdk-8uxxx-linux-x64.rpm
+sudo rpm -Uvh jdk-8uxxx-linux-x64.rpm
+
+sudo alternatives --install /usr/bin/java java /usr/java/latest/bin/java 2
+# config soft link to the default java
+sudo alternatives --config java
+
+sudo alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 2
+# config soft link to the default javac
+sudo alternatives --config javac
+
+#sudo alternatives --install /usr/bin/jar jar /usr/java/latest/bin/jar 2
+# config soft link to the default jar
+#sudo alternatives --config jar
+
+#-----------------------------------------------------------------
 
 
+
+#-----------------------------------------------------------------
 # create Hadoop user group
-sudo addgroup hadoop
+#-----------------------------------------------------------------
+sudo addgroup hdgrp
+sudo groupadd hdgrp
+
 # create new user
-sudo adduser --ingroup hadoop hduser
+sudo adduser --ingroup hdgrp hduser
+sudo adduser -g hdgrp hduser
+passwd hduser
 
 # to check
 groups hduser
 
 #-----------------------------------------------------------------
-# install ssh
+# setup ssh
 #-----------------------------------------------------------------
+# see also linux_admin manual
+
+# install ssh
 sudo apt-get install openssh-server
 
+#-----------------------------------------------------------------
 # First login with hduser
 sudo su hduser
 
 # Generate ssh key for hduser account
-ssh-keygen -t rsa -P ""
+ssh-keygen -t rsa
 
-# ssh to the same machine
+# try ssh to the same machine
 # Copy id_rsa.pub to authorized keys from hduser
+# the public key is saved to its own authorized keys
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+# security
+chmod 600 authorized_keys
+
+#-----------------------------------------------------------------
+# optional
 
 # disable ipv6
 # update the file /etc/sysctl.conf by adding:
@@ -41,32 +83,28 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 
 # to check...
 ssh localhost
-# check if hdsuser is in sudo group
-sudo -v
-# become a sudoer
-sudo adduser hduser sudo
 
+# check if hduser is in sudo group
+sudo -v
+
+# add hduser to become a sudoer
+visudo
 
 #-----------------------------------------------------------------
 # Download Hadoop
 #-----------------------------------------------------------------
 # download from source
+wget http://apache.claz.org/hadoop/common/stable/hadoop-2.7.3.tar.gz
 
-## Extract Hadoop source
-sudo tar -xzvf hadoop-2.6.0.tar.gz
+## Extract Hadoop
+sudo tar -xzvf hadoop-2.7.3.tar.gz
 sudo mkdir -p /usr/local/hadoop
-sudo mv hadoop-2.6.0 /usr/local/hadoop 
+sudo mv hadoop-2.7.3 /usr/local/hadoop 
 
 ## Assign ownership of this folder to Hadoop user
-sudo chown hduser:hadoop -R /usr/local/hadoop
+sudo chown hduser:hdgrp -R /usr/local/hadoop
 
 
-## Create Hadoop temp directories for Namenode and Datanode
-sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
-sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
-
-## Again assign ownership of this Hadoop temp folder to Hadoop user
-sudo chown hduser:hadoop -R /usr/local/hadoop_tmp/
 
 #-----------------------------------------------------------------
 # config .bashrc
@@ -79,10 +117,11 @@ sudo gedit .bashrc
 ## Update hduser configuration file by appending the 
 ## following environment variables at the end of this file.
 
-# Update $HOME/.bashcr
+# Update $HOME/.bash_profile or .bashrc
 # -- HADOOP ENVIRONMENT VARIABLES START -- #
-export JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export JAVA_HOME=/usr/java/latest
 export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$JAVA_HOME/bin
 export PATH=$PATH:$HADOOP_HOME/bin
 export PATH=$PATH:$HADOOP_HOME/sbin
 export HADOOP_MAPRED_HOME=$HADOOP_HOME
@@ -93,41 +132,67 @@ export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
 export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
 # -- HADOOP ENVIRONMENT VARIABLES END -- #
 
-# to check
+# to check the softlink
 readlink -f /usr/bin/javac
 which javac
 
+# update the settings
+source .bash_profile
 
 #-----------------------------------------------------------------
-Pseudo Distribution Mode
+# Change SSH port number
 #-----------------------------------------------------------------
+# edit hadoop-env.sh
+#export HADOOP_SSH_OPTS="-p <port_num> -o ConnectTimeout=1 -o SendEnv=HADOOP_CONF_DIR"
+export HADOOP_SSH_OPTS="-p <port_num>"
 
-
+#-----------------------------------------------------------------
+# Pseudo Distribution Mode
+#-----------------------------------------------------------------
 
 #-----------------------------------------------------------------
 # hadoop-env.sh
 #-----------------------------------------------------------------
 # Under /usr/local/hadoop/etc/hadoop/
-# Update JAVA_HOME variable in the file
+# Update JAVA_HOME variable if it is not set in .bashrc
 
-JAVA_HOME=/usr/lib/jvm/java-8-oracle
+export JAVA_HOME=/usr/java/latest/
 
 #-----------------------------------------------------------------
 # config XMLs : core-site.xml
 #-----------------------------------------------------------------
+# create Hadoop tmp directories (to be added in core-site.xml)
+#sudo mkdir -p /app/hadoop/tmp
+#sudo chown hduser:hdgrp /app/hadoop/tmp
+
+# optional:
+<property>
+  <name>hadoop.tmp.dir</name>
+  <value>/app/hadoop/tmp</value>
+  <description>A base for other temporary directories.</description>
+</property>
+
 ## To edit file
 /usr/local/hadoop/etc/hadoop/core-site.xml
 
 ## Paste these lines into <configuration> tag
 
+# port 9000??
 <property>
-<name>fs.default.name</name>
-<value>hdfs://localhost:9000</value>
+        <name>fs.default.name</name>
+        <value>hdfs://localhost:54310</value>
 </property>
 
 #-----------------------------------------------------------------
 # config XMLs : hdfs-site.xml
 #-----------------------------------------------------------------
+## Create Hadoop temp directories for Namenode and Datanode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
+
+## Again assign ownership of this Hadoop temp folder to Hadoop user
+sudo chown hduser:hdgrp -R /usr/local/hadoop_tmp/
+
 ## To edit file
 /usr/local/hadoop/etc/hadoop/hdfs-site.xml
 
@@ -136,10 +201,12 @@ JAVA_HOME=/usr/lib/jvm/java-8-oracle
       <name>dfs.replication</name>
       <value>1</value>
  </property>
+ 
  <property>
       <name>dfs.namenode.name.dir</name>
       <value>file:/usr/local/hadoop_tmp/hdfs/namenode</value>
  </property>
+ 
  <property>
       <name>dfs.datanode.data.dir</name>
       <value>file:/usr/local/hadoop_tmp/hdfs/datanode</value>
@@ -177,7 +244,16 @@ cp /usr/local/hadoop/etc/hadoop/mapred-site.xml.template  /usr/local/hadoop/etc/
       <value>yarn</value>
 </property>
  
- 
+<property>
+  <name>mapred.job.tracker</name>
+  <value>localhost:54311</value>
+  <description>The host and port that the MapReduce job tracker runs
+  at.  If "local", then jobs are run in-process as a single map
+  and reduce task.
+  </description>
+</property>
+
+
 #-----------------------------------------------------------------
 # Start daemons
 #-----------------------------------------------------------------
@@ -192,13 +268,12 @@ hdfs namenode -format
 jps
 netstat -plten | grep java
 
-
-
-# by default the name node is at??
-# NameNode - http://localhost:50070/
- 
 # resource manager
 http://locahost:8088
+
+# Node Manager
+http://localhost:8042/
+
 
 #-----------------------------------------------------------------
 # Execution
@@ -225,41 +300,106 @@ stop-yarn.sh
 
 
 
+
+
+
+
+
+
 #-----------------------------------------------------------------
 # Hadoop multinode setup
 #-----------------------------------------------------------------
-# Edit the /etc/hosts file in ALL machines
+# Edit the /etc/hosts file in *ALL* machines
 sudo gedit /etc/hosts
 
 # Add following hostname and their ip in host table
-192.168.2.14    HadoopMaster
-192.168.2.15    HadoopSlave1
-192.168.2.16    HadoopSlave2
+192.168.2.14    HadoopMaster 	   conjuration
+192.168.2.15    HadoopSlave1	   necromancy
+192.168.2.16    HadoopSlave2	   Abjuration
 
 # add hadoop users in all machine
 sudo addgroup hadoop 
 sudo adduser --ingroup hadoop hduser
 
-# to add sudoers
+# to add sudoers (ubuntu)
 sudo usermod -a -G sudo hduser﻿
 
-# install rsync for sharing hadoop source 
-sudo apt-get install rsync
+# make sure you can ssh from master to slave
+# and master to master
+
+# use rsync for sharing hadoop source 
+# alternatively
+# copy the source code to slave
+cd /opt/hadoop
+scp -r hadoop hadoop-slave-1:/opt/hadoop
+scp -r hadoop hadoop-slave-2:/opt/hadoop
+
 
 # need to reboot all machines
+
+# On master machine
+# edit the hadoop-xxx/etc/hadoop/masters file, type:
+master (or the hostname of the master machine)
+
+# edit the hadoop-xxx/etc/hadoop/slaves file, type:
+master (the hostname of the master machine)
+slave (or the hostname of the slave machine)
+
+# On slave machine
+# edit only the master file
+# edit the hadoop-xxx/etc/hadoop/masters file, type:
+master (or the hostname of the master machine)
+
+#-----------------------------------------------------------------
+# Edit .bashrc
+#-----------------------------------------------------------------
+export JAVA_HOME=/usr/java/latest
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$PATH:$JAVA_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/bin
+export PATH=$PATH:$HADOOP_HOME/sbin
+export HADOOP_MAPRED_HOME=$HADOOP_HOME
+export HADOOP_COMMON_HOME=$HADOOP_HOME
+export HADOOP_HDFS_HOME=$HADOOP_HOME
+export YARN_HOME=$HADOOP_HOME
+export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_HOME/lib/native
+export HADOOP_OPTS="-Djava.library.path=$HADOOP_HOME/lib"
+
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 
 #-----------------------------------------------------------------
 # core-site.xml
 #-----------------------------------------------------------------
+# port 9000 or 54310??
 <property>
   <name>fs.default.name</name>
   <value>hdfs://HadoopMaster:9000</value>
 </property>
 
+<property>
+    <name>dfs.permissions</name>
+    <value>false</value>
+</property>
 
 #-----------------------------------------------------------------
 # hdfs-site.xml
 #-----------------------------------------------------------------
+# create nameNOde and DataNode directories
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
+
+<property>
+	<name>dfs.data.dir</name>
+	<value>file:/usr/local/hadoop_tmp/hdfs/datanode</value>
+	<final>true</final>
+</property>
+
+<property>
+	<name>dfs.name.dir</name>
+	<value>file:/usr/local/hadoop_tmp/hdfs/namenode</value>
+	<final>true</final>
+</property>
+
 <property>
   <name>dfs.replication</name>
   <value>3</value>
@@ -268,6 +408,16 @@ sudo apt-get install rsync
 #-----------------------------------------------------------------
 # yarn-site.xml
 #-----------------------------------------------------------------
+<property>
+	<name>yarn.nodemanager.aux-services</name>
+	<value>mapreduce_shuffle</value>
+</property>
+
+<property>
+	<name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
+	<value>org.apache.hadoop.mapred.ShuffleHandler</value>
+</property>
+
 <property>
 	<name>yarn.resourcemanager.resource-tracker.address</name>
 	<value>HadoopMaster:8025</value>

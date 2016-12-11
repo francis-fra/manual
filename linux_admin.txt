@@ -1,4 +1,18 @@
 #------------------------------------------------------------
+# CLI Data Science
+#------------------------------------------------------------
+pip install csvkit
+sudo npm install xml2json-command
+
+# install jq from https://stedolan.github.io/jq/
+
+# install json2csv
+# no sudo, user based
+go get github.com/jehiah/json2csv
+
+
+
+#------------------------------------------------------------
 # Basic
 #------------------------------------------------------------
 w; free; df;
@@ -9,11 +23,19 @@ Ctrl+Alt+F1
 # shutdown
 shutdown -h now
 
+# -e to enable interpretation of back slash
+echo -e "Hello\nWorld"
+
 
 
 #-----------------------------------------------------------
 # admin
 #-----------------------------------------------------------
+# show running service
+service --status-all
+
+
+
 # show hostname
 hostnamectl
 
@@ -134,6 +156,32 @@ grep -option <string> <file or directory>
 grep -r (recursive)
 grep -n (line num)
 grep -c (count only)
+grep -i (ignore case)
+grep -A (show additional lines after the target)
+
+
+# these are equivalent
+cat <file> | grep <pattern>
+grep <pattern> <file>
+
+# show the output and also save the content to a file
+tee <file_name>
+
+cut -f (extract field)
+cut -d (delimiter)
+# e.g. grep the word 'chapter' from the file 'alice.txt' and then
+#extract the field from number 3 till the end where the delimiter is
+#empty space
+
+grep -i chapter alice.txt | cut -d ' ' -f 3-
+
+# e.g. read the file 'alice.txt' and extract using the regular
+# expression (every single word)
+< alice.txt grep -oE '\w+'
+
+
+
+
 
 
 # coproc (putting in background)
@@ -154,7 +202,10 @@ sudo adduser <user_name>
 sudo groupadd <group_name>
 
 # add user to sudo group (fedora)
-usermod -aG wheel <usename>  (reboot required)
+sudo usermod -aG sudo <usename>  (reboot required)
+
+
+# or visudo (RH)
 
 # check all sudoers
 grep -Po '^sudo.+:\K.*$' /etc/group
@@ -252,6 +303,15 @@ dkpg
 # Red hat system
 yum
 zypper
+
+#-----------------------------------------------------------
+# MySQL (MariaDB)
+#-----------------------------------------------------------
+# initial start
+mysql -u root
+
+# TODO: config mariadb
+
 
 #-----------------------------------------------------------
 # Shell script
@@ -399,7 +459,10 @@ Banner /etc/issue.net
 
 # restart
 sudo service ssh restart
-sudo systemctl reload sshd
+sudo systemctl reload sshd (RH)
+
+# check if sshd is active
+netstat -plant
 
 #-------------------------------------------------------------
 # SSH client
@@ -409,39 +472,42 @@ ssh-keygen -t rsa
 
 # LOCAL: default public key stored in
 ~/.ssh/id_rsa.pub
+
 # LOCAL: default private key
 ~/.ssh/id_rsa
 
-# make it private
+# make the key pairs private
 chmod 700 .ssh
 chmod 600 .ssh/id_rsa*
 
 #-------------------------------------------------------------
 # copy and append the public key to the remote machine
+# use dropbox or scp
 
-# use dropbox!
+# copy via scp (if password authentication allowed)
+scp -P <port_number> ~/.ssh/id_rsa.pub username@serverip:~/tmp/.ssh
 
-#-------------------------------------------------------------
+
 # Does not seem to work...
 #?? add the SSH key to the ssh-agent (github)
 #eval "$(ssh-agent -s)"
 #ssh-add ~/.ssh/id_rsa
-
 #?? to place the public key to the remote machine
 # LOCAL: install the public key (id_rsa.pub) to the remote host
 #ssh-copy-id username@remotehost
 
-# copy via scp (if password authentication allowed)
-scp -p <port_number> ~/.ssh/id_rsa.pub username@serverip:~/.ssh
+
 
 #-------------------------------------------------------------
-# Append the public key (if missing)
+# Append the local machine public key to the server authorized keys
 
+# backup
 cp ~/.ssh/authorized_keys ~/.ssh/authorized_keys_copy
+# append
 cat ~/id_rsa.pub >> ~/.ssh/authorized_keys
 
 # HOST: check ~/.ssh/authorized_keys in the remote host
-chmod 600 .ssh/authorized_keys
+chmod 600 ~/.ssh/authorized_keys
 
 #-------------------------------------------------------------
 # Examples
@@ -466,6 +532,39 @@ scp -P <port_num> username@192.168.2.21:/home/demo/myfile.txt .
 scp -P <port> <filename> <destination>:location
 e.g. scp -P 22 mydoc.txt fra@192.168.1.6:Documents/
 
+
+
+#------------------------------------------------------------
+# Rsync
+#------------------------------------------------------------
+sudo apt-get install rsync
+yum install rsync
+
+# sync files locally
+rsync -zvh <source_file> <target_directory>
+# e.g.
+rsync -zvh backup.tar /tmp/backups
+
+# sync directory locally
+rsync -avzh <source_directory> <target_directory>
+# e.g.
+rsync -avzh /home/fra/Documents /tmp/backups/Documents
+
+# sync from local to remote
+rsync -avz <local_source> <remote_target>
+# e.g.
+rsync -avz /home/fra/Documents fra@192.168.1.10:/home/fra/
+
+# rsync from remote to local
+rsync -avz <remote_target> <local_source> 
+rsync -avzh fra@192.168.1.10:/home/fra /home/fra/Documents
+
+# to transfer via ssh
+# add -e to options
+
+# to show progress
+# add -progress to options
+rsync -avzh -e 'ssh -p 22' --progress fra@192.168.1.10:/home/fra /home/fra/Documents
 
 #-------------------------------------------------------------
 # HTTP Server
