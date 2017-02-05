@@ -1,15 +1,20 @@
+--------------------------------------------------------------------
 # javac
+--------------------------------------------------------------------
 On Unix, we would do this: (in colon)
 javac -classpath dir1:dir2:dir3 ...
 
+--------------------------------------------------------------------
 # java
+--------------------------------------------------------------------
 # use -cp to specific path (if not in the global class path)
 # example
 ~/FraDir/learn/introcs/out/production/introcs$ 
 java -cp ./:/home/fra/FraDir/learn/introcs/stdlib-package.jar exercise.FindMinMax
 
-
+--------------------------------------------------------------------
 # package
+--------------------------------------------------------------------
 # if the java class is part of a package
 # for example in Precedence.java, it begins with the package keyword followed by the structure
 
@@ -22,7 +27,15 @@ package com.operators;
 # in this case, run this command at the parent folder 
 java com.operators.Precedence
 
+
+# javadoc
+# to create html documentation
+Usage: javadoc [options] [packagenames] [sourcefiles] [@files]
+
+
+--------------------------------------------------------------------
 # Intellij setup
+--------------------------------------------------------------------
 javac -cp "C:\Users\m038402\Documents\myWork\Codes\algs4-master\src\main\java" .\edu\princeton\cs\algs4\ThreeSum.java
 
 # standford NLP Core

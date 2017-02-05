@@ -1,6 +1,47 @@
-http://developer.download.nvidia.com/compute/cuda/repos/
+------------------------------------------------------------------
+# Pre-installation actions
+------------------------------------------------------------------
+# Verify the system has a CUDA-capable GPU
+lspci | grep -i nvidia
 
-CUDA repository for ubuntu 16.04 is missing??
+# Verify the system is running a supported version of Linux.
+uname -m && cat /etc/*release
+
+# Verify the system has gcc installed.
+gcc --version
+
+# Verify the system has the correct kernel headers and development packages installed.
+uname -r
+
+# install the header if not available
+sudo apt-get install linux-headers-$(uname -r)
+
+# Download the NVIDIA CUDA Toolkit.
+https://developer.nvidia.com/cuda-downloads
+
+
+
+------------------------------------------------------------------
+# Uninstall
+------------------------------------------------------------------
+Use the following command to uninstall a Toolkit runfile installation:
+$ sudo /usr/local/cuda-X.Y/bin/uninstall_cuda_X.Y.pl
+
+Use the following command to uninstall a Driver runfile installation:
+$ sudo /usr/bin/nvidia-uninstall
+
+Use the following commands to uninstall a RPM/Deb installation:
+$ sudo yum remove <package_name>                      # Redhat/CentOS
+$ sudo dnf remove <package_name>                      # Fedora
+$ sudo zypper remove <package_name>                   # OpenSUSE/SLES
+$ sudo apt-get --purge remove <package_name>          # Ubuntu
+
+
+------------------------------------------------------------------
+# Download sites
+------------------------------------------------------------------
+http://developer.download.nvidia.com/compute/cuda/repos/
+https://developer.nvidia.com/cuda-downloads
 
 # cuda dev library
 sudo apt-get install -y cuda
@@ -14,29 +55,38 @@ cuDNN (CUDA Deep learning) cuDNN v4
 # to check nvidia system
 nvidia-smi
 
-
+# reference
 http://www.r-tutor.com/gpu-computing/cuda-installation/cuda7.5-ubuntu
+
+
 ------------------------------------------------------------------
 # install packages
 ------------------------------------------------------------------
+# Package Manager (Ubuntu)
 
-sudo dpkg -i cuda-repo-ubuntu1404_7.5-18_amd64.deb 
+# sudo dpkg -i cuda-repo-<distro>_<version>_<architecture>.deb
+# e.g. sudo dpkg -i cuda-repo-ubuntu1404_7.5-18_amd64.deb
+
 sudo apt-get update
-
 sudo apt-get install cuda
 
+------------------------------------------------------------------
+# post-installation
+------------------------------------------------------------------
 # environment variables
-export CUDA_HOME=/usr/local/cuda-7.5 
+export CUDA_HOME=/usr/local/cuda-8.0 
 export LD_LIBRARY_PATH=${CUDA_HOME}/lib64 
  
 PATH=${CUDA_HOME}/bin:${PATH} 
 export PATH
 
-# CUDA SDK samples
+# To install writable samples
+# In order to modify, compile, and run the samples, the samples must be installed with write permissions. 
 cuda-install-samples-7.5.sh  ~ 
-cd ~/NVIDIA_CUDA-7.5_Samples 
-cd 1_Utilities/deviceQuery 
-make
+
+# To verify installation with CUDA SDK samples
+cd ~/NVIDIA_CUDA-8.0_Samples 
+./deviceQuery 
 
 ------------------------------------------------------------------
 Others
@@ -53,26 +103,17 @@ Others
 #sudo reboot
 
 ------------------------------------------------------------------
-Post installation
+# Others
 ------------------------------------------------------------------
 # The PATH variable needs to include /usr/local/cuda-7.5/bin
 # LD_LIBRARY_PATH variable needs to contain /usr/local/cuda-7.5/lib64
 
-
-export PATH=/usr/local/cuda-7.5/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda-7.5/lib64:$LD_LIBRARY_PATH
-
-
-# verify the installation
-# compile some examples
-cuda-install-samples-7.5.sh  ~ 
-cd ~/NVIDIA_CUDA-7.5_Samples 
-cd 1_Utilities/deviceQuery 
-make
-
-
+#export PATH=/usr/local/cuda-7.5/bin:$PATH
+#export LD_LIBRARY_PATH=/usr/local/cuda-7.5/lib64:$LD_LIBRARY_PATH
 
 # verify the driver version
 cat /proc/driver/nvidia/version
 # run the testing script under ~/NVIDIA_CUDA-7.5_Samples
 deviceQuery 
+
+

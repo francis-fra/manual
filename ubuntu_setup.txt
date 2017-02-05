@@ -973,6 +973,20 @@ flatpak install --user --from https://download.mono-project.com/repo/monodevelop
 # to start
 flatpak run com.xamarin.MonoDevelop
 
+--------------------------------------------------------------------
+# F# paket
+--------------------------------------------------------------------
+# Download the latest paket.exe
+
+# save the paket.exe in the project sub folder .paket
+
+# create a file called  paket.dependencies and type:
+source https://nuget.org/api/v2
+nuget Fslab
+
+# run
+mono paket.exe install
+
 
 
 

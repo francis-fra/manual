@@ -76,3 +76,275 @@ rsp : stack pointer
 x/5i $rip
 
 # register rip points to the current instruction
+
+#------------------------------------------------------------
+# CLI Data Science installation
+#------------------------------------------------------------
+# installation
+pip install csvkit
+sudo npm install xml2json-command
+
+# install jq from https://stedolan.github.io/jq/
+
+# install json2csv
+# no sudo, user based
+go get github.com/jehiah/json2csv
+
+#------------------------------------------------------------
+# Data Science Command Line
+#------------------------------------------------------------
+cat hello-world | wc -w
+< hello-world wc -w
+
+# convert xlsx to csv
+in2csv <excel input file> > <csv out file>
+
+# quick look at csv file
+cat imdb-250.csv | head -n 10 | csvcut -c Title,Year | csvlook
+
+
+# download file with curl
+curl <url>
+# ftp with login credentials
+curl -u username:password ftp://host/file
+
+# translate fro lower to upper
+echo "hi" | tr '[:lower:]' '[:upper:]'
+
+
+# TODO: getopts
+# word count and sort by frequency
+cat shakes.txt | tr '[:upper:]' '[:lower:]' | grep -oE '\w+' | sort | uniq -c | sort -nr | head -n 10
+
+
+# python / R command line
+#! /usr/bin/env python
+#! /usr/bin/env Rscript
+
+# header / body / cols
+
+# get the header of a csv file
+< tips.csv header
+
+# remove the header
+< tips.csv header -d 
+
+# add a header
+< tips.csv header -a newheader
+
+# use 'tr' to transform text, but apply to the 'body' only and only to
+# the 'day' col only
+< tips.csv cols -c day body "tr '[a-z]' '[A-Z]'" | head -n 5 | csvlook
+
+# csvcut
+# select all cols except species
+< iris.csv csvcut -C species | head -n 5 | csvlook
+
+# csvsql
+< iris.csv csvsql --query "SELECT sepal_length, petal_length FROM stdin WHERE sepal_length > 6" | head -n 5 | csvlook
+
+# filtering - csvgrep
+# sel size with is 5
+csvgrep -c size -r "5" tips.csv | csvlook
+
+
+# create new cols -- transformation
+< names.csv csvsql --query "SELECT id, first_name || ' ' || last_name AS full_name, born FROM stdin" | csvlook
+
+# stack csv (vertical)
+csvstack Iris-*.csv 
+
+# horizontal stack of the three files: bills.csv, customers.csv and datetime.csv
+paste -d, {bills,customers,datetime}.csv
+
+# inner join
+csvjoin -c species iris.csv irismeta.csv | csvcut -c sepal_length,sepal_width,species,usda_id | csvlook
+
+# csvsql
+csvsql --query 'SELECT i.sepal_length, i.sepal_width, i.species, m.usda_id FROM iris i JOIN irismeta m ON (i.species = m.species)' iris.csv irismeta.csv | csvlook
+
+#---------------------------------------------------------------------
+# Data Science Tools
+#---------------------------------------------------------------------
+# login name
+whoami
+# host name
+hostname
+# current date
+date
+
+# data structure
+tree 
+
+# which json2csv
+home/fra/Project/GoProj/bin/json2csv
+
+# word count
+wc -l xxx.csv
+
+# view files
+head / less / more / tail
+
+
+# set an executable python script
+# put this at the first line
+#!/usr/bin/env python
+
+# set an executable R script
+# put this at the first line
+#!/usr/bin/env Rscript
+
+
+# convert excel file to csv file
+in2csv xxx.xlsx > xxx.csv
+
+# to quickly view xlsx file
+in2csv xxx.xlsx | head | csvcut -c <column names> | csvlook
+in2csv xxx.xlsx --sheet <sheet name> | head | csvcut -c <column names> | csvlook
+
+# download from the web
+curl -s <url> -o out_file
+curl -u username:password ftp://host/file
+
+# word count
+cat shakes.txt | tr '[:upper:]' '[:lower:]' | grep -oE '\w+' | sort |
+uniq -c | sort -nr | head -n 10
+
+# random sample with specified rate (e.g. 10%)
+sample -r 10%
+
+# replace values
+tr <original_value> <new_value>
+# e.g. echo 'hello world!' | tr ' ' '_'
+
+# delete characters
+echo 'hello world!' | tr -d -c '[a-z]'
+
+# munipulate adder
+# e.g. to add a header
+seq 5 | header -a count
+
+# to extract header
+cat tips.csv | header
+< tips.csv header
+
+# to delete header
+cat tips.csv header -d | head
+
+# apply a certain command only to the body
+body
+# apply a certain command only to some columns
+cols
+
+e.g. change the column 'day' to uppercase
+< tips.csv cols -c day body "tr '[a-z]' '[A-Z]'" | head
+
+
+# do sql query on csv
+seq 5 | header -a value | csvsql --query "SELECT SUM(value) AS sum FROM stdin"
+
+
+# convert XML (HTML) to json
+< table.html xml2json > table.json
+< table.json jq '.' | head -n 25
+
+# jq : extract and reshape json data
+# e.g. take the values and give them labels
+< table.json jq -c '.html.body.tr[] | {country: .td[1][],border:'\ '.td[2][], surface: .td[3][]}' > countries.json
+
+# convert json to csv
+< countries.json json2csv -p -k border,surface > countries.csv
+
+#---------------------------------------------------------------------------------
+# CSV scrub operations
+#---------------------------------------------------------------------------------
+# extract and reordering
+< iris.csv csvcut -c sepal_length,petal_length,sepal_width,petal_width | head | csvlook
+
+# select columns
+< tips.csv csvcut -c bill,tip
+# select columns and save the results
+< tips.csv csvcut -c day,time | tee datetime.csv | head -n 3 | csvlook
+< tips.csv csvcut -c sex,smoker,size | tee customers.csv | head -n 3 | csvlook
+
+# exclude species
+< iris.csv csvcut -C species | head -n 5 | csvlook
+
+# Filtering
+# exclude size with values 1 to 4
+csvgrep -c size -i -r "[1-4]" tips.csv | csvlook
+
+#---------------------------------------------------------------------------------
+# csvsql
+#---------------------------------------------------------------------------------
+< iris.csv csvsql --query "SELECT sepal_length, petal_length, sepal_width, petal_width FROM stdin" | head -n 5 | csvlook
+
+< tips.csv csvsql --query "SELECT * FROM stdin WHERE bill > 40 AND day LIKE '%S%'" | csvlook
+
+#---------------------------------------------------------------------------------
+# Explore Data
+#---------------------------------------------------------------------------------
+# to check the data types
+# e.g.
+csvsql iris.csv
+
+
+# count num unique values
+cat data/iris.csv | csvcut -c species | body "uniq | wc -l"
+
+# show number of unique values in each column
+csvstat data/iris.csv --unique
+
+# treat as categorical value if num of unique values is far less than
+#  the number of rows
+
+# all statistics
+csvstat data/iris.csv
+
+# stat for some selected columns only
+csvstat data/iris.csv -c 2,14
+
+# explore data using R
+data/iris.csv Rio -e 'summary(df)'
+
+
+# Create visualization
+# examples:
+< data/tips.csv Rio -ge 'g+geom_histogram(aes(bill))' | display
+
+< data/tips.csv Rio -ge 'g+geom_density(aes(tip / bill * 100, fill=sex), alpha=0.3) + xlab("percent")' | display
+
+#---------------------------------------------------------------------------------
+# Parallel Pipeline
+#---------------------------------------------------------------------------------
+echo "2.1^3" | bc
+
+# command line for loop
+for i in {0..100..2}; do echo "$i^2" | bc ; done
+
+# GNU Parallel
+seq 5 | parallel --no-notice "echo {}^2 | bc"
+
+# exmaples
+zcat *.json.gz | jq -r '.borough' | tr '[A-Z] ' '[a-z]_' | sort | uniq -c
+
+#---------------------------------------------------------------------------------
+# Modeling
+#---------------------------------------------------------------------------------
+# view multiple files
+
+head wine-{red,white}.csv
+wc -l wine-{red,white}.csv
+
+# check missing data
+csvstat wine-both-clean.csv --nulls
+
+# install tapkee
+sudo apt-get install libeigen3-dev
+curl -sL https://github.com/lisitsyn/tapkee/archive/master.tar.gz > tapkee-master.tar.gz
+
+# ERROR: eigen3 lib problems
+tar -xzf tapkee-master.tar.gz
+cd tapkee-master
+mkdir build && cd build
+

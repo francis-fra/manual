@@ -1,6 +1,7 @@
 #------------------------------------------------------------
 # CLI Data Science
 #------------------------------------------------------------
+# installation
 pip install csvkit
 sudo npm install xml2json-command
 
@@ -10,7 +11,78 @@ sudo npm install xml2json-command
 # no sudo, user based
 go get github.com/jehiah/json2csv
 
+#------------------------------------------------------------
+# Data Science Command Line
+#------------------------------------------------------------
+cat hello-world | wc -w
+< hello-world wc -w
 
+# convert xlsx to csv
+in2csv <excel input file> > <csv out file>
+
+# quick look at csv file
+cat imdb-250.csv | head -n 10 | csvcut -c Title,Year | csvlook
+
+
+# download file with curl
+curl <url>
+# ftp with login credentials
+curl -u username:password ftp://host/file
+
+# translate fro lower to upper
+echo "hi" | tr '[:lower:]' '[:upper:]'
+
+
+# TODO: getopts
+# word count and sort by frequency
+cat shakes.txt | tr '[:upper:]' '[:lower:]' | grep -oE '\w+' | sort | uniq -c | sort -nr | head -n 10
+
+
+# python / R command line
+#! /usr/bin/env python
+#! /usr/bin/env Rscript
+
+# header / body / cols
+
+# get the header of a csv file
+< tips.csv header
+
+# remove the header
+< tips.csv header -d 
+
+# add a header
+< tips.csv header -a newheader
+
+# use 'tr' to transform text, but apply to the 'body' only and only to
+# the 'day' col only
+< tips.csv cols -c day body "tr '[a-z]' '[A-Z]'" | head -n 5 | csvlook
+
+# csvcut
+# select all cols except species
+< iris.csv csvcut -C species | head -n 5 | csvlook
+
+# csvsql
+< iris.csv csvsql --query "SELECT sepal_length, petal_length FROM stdin WHERE sepal_length > 6" | head -n 5 | csvlook
+
+# filtering - csvgrep
+# sel size with is 5
+csvgrep -c size -r "5" tips.csv | csvlook
+
+
+# create new cols -- transformation
+< names.csv csvsql --query "SELECT id, first_name || ' ' || last_name AS full_name, born FROM stdin" | csvlook
+
+# stack csv (vertical)
+csvstack Iris-*.csv 
+
+# horizontal stack of the three files: bills.csv, customers.csv and datetime.csv
+paste -d, {bills,customers,datetime}.csv
+
+# inner join
+csvjoin -c species iris.csv irismeta.csv | csvcut -c sepal_length,sepal_width,species,usda_id | csvlook
+
+# csvsql
+csvsql --query 'SELECT i.sepal_length, i.sepal_width, i.species, m.usda_id FROM iris i JOIN irismeta m ON (i.species = m.species)' iris.csv irismeta.csv | csvlook
 
 #------------------------------------------------------------
 # Basic
@@ -26,7 +98,8 @@ shutdown -h now
 # -e to enable interpretation of back slash
 echo -e "Hello\nWorld"
 
-
+# cat and grep for archived files
+zcat and zgrep
 
 #-----------------------------------------------------------
 # admin
@@ -51,7 +124,10 @@ ln -s <existing_file_or_directory> <new_link>
 # mount
 mount <source_device> <mount_point>
 
+
+#-----------------------------------------------------------
 # find command
+#-----------------------------------------------------------
 # find the matching names
 find . -name \*.txt
 
@@ -61,11 +137,19 @@ find . -name \*.txt
 # example: change user own and gorup
 find /home/chavez -exec chown chavez {} \; \ -exec chgrp physics {} \;
 
+# parameters
+type -d (directory)
+type -f (file)
+type -l (symbolic link)
+
 # find files
 locate <filename>
 
 find <src_dir> -name <file_name>
 # xargs??
+
+
+
 
 # see content of zip file
 gzcat
@@ -158,6 +242,8 @@ grep -n (line num)
 grep -c (count only)
 grep -i (ignore case)
 grep -A (show additional lines after the target)
+grep -o print only the matching  part
+grep -l (list file name only)
 
 
 # these are equivalent
@@ -167,6 +253,7 @@ grep <pattern> <file>
 # show the output and also save the content to a file
 tee <file_name>
 
+# remove sections of text
 cut -f (extract field)
 cut -d (delimiter)
 # e.g. grep the word 'chapter' from the file 'alice.txt' and then
