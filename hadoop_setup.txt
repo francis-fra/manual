@@ -9,6 +9,10 @@ java -version
 # check java home
 #readlink -f /usr/bin/java
 
+# install nmap
+sudo yum install nmap
+
+
 #-----------------------------------------------------------------
 # Install java on CentOS
 #-----------------------------------------------------------------
@@ -30,9 +34,6 @@ sudo alternatives --config javac
 #sudo alternatives --install /usr/bin/jar jar /usr/java/latest/bin/jar 2
 # config soft link to the default jar
 #sudo alternatives --config jar
-
-#-----------------------------------------------------------------
-
 
 
 #-----------------------------------------------------------------
@@ -74,14 +75,16 @@ chmod 600 authorized_keys
 
 #-----------------------------------------------------------------
 # optional
-
+#-----------------------------------------------------------------
 # disable ipv6
 # update the file /etc/sysctl.conf by adding:
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 
+#-----------------------------------------------------------------
 # to check...
+#-----------------------------------------------------------------
 ssh localhost
 
 # check if hduser is in sudo group
@@ -137,7 +140,17 @@ readlink -f /usr/bin/javac
 which javac
 
 # update the settings
-source .bash_profile
+source .bashrc
+
+#-----------------------------------------------------------------
+# Change SSH port number
+#-----------------------------------------------------------------
+## Create Hadoop temp directories for Namenode and Datanode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
+sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
+
+## Again assign ownership of this Hadoop temp folder to Hadoop user
+sudo chown hduser:hdgrp -R /usr/local/hadoop_tmp/
 
 #-----------------------------------------------------------------
 # Change SSH port number
@@ -149,14 +162,16 @@ export HADOOP_SSH_OPTS="-p <port_num>"
 #-----------------------------------------------------------------
 # Pseudo Distribution Mode
 #-----------------------------------------------------------------
+# edit /etc/hosts
+# check the host name:
+hostname
+# make sure 127.0.0.1 contains the 'hostname'
+
 
 #-----------------------------------------------------------------
 # hadoop-env.sh
 #-----------------------------------------------------------------
 # Under /usr/local/hadoop/etc/hadoop/
-# Update JAVA_HOME variable if it is not set in .bashrc
-
-export JAVA_HOME=/usr/java/latest/
 
 #-----------------------------------------------------------------
 # config XMLs : core-site.xml
@@ -176,22 +191,14 @@ export JAVA_HOME=/usr/java/latest/
 /usr/local/hadoop/etc/hadoop/core-site.xml
 
 ## Paste these lines into <configuration> tag
-
-# port 9000??
 <property>
-        <name>fs.default.name</name>
-        <value>hdfs://localhost:54310</value>
+        <name>fs.defaultFS</name>
+        <value>hdfs://localhost:9000</value>
 </property>
 
 #-----------------------------------------------------------------
 # config XMLs : hdfs-site.xml
 #-----------------------------------------------------------------
-## Create Hadoop temp directories for Namenode and Datanode
-sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
-sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
-
-## Again assign ownership of this Hadoop temp folder to Hadoop user
-sudo chown hduser:hdgrp -R /usr/local/hadoop_tmp/
 
 ## To edit file
 /usr/local/hadoop/etc/hadoop/hdfs-site.xml
@@ -227,6 +234,11 @@ sudo chown hduser:hdgrp -R /usr/local/hadoop_tmp/
       <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
       <value>org.apache.hadoop.mapred.ShuffleHandler</value>
 </property>
+## additional??
+<property>
+      <name>yarn.resourcemanager.hostname</name>
+      <value>localhost</value>
+</property>
  
 
 #-----------------------------------------------------------------
@@ -253,20 +265,37 @@ cp /usr/local/hadoop/etc/hadoop/mapred-site.xml.template  /usr/local/hadoop/etc/
   </description>
 </property>
 
+#-----------------------------------------------------------------
+# Format Name Node
+#-----------------------------------------------------------------
+hdfs namenode -format
 
 #-----------------------------------------------------------------
 # Start daemons
 #-----------------------------------------------------------------
-# format name node
-hdfs namenode -format
-
-# start daemons
-/usr/local/hadoop$ start-dfs.sh
-/usr/local/hadoop$ start-yarn.sh
+# start daemons (/usr/local/hadoop)
+start-dfs.sh
+start-yarn.sh
+mr-jobhistory-daemon.sh start historyserver
 
 # to verify
 jps
+
+# examples:
+12162 Jps
+11798 NodeManager
+11464 SecondaryNameNode
+11196 DataNode
+11037 NameNode
+11663 ResourceManager
+
 netstat -plten | grep java
+
+# to check if port is opened
+nmap -p <port_num> localhost
+nmap localhost
+
+hadoop dfsadmin -report
 
 # resource manager
 http://locahost:8088
@@ -274,26 +303,75 @@ http://locahost:8088
 # Node Manager
 http://localhost:8042/
 
+# testing
+yard node -list 
+hadoop version
+
+
+# make sure the ClusterID are the same
+# check the datanode and namenode VERSION file in:
+/usr/local/hadoop_tmp/hdfs/datanode/current
+/usr/local/hadoop_tmp/hdfs/namenode/current
 
 #-----------------------------------------------------------------
-# Execution
+# FireWall (deprecated)
 #-----------------------------------------------------------------
-bin/hdfs dfs -mkdir /user
-bin/hdfs dfs -mkdir /user/<username>
+firewall-cmd --zone=public --add-port=9000/tcp --permanent
+firewall-cmd --reload
+# remove port
+#firewall-cmd --zone=public --remove-port=54310/tcp -- permanent
+
+# FIXME:
+Incorrect configuration: namenode address dfs.namenode.servicerpc-address or dfs.namenode.rpc-address is not configured.
+
+#-----------------------------------------------------------------
+# Testing
+#-----------------------------------------------------------------
+# create directory at hdfs
+hdfs dfs -mkdir /user
+hdfs dfs -mkdir /user/hduser
 
 # copy files to hdfs
-bin/hdfs dfs -put etc/hadoop input
+#cd /usr/local/hadoop
+hdfs dfs -put /usr/local/hadoop/etc/hadoop input
+
+# check the contents in data node
+hdfs dfs -ls /user/hduser/input/hadoop
+hdfs dfs -ls /user/hduser/output
 
 # examples
-bin/hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.2.jar grep input output 'dfs[a-z.]+'
-bin/hdfs dfs -get output output
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input/hadoop output 'dfs[a-z.]+'
+
+# to transfer results to local system
+hdfs dfs -get output ~/Downloads/output
 cat output/*
+
+#-----------------------------------------------------------------
+# Old 
+#-----------------------------------------------------------------
+# default port
+NameNode - http://centos-vm:50070/
+DataNode - http://centos-vm:50075/
+JobTracker - http://centos-vm:50030/
 
 #-----------------------------------------------------------------
 # Stop Hadoop
 #-----------------------------------------------------------------
-stop-dfs.sh
+mr-jobhistory-daemon.sh stop historyserver
 stop-yarn.sh
+stop-dfs.sh
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -307,7 +385,7 @@ stop-yarn.sh
 
 
 #-----------------------------------------------------------------
-# Hadoop multinode setup
+# TODO: Hadoop multinode setup
 #-----------------------------------------------------------------
 # Edit the /etc/hosts file in *ALL* machines
 sudo gedit /etc/hosts
