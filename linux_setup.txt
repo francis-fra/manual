@@ -36,17 +36,19 @@ dnf install @kde-desktop
 #------------------------------------------------------------
 # Install Dropbox
 #------------------------------------------------------------
-# create repository
-sudo gedit /etc/yum.repos.d/dropbox.repo
+# install dependecies
+sudo yum install nautilus-extensions.x86_64 
 
-# save the following
-[Dropbox]
-name=Dropbox Repository
-baseurl=http://linux.dropbox.com/fedora/24/
-gpgkey=http://linux.dropbox.com/fedora/rpm-public-key.asc
+# download rpm package from dropbox
+sudo rpm -ivh nautilus-dropbox-1.6.2-1.fedora.x86_64.rpm
 
-# issue the command
-sudo dnf install nautilus-dropbox
+# uninstall:
+sudo rpm -e nautilus-dropbox-1.6.2-1.fc10.x86_64
+
+# to remove DropBox from yum repository
+yum-config-manager --disable Dropbox
+yum-config-manager --enablerepo Dropbox
+
 
 #------------------------------------------------------------
 # Install Packages
@@ -266,16 +268,24 @@ mount /dev/centos/root /mnt/centos
 
 
 #------------------------------------------------------------
-# Centos
+# Centos YUM
 #------------------------------------------------------------
-# check install packages
+# add EPEL Repository
+yum -y install epel-release
+
+
+# check installed packages
 yum list installed
+yum grouplist installed
+
 yum check-update
 yum info <package>
 
 # remove a package
 yum remove <package_name>
 
+# search package
+yum list <package>
 
 # list repo
 yum repolist
@@ -286,6 +296,7 @@ yum grouplist
 # install group package
 yum groupinstall "Base"
 yum groupinstall "Web Server"
+yum groupinstall "Development tools"
 
 # check group info
 yum groupinfo "Base"
@@ -298,6 +309,7 @@ sudo yum install <package>
 yum history list
 yum history summary
 
+yum groupinstall "Eclipse"
 
 #------------------------------------------------------------
 # sudoers
@@ -462,18 +474,15 @@ ssh -V
 /etc/ssh/ssh_config
 
 # change port number and options
-semanage port -a -t ssh_port_t -p tcp 2882
+#semanage port -a -t ssh_port_t -p tcp 2882
 
 #------------------------------------------------------------
 # Others
 #------------------------------------------------------------
 # needed to mount windows
 yum install ntfs-3g
-
-
 yum install nmap
 yum install telent
-
 yum install vsftpd
 
 # config file
@@ -487,11 +496,27 @@ yum install vsftpd
 
 
 #------------------------------------------------------------
+# IDE
+#------------------------------------------------------------
+# Intellij
+
+# Download tar.gz file
+# Extract compressed archive
+tar xfz <ideaIC or ideaIU>-*.tar.gz
+# e.g.
+sudo tar xf <ideaIC or ideaIU>-*.tar.gz -C /opt/
+# run the installation script
+cd opt/<ideaIC or ideaIU>-*/bin
+idea.sh
+
+# Eclipse
+
+
+
+
+#------------------------------------------------------------
 # Applications
 #------------------------------------------------------------
-# add EPEL Repository
-yum -y install epel-release
-
 
 yum install terminator
 # auto start
@@ -504,11 +529,36 @@ terminator -m --layout=myLayout
 yum install R
 yum install emacs
 
-yum groupinstall "Eclipse"
+#------------------------------------------------------------
+# python
+#------------------------------------------------------------
+
+yum groupinstall 'Development Tools'
+sudo yum -y install python34 
+sudo yum -y install python-pip
+
+# jupyter
+pip install jupyter
+
+#------------------------------------------------------------
+# Locale
+#------------------------------------------------------------
+# enable / disable ibus:
+im-chooser
+
+# check status
+localectl
+   System Locale: LANG=en_US.UTF-8
+       VC Keymap: us
+      X11 Layout: us
+
+# install ibus method
+yum search ibus
+yum install ibus-table-chinese-XXXXX
 
 
+ibus-setup
 
-
-
-
-
+localectl set-locale LANG=locale_name
+# example:
+# localectl set-locale LANG=en_GB.utf8

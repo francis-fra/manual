@@ -115,7 +115,23 @@ export SPARK_PID_DIR=${SPARK_HOME}/run
 #export SPARK_JAVA_OPTS=-Dspark.driver.port=53411
 #HADOOP_CONF_DIR=$HADOOP_HOME/conf
 
+#----------------------------------------------------------------
+# conf/log4j.properties
+#----------------------------------------------------------------
+# to change the verbosity level
+cp conf/log4j.properties.template conf/log4j.properties
+# change the line
+log4j.rootCategory=INFO, console
+# to this
+log4j.rootCategory=ERROR, console
 
+#----------------------------------------------------------------
+# Python
+#----------------------------------------------------------------
+# add to .bashrc:
+export PYTHONPATH=$SPARK_HOME/python:$PYTHONPATH
+
+sudo pip install numpy scipy matplotlib ipython jupyter pandas sympy nose
 
 #----------------------------------------------------------------
 # edit spark-defaults.conf (optional)
@@ -126,6 +142,16 @@ spark.serializer        org.apache.spark.serializer.KryoSerializer
 
 # edit slaves config
 sudo cp /usr/local/spark/conf/slaves.template /usr/local/spark/conf/slaves
+
+
+
+
+
+
+
+
+
+
 
 
 

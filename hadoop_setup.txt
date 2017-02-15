@@ -297,14 +297,9 @@ nmap localhost
 
 hadoop dfsadmin -report
 
-# resource manager
-http://locahost:8088
-
-# Node Manager
-http://localhost:8042/
 
 # testing
-yard node -list 
+#yard node -list 
 hadoop version
 
 
@@ -347,12 +342,40 @@ hdfs dfs -get output ~/Downloads/output
 cat output/*
 
 #-----------------------------------------------------------------
-# Old 
+# Commands
 #-----------------------------------------------------------------
+# check the hdfs file structure
+hdfs dfs -ls \
+
+# local -> hdfs
+hadoop fs -copyFromLocal <fileName>
+# same as
+hdfs dfs -copyFromLocal <fileName>
+
+# hdfs -> local
+hdfs dfs -copyToLocal <fileName>
+
+
+
+
+#-----------------------------------------------------------------
+# Web UI
+#-----------------------------------------------------------------
+# Name node
+http://localhost:50070/
+
+# resource manager
+http://locahost:8088
+
+# Node Manager
+http://localhost:8042/
+
+
+
 # default port
-NameNode - http://centos-vm:50070/
-DataNode - http://centos-vm:50075/
-JobTracker - http://centos-vm:50030/
+#NameNode - http://centos-vm:50070/
+#DataNode - http://centos-vm:50075/
+#JobTracker - http://centos-vm:50030/
 
 #-----------------------------------------------------------------
 # Stop Hadoop
