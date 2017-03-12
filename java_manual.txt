@@ -4,6 +4,9 @@
 On Unix, we would do this: (in colon)
 javac -classpath dir1:dir2:dir3 ...
 
+# check class path
+echo $CLASSPATH
+
 --------------------------------------------------------------------
 # java
 --------------------------------------------------------------------
@@ -32,6 +35,18 @@ java com.operators.Precedence
 # to create html documentation
 Usage: javadoc [options] [packagenames] [sourcefiles] [@files]
 
+
+--------------------------------------------------------------------
+# JAR package
+--------------------------------------------------------------------
+# to view contents a JAR file
+jar tf <jar file>
+
+# to extract contents a JAR file
+jar xf <jar file>
+
+# to create a JAR file
+jar cf <jar file> <input files>
 
 --------------------------------------------------------------------
 # Intellij setup

@@ -10,6 +10,13 @@ git config --list
 # file status
 git status
 
+# key command:
+# update local from github
+git pull origin master
+
+# update github from local
+git push origin master
+
 #------------------------------------------------------------------
 # Commit
 #------------------------------------------------------------------
@@ -41,7 +48,10 @@ git log --stat
 
 # check differences
 git diff old_file new_file
-git diff -- <filename>
+
+# check differences of file since last commit
+git diff -- current_file
+
 # difference between github and local
 git diff master origin/master
 

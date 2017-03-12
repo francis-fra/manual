@@ -446,6 +446,7 @@ pip install -U scikit-learn
 # pip install
 in2csv
 
+# TODO: install pyqt
 
 # hy
 
@@ -462,6 +463,22 @@ jupyter kernelspec list
 python2 -m pip install ipykernel
 python2 -m ipykernel install --user
 
+
+# TODO: Add R kernel for jupyter
+# run within R cmd line:
+install.packages(c('repr', 'IRdisplay', 'crayon', 'pbdZMQ', 'devtools'))
+devtools::install_github('IRkernel/IRkernel')
+IRkernel::installspec(user=FALSE)  # to register the kernel in the current R
+
+# installation path
+Installed kernelspec ir in /usr/local/share/jupyter/kernels/ir
+
+# in R 3.3
+#IRkernel::installspec(name = 'ir33', displayname = 'R 3.3')
+
+--------------------------------------------------------------------
+# python
+--------------------------------------------------------------------
 # To check the versions:
 pip -V
 pip3 -V
@@ -771,18 +788,18 @@ Preference .> PyDev -> Interpreters -> Python interpreters
 Scala
 --------------------------------------------------------------------
 # download deb file
-wget www.scala-lang.org/files/archive/scala-2.11.7.deb
-sudo dpkg -i scala-2.11.7.deb
+#wget www.scala-lang.org/files/archive/scala-2.11.7.deb
+#sudo dpkg -i scala-2.11.7.deb
 sudo apt-get update
 sudo apt-get install scala
-sudo apt-get install scala-library
 
 
 # sbt installation
 echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 642AC823
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 sudo apt-get update
 sudo apt-get install sbt
+
 
 # java install
 sudo apt-get install python-software-properties
