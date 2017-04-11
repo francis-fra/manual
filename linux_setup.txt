@@ -456,6 +456,11 @@ systemctl enable mariadb
 
 sudo mysql_upgrade
 
+# Download SQL client: sql workbench
+# Download mariadb JDBC driver
+
+
+
 #------------------------------------------------------------
 # optional:
 # set passwords
@@ -510,7 +515,7 @@ cd opt/<ideaIC or ideaIU>-*/bin
 idea.sh
 
 # Eclipse
-
+install the eclipse installer, install using sudo root  and turn OFF bundle pool
 
 
 
@@ -529,6 +534,13 @@ terminator -m --layout=myLayout
 yum install R
 yum install emacs
 
+# calibre
+sudo -v && wget -nv -O- https://download.calibre-ebook.com/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main()"
+
+# to add items in KDE
+right click panel -> edit applications
+
+
 #------------------------------------------------------------
 # python
 #------------------------------------------------------------
@@ -537,8 +549,18 @@ yum groupinstall 'Development Tools'
 sudo yum -y install python34 
 sudo yum -y install python-pip
 
-# jupyter
-pip install jupyter
+sudo python -m pip install --upgrade pip
+
+sudo yum install python-devel.x86_64
+
+# setup tools problem, use old version
+pip install --user setuptools==33.1.1
+
+# NOT recommend to install using sudo
+pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose
+
+pip install --user -U scikit-learn
+pip install --user csvkit
 
 #------------------------------------------------------------
 # Locale

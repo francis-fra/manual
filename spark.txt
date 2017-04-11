@@ -143,7 +143,11 @@ spark.serializer        org.apache.spark.serializer.KryoSerializer
 # edit slaves config
 sudo cp /usr/local/spark/conf/slaves.template /usr/local/spark/conf/slaves
 
-
+#----------------------------------------------------------------
+# Examples
+#----------------------------------------------------------------
+# calculate Pi
+/usr/lib/spark/run-example org.spache.spark.examples.SparkPi
 
 
 

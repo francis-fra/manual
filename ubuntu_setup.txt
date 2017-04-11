@@ -443,8 +443,9 @@ sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 ipy
 pip install -U scikit-learn
 
 # install python3 libraries
-# pip install
-in2csv
+# pip install csvkit
+# pip install h2o
+
 
 # TODO: install pyqt
 
@@ -967,6 +968,8 @@ password: hadoop
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
 echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+# additional: mod_mono
+echo "deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main" | sudo tee -a /etc/apt/sources.list.d/mono-xamarin.list
 sudo apt-get update
 
 # install mono and fsharp
