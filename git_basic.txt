@@ -23,26 +23,31 @@ git status -p
 #------------------------------------------------------------------
 # key command:
 #------------------------------------------------------------------
-# update local from github
-git pull origin master
-
-# update github from local
+# update github from local (to share)
 git push origin master
+
+# update local from github (get shared)
+git fetch origin
+
+
 
 #------------------------------------------------------------------
 # Log
 #------------------------------------------------------------------
 # one line log
 git log --pretty=oneline
-
 git log --oneline --decorate
 
 # show full graph
-git log --oneline --decorate -- graph --all
+git log --oneline --decorate --graph --all
 
 # check log file
 git log --stat
 git log --graph
+
+# show remote log
+# e.g.
+git log remotes/origin/master --graph --oneline
 
 
 #------------------------------------------------------------------
@@ -133,6 +138,13 @@ git config --global credential.helper 'cache --timeout=3600'
 # unmodify files (NOTE: this will replace modified files completely without any backup!!)
 git checkout -- <file_name>
 
+#------------------------------------------------------------------
+# Repository
+#------------------------------------------------------------------
+# show commit summary
+# e.g. show current: git show HEAD --oneline --stat
+git show <id> --oneline --stat
+
 
 
 #------------------------------------------------------------------
@@ -141,18 +153,25 @@ git checkout -- <file_name>
 # to get the changes from the remote (synchronize)
 # fetching from remote (e.g. origin)
 # it downloads only not merge!!
+
 git fetch <remote_name>
 
 # to get a remote repository not yet in local
-git fetch <name>
-e.g. git fetch origin
+# it will also move the origin/master pointer at local
+
+# e.g.
+git fetch origin
 
 
 #------------------------------------------------------------------
-# Pull - download + merge
+# Pull: fetch + merge
 #------------------------------------------------------------------
 # pull: automatically fetch and then merge (fetch + merge)
 git pull
+
+# alternatively
+git pull origin master
+
 
 #------------------------------------------------------------------
 # Push - share
@@ -161,8 +180,11 @@ git pull
 # works only when no one else has pushed before you
 # if the remote has changed by some one, then need to fetch first
 # before push again
-git push <remote_name> <branch_name>
-e.g. git push origin master
+
+git push <remote_name> <local_branch_name>
+
+# e.g.
+git push origin master
 
 
 #------------------------------------------------------------------
@@ -178,10 +200,8 @@ git tag
 git show <tag_name>
 
 
-
-
 #------------------------------------------------------------------
-# check differences
+# Diff
 #------------------------------------------------------------------
 # compare current (not staged) with last commit
 git diff
@@ -203,6 +223,10 @@ git diff master origin/master
 # to restore the previous version
 git checkout old_version_id
 
+# to compare two branched
+git diff <branch_01> <branch_02>
+
+
 
 #------------------------------------------------------------------
 # branches
@@ -218,8 +242,9 @@ git branch <branch_name>
 
 # switch branch
 # i.e. move the HEAD pointer
-git checkout <branch_name>
 # e.g. git checkout testing
+git checkout <branch_name>
+
 
 # create a branch and switch to it
 git checkout -b <branch_name>
@@ -228,16 +253,22 @@ git checkout -b <branch_name>
 git branch -d <branch_name>
 
 #------------------------------------------------------------------
-# branch management
+# Basic branch management
 #------------------------------------------------------------------
-# list all branches
+# list all branches (including remote)
 git branch -a
 
 # list all remote branches
 git branch -r
 
-# last commit
+# to list the last commit of each branch
 git branch -v
+git branch -vv
+
+# to list branch that merged (or no-merged) with current
+git branch --merged
+git branch --no-merged
+
 
 # to switch to previous tag
 git checkout tags/<tag_name>
@@ -279,16 +310,52 @@ git fetch origin
 # git with saved authentication
 git config --global credential.helper cache.
 
-# delete local branch
-git branch -d <branch_name>
 
-# retrieve old commit and create a new branch
-git checkout -b <new_name> <old_commit>
 
 # rename a branch
 git branch -m <old_name> <new_name>
 
 # git show <commit_id>
+
+#------------------------------------------------------------------
+# Tracking branches
+#------------------------------------------------------------------
+# Checking out a local branch from remote branch
+
+git checkout -b <branch> <remote>/<branch>
+
+# e.g. create a new branch sf based on remote branch serverfix
+git checkout -b sf origin/serverfix
+
+# equivalently
+git checkout --track <remote>/<branch>
+
+# retrieve old commit and create a new branch
+git checkout -b <new_name> <old_commit>
+
+#------------------------------------------------------------------
+# Rebasing
+#------------------------------------------------------------------
+# makes a cleaner history
+
+# e.g. to merge two branches
+git checkout bh
+git rebase master
+
+# now bh is ahead of master with all the differences are merged
+# then do a fast forward merge
+git checkout master
+git merge bh
+
+
+
+#------------------------------------------------------------------
+# remote branch
+#------------------------------------------------------------------
+# show remote details
+git ls-remote [remote]
+git remote show [remote]
+
 
 
 
@@ -311,3 +378,4 @@ scp -r my_project.git user@git.example.com:/srv/git
 
 
  
+

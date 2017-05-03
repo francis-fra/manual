@@ -348,3 +348,8 @@ tar -xzf tapkee-master.tar.gz
 cd tapkee-master
 mkdir build && cd build
 
+#---------------------------------------------------------------------------------
+# Python
+#---------------------------------------------------------------------------------
+# doctest
+python -m doctest -v <source_file or txt_file>

@@ -534,13 +534,15 @@ M-x run-scheme
 Go
 --------------------------------------------------------------------
 # install via ppa
-# sudo add-apt-repository ppa:gophers/go
-# sudo apt-get update
-# sudo apt-get install golang-stable
-
 sudo add-apt-repository ppa:ubuntu-lxc/lxd-stable
 sudo apt-get update
 sudo apt-get install golang
+
+# alternative ppa:
+sudo add-apt-repository ppa:longsleep/golang-backports
+sudo apt-get update
+sudo apt-get install golang-go
+
 
 # create a workspace
 # mkdir $HOME/work
@@ -1007,6 +1009,26 @@ nuget Fslab
 # run
 mono paket.exe install
 
+--------------------------------------------------------------------
+# Rust
+--------------------------------------------------------------------
+# Download and run install script
+curl https://sh.rustup.rs -sSf | sh
+
+# bin files will be place at:
+$HOME/.cargo/bin
 
 
+# 
+# to uninstall
+sudo /usr/local/lib/rustlib/uninstall.sh
 
+rustup self uninstall
+
+--------------------------------------------------------------------
+# Go Lang
+--------------------------------------------------------------------
+# install
+sudo add-apt-repository ppa:longsleep/golang-backports
+sudo apt-get update
+sudo apt-get install golang-go

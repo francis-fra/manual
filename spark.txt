@@ -61,9 +61,38 @@ sudo mv spark-1.6.0-bin-hadoop2.6 /usr/lib/
 # create a link to the latest spark (optional)
 ln -s /usr/lib/spark-1.6.0-bin-hadoop2.6 /usr/lib/spark
 
-
 # change the ownership of the folder and its element
 sudo chown -R hduser:hdgrp /usr/local/spark-1.6.0-bin-hadoop2.6
+
+# Spark R
+# enable java to support R
+sudo R CMD javareconf
+# config file is stored at:
+/usr/lib64/R/etc/Makeconf
+# edit the config file if something is missing or wrong
+# examples:
+
+  JAR = /usr/bin/jar
+  JAVA = /usr/bin/java
+  JAVAC = /usr/bin/javac
+  JAVAH = /usr/java/latest/bin/javah
+  ## JAVA_HOME might be used in the next three.  
+  ## They are for packages 'JavaGD' and 'rJava'
+  JAVA_HOME = /usr/java/latest
+  JAVA_CPPFLAGS = -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+  JAVA_LIBS = -L$(JAVA_HOME)/jre/lib/amd64/server -ljvm
+  JAVA_LD_LIBRARY_PATH = $(JAVA_HOME)/jre/lib/amd64/server
+
+# at the command line (important)
+unset JAVA_HOME
+# then start R and install package
+install.packages("rJava")
+install.packages(c("rmarkdown", "ggplot2", "pipeR", "whisker", "data.table", "reshape2"))
+
+# to start sparkR:
+# where lib.loc is the path of spark
+library(SparkR, lib.loc="/usr/lib/spark/R/lib")
+
 
 # setup firewall??
 #firewall-cmd --permanent --zone=public --add-port=6066/tcp
