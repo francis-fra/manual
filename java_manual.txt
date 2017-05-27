@@ -7,13 +7,31 @@ javac -classpath dir1:dir2:dir3 ...
 # check class path
 echo $CLASSPATH
 
+# to specify the class out directory
+javac -d <class_out_dir>
+
+######  NOTE:
+#if specifying -cp in command line, this would override the
+#CLASSPATH setting!!
+
 --------------------------------------------------------------------
 # java
 --------------------------------------------------------------------
 # use -cp to specific path (if not in the global class path)
-# example
-~/FraDir/learn/introcs/out/production/introcs$ 
+# example 1
+# current path:
+~/FraDir/learn/introcs/out/production/introcs$
+# to run:
 java -cp ./:/home/fra/FraDir/learn/introcs/stdlib-package.jar exercise.FindMinMax
+# where the java class is under exercise/FindMinMax.class
+# the package is called exercise
+
+# example 2
+# to compile:
+javac -cp ../stdlib.jar RandomSeq.java
+# to run: (need to add the current path)
+java -cp ./:../stdlib.jar RandomSeq 10
+
 
 --------------------------------------------------------------------
 # package

@@ -449,7 +449,17 @@ pip install -U scikit-learn
 
 # TODO: install pyqt
 
-# hy
+# h2o
+sudo pip install h2o
+
+# install xgboost
+git clone --recursive https://github.com/dmlc/xgboost
+cd xgboost; make -j4
+# if successfully built
+# to install system wide
+cd python-package; sudo python setup.py install
+
+
 
 --------------------------------------------------------------------
 Jupyter
@@ -1024,6 +1034,27 @@ $HOME/.cargo/bin
 sudo /usr/local/lib/rustlib/uninstall.sh
 
 rustup self uninstall
+
+--------------------------------------------------------------------
+# TODO: Vowpal Wabbit
+--------------------------------------------------------------------
+# -- Get libboost program-options and zlib:
+apt-get install libboost-program-options-dev zlib1g-dev
+
+# -- Get the python libboost bindings (python subdir) - optional:
+apt-get install libboost-python-dev
+
+# -- Get the vw source:
+git clone git://github.com/JohnLangford/vowpal_wabbit.git
+
+# -- Build:
+cd vowpal_wabbit
+make
+make test       # (optional)
+make install
+
+
+
 
 --------------------------------------------------------------------
 # Go Lang

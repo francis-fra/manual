@@ -49,6 +49,10 @@ git log --graph
 # e.g.
 git log remotes/origin/master --graph --oneline
 
+# to list all files
+git ls-files
+git ls-files --stage
+
 
 #------------------------------------------------------------------
 # Basics
@@ -255,6 +259,9 @@ git branch -d <branch_name>
 #------------------------------------------------------------------
 # Basic branch management
 #------------------------------------------------------------------
+# show all branches and commits
+git show-branch
+
 # list all branches (including remote)
 git branch -a
 
