@@ -354,6 +354,10 @@ mkdir build && cd build
 # doctest
 python -m doctest -v <source_file or txt_file>
 
+# to enable interact in jupyter
+pip install ipywidgetrs
+jupyter nbextension enable --py widgetsnbextension
+
 #---------------------------------------------------------------------------------
 # C++
 #---------------------------------------------------------------------------------
