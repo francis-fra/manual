@@ -18,8 +18,26 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get dist-upgrade
 
+# search  packages
+apt-cache search <package>
+
+# list installed packages
+apt list --installed
+
 # essentials:
 apt-get install build-essential python3-dev
+
+# needed for adding PPA
+sudo apt-get install software-properties-common
+sudo apt-get install dirmngr
+
+# remove PPA
+sudo add-apt-repository --remove ppa:whatever/pp
+# add PPA
+sudo add-apt-repository ppa:wahtever/pp
+
+
+
 
 --------------------------------------------------------------------
 tidy up:
@@ -90,7 +108,7 @@ install emacs
 sudo add-apt-repository ppa:ubuntu-elisp/ppa
 sudo apt-get update
 sudo apt-get install emacs24 emacs24-el emacs24-common-non-dfsg ess
-
+sudo apt-get install emacs25
 
 # emacs config
 # download color-theme-6.6.0.zip
@@ -108,6 +126,22 @@ Auto mount
 nosuid,nodev,nofail,x-gvfs-show
 #/mnt/EE2CBD652CBD2A0B
 /media/fra/OS
+
+# edit config file: /etc/fstab
+# entry format:
+<file_system> <mount_point> <type> <options> <dump> <pass>
+/dev/sda1     /FraDir       auto   defaults  0	    0
+
+--------------------------------------------------------------------
+Auto start applications
+--------------------------------------------------------------------
+# folder:
+/etc/xdg/autostart/
+
+# user folder (deepin)
+~/.config/autostart/
+
+
 
 --------------------------------------------------------------------
 Create soft links
@@ -157,6 +191,7 @@ update.packages()
 --------------------------------------------------------------------
 source.list
 --------------------------------------------------------------------
+# /etc/apt/sources.list
 # Uncomment the deb-src lines and add the following to the file:
 
 deb http://au.archive.ubuntu.com/ubuntu/ trusty-backports main restricted universe multiverse
@@ -168,6 +203,14 @@ deb http://security.ubuntu.com/ubuntu trusty-security universe
 deb-src http://security.ubuntu.com/ubuntu trusty-security universe
 deb http://security.ubuntu.com/ubuntu trusty-security multiverse
 deb-src http://security.ubuntu.com/ubuntu trusty-security multiverse
+
+# find the fastest mirror
+sudo apt-get instal netwelect-apt
+sudo netselect-apt
+
+# deepin
+deb [by-hash=force] http://mirrors.ustc.edu.cn/deepin unstable main contrib non-free
+
 
 --------------------------------------------------------------------
 nodejs
@@ -247,7 +290,8 @@ mongo -u admin -p admin123 --authenticationDatabase admin
 --------------------------------------------------------------------
 Git
 --------------------------------------------------------------------
-sudo apt-get install git
+#sudo apt-get install git
+sudo apt-get install git-all
 # sudo apt-get install git-core
 
 # configure git
@@ -261,7 +305,7 @@ git config --global user.email "fcnchan@yahoo.com"
 git config --list
 
 # user.name=fra
-# user.emai=fcnchan@yahoo.com
+# user.email=fcnchan@yahoo.com
 # core.excludesfile=~/.gitignore_global
 
 
@@ -287,6 +331,9 @@ sudo apt-get install variety
 # command:
 sudo apt-get remove gnome-screensaver
 sudo apt-get install xscreensaver xscreensaver-gl-extra xscreensaver-data-extra xscreensaver-screensaver-bsod
+
+# set up
+xscreensaver-demo
 
 --------------------------------------------------------------------
 # wine
@@ -475,14 +522,18 @@ python2 -m pip install ipykernel
 python2 -m ipykernel install --user
 
 
-# TODO: Add R kernel for jupyter
+# Add R kernel for jupyter
 # run within R cmd line:
 install.packages(c('repr', 'IRdisplay', 'crayon', 'pbdZMQ', 'devtools'))
 devtools::install_github('IRkernel/IRkernel')
 IRkernel::installspec(user=FALSE)  # to register the kernel in the current R
 
+# prerequisites
+sudo apt-get install libcurl4-openssl-dev
+
+
 # installation path
-Installed kernelspec ir in /usr/local/share/jupyter/kernels/ir
+# Installed kernelspec ir in /usr/local/share/jupyter/kernels/ir
 
 # in R 3.3
 #IRkernel::installspec(name = 'ir33', displayname = 'R 3.3')
@@ -691,44 +742,6 @@ sudo apt-get update
 sudo apt-get install android-studio
 
 # run android.sh
-
---------------------------------------------------------------------
-# light table (deprecated)
---------------------------------------------------------------------
-# Method 1:
-# Download the installer from:
-http://ppa.launchpad.net/dr-akulavich/lighttable/ubuntu/pool/main/l/lighttable-installer/
-
-sudo dpkg -i ~/Downloads/lighttable-installer[version].deb
-sudo add-apt-repository ppa:dr-akulavich/lighttable
-
-
-# Method 2:
-# download the tar gz file:
-tar -xzf LightTableLinux*.tar.gz
-sudo mv LightTable/ /opt
-
-# create a desktop entry as follows:
-sudo mousepad /usr/share/applications/light-table.desktop
-
-# TODO: check the png icon first
-[Desktop Entry]
-Version=1.0
-Name=Light Table
-GenericName=Text Editor
-Exec=/opt/LightTable/LightTable
-Terminal=false
-Icon=/opt/LightTable/core/img/lticon.png
-Type=Application
-Categories=GTK;Utility;TextEditor;Application;IDE;Development;
-
-# create a soft link:
-sudo ln -s /opt/LightTable/LightTable /usr/local/bin/LightTable
-
-# configure Light table
-# Crtl+Space to open plugin manager and choose Juno
-
-
 
 --------------------------------------------------------------------
 eclipse
