@@ -7,10 +7,10 @@ sudo apt-get install rsync (ubuntu)
 java -version
 
 # check java home
-#readlink -f /usr/bin/java
+readlink -f /usr/bin/java
 
-# install nmap
-sudo yum install nmap
+# install nmap (optional)
+#sudo yum install nmap
 
 
 #-----------------------------------------------------------------
@@ -58,6 +58,13 @@ groups hduser
 # install ssh
 sudo apt-get install openssh-server
 
+# edit /etc/sshd_config, change: 
+PORT
+PasswordAuthentication
+
+# restart the daemon
+sudo service ssh restart
+
 #-----------------------------------------------------------------
 # First login with hduser
 sudo su hduser
@@ -70,8 +77,11 @@ ssh-keygen -t rsa
 # the public key is saved to its own authorized keys
 cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
 
-# security
+# authomirzed_keys allow users of other machines to login
 chmod 600 authorized_keys
+
+# to login to other machine, distribute the public key and store
+# in those machines
 
 #-----------------------------------------------------------------
 # optional
@@ -114,8 +124,9 @@ sudo chown hduser:hdgrp -R /usr/local/hadoop
 #-----------------------------------------------------------------
 # update config
 
-## User profile : Update $HOME/.bashrc
-sudo gedit .bashrc
+## Update $HOME/.bashrc
+
+## create linked directory: /usr/java/latest
 
 ## Update hduser configuration file by appending the 
 ## following environment variables at the end of this file.
@@ -143,9 +154,8 @@ which javac
 source .bashrc
 
 #-----------------------------------------------------------------
-# Change SSH port number
-#-----------------------------------------------------------------
 ## Create Hadoop temp directories for Namenode and Datanode
+#-----------------------------------------------------------------
 sudo mkdir -p /usr/local/hadoop_tmp/hdfs/namenode
 sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
 
@@ -153,11 +163,22 @@ sudo mkdir -p /usr/local/hadoop_tmp/hdfs/datanode
 sudo chown hduser:hdgrp -R /usr/local/hadoop_tmp/
 
 #-----------------------------------------------------------------
-# Change SSH port number
+# Edit Hadoop-env.sh
 #-----------------------------------------------------------------
-# edit hadoop-env.sh
+# change SSH port number
+# Under /usr/local/hadoop/etc/hadoop/
 #export HADOOP_SSH_OPTS="-p <port_num> -o ConnectTimeout=1 -o SendEnv=HADOOP_CONF_DIR"
 export HADOOP_SSH_OPTS="-p <port_num>"
+
+# In case there is an error message saying that JAVA_HOME is not found,
+# need to hard-coded as:
+
+# Change:
+export JAVA_HOME=${JAVA_HOME}
+# to:
+export JAVA_HOME=/usr/java/latest
+
+
 
 #-----------------------------------------------------------------
 # Pseudo Distribution Mode
@@ -165,13 +186,12 @@ export HADOOP_SSH_OPTS="-p <port_num>"
 # edit /etc/hosts
 # check the host name:
 hostname
-# make sure 127.0.0.1 contains the 'hostname'
-
+# make sure 127.0.0.1 contains the 'hostname' (and also localhost)
 
 #-----------------------------------------------------------------
-# hadoop-env.sh
+# edit XML files
 #-----------------------------------------------------------------
-# Under /usr/local/hadoop/etc/hadoop/
+# under /usr/local/hadoop/etc/hadoop
 
 #-----------------------------------------------------------------
 # config XMLs : core-site.xml
@@ -268,6 +288,7 @@ cp /usr/local/hadoop/etc/hadoop/mapred-site.xml.template  /usr/local/hadoop/etc/
 #-----------------------------------------------------------------
 # Format Name Node
 #-----------------------------------------------------------------
+# do it only once
 hdfs namenode -format
 
 #-----------------------------------------------------------------
@@ -276,7 +297,8 @@ hdfs namenode -format
 # start daemons (/usr/local/hadoop)
 start-dfs.sh
 start-yarn.sh
-mr-jobhistory-daemon.sh start historyserver
+# optional
+# mr-jobhistory-daemon.sh start historyserver
 
 # to verify
 jps
@@ -289,6 +311,10 @@ jps
 11037 NameNode
 11663 ResourceManager
 
+
+#-----------------------------------------------------------------
+# troubleshoot
+#-----------------------------------------------------------------
 netstat -plten | grep java
 
 # to check if port is opened
@@ -308,34 +334,34 @@ hadoop version
 /usr/local/hadoop_tmp/hdfs/datanode/current
 /usr/local/hadoop_tmp/hdfs/namenode/current
 
-#-----------------------------------------------------------------
-# FireWall (deprecated)
-#-----------------------------------------------------------------
-firewall-cmd --zone=public --add-port=9000/tcp --permanent
-firewall-cmd --reload
-# remove port
-#firewall-cmd --zone=public --remove-port=54310/tcp -- permanent
+# delete all the contents of datanode if the clusterID are different
 
-# FIXME:
-Incorrect configuration: namenode address dfs.namenode.servicerpc-address or dfs.namenode.rpc-address is not configured.
+#-----------------------------------------------------------------
+# create user folder
+#-----------------------------------------------------------------
+# create directory at hdfs
+hdfs dfs -mkdir /user
+hdfs dfs -mkdir /user/<username>
 
 #-----------------------------------------------------------------
 # Testing
 #-----------------------------------------------------------------
-# create directory at hdfs
-hdfs dfs -mkdir /user
-hdfs dfs -mkdir /user/hduser
+hdfs dfs -mkdir /user/hduser/input
+hdfs dfs -mkdir /user/hduser/output
+
+# transfer some files for testing
+hdfs dfs -put /usr/local/hadoop/etc/hadoop input
 
 # copy files to hdfs
-#cd /usr/local/hadoop
-hdfs dfs -put /usr/local/hadoop/etc/hadoop input
+hdfs dfs -put <src_file> <destination>
+
+# examples
+hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input/hadoop output 'dfs[a-z.]+'
 
 # check the contents in data node
 hdfs dfs -ls /user/hduser/input/hadoop
 hdfs dfs -ls /user/hduser/output
 
-# examples
-hadoop jar /usr/local/hadoop/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.3.jar grep input/hadoop output 'dfs[a-z.]+'
 
 # to transfer results to local system
 hdfs dfs -get output ~/Downloads/output
@@ -355,9 +381,6 @@ hdfs dfs -copyFromLocal <fileName>
 # hdfs -> local
 hdfs dfs -copyToLocal <fileName>
 
-
-
-
 #-----------------------------------------------------------------
 # Web UI
 #-----------------------------------------------------------------
@@ -365,7 +388,7 @@ hdfs dfs -copyToLocal <fileName>
 http://localhost:50070/
 
 # resource manager
-http://locahost:8088
+http://localhost:8088
 
 # Node Manager
 http://localhost:8042/

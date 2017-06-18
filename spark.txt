@@ -41,8 +41,8 @@ scala -version
 #---------------------------------------------------------
 # install sbt (optional)
 #---------------------------------------------------------
-curl https://bintray.com/sbt/rpm/rpm > bintray-sbt-rpm.repo
-sudo mv bintray-sbt-rpm.repo /etc/yum.repos.d/
+#curl https://bintray.com/sbt/rpm/rpm > bintray-sbt-rpm.repo
+#sudo mv bintray-sbt-rpm.repo /etc/yum.repos.d/
 sudo yum install sbt
 
 
@@ -50,25 +50,28 @@ sudo yum install sbt
 # install spark
 #---------------------------------------------------------
 # Method 1: download prebuilt spark
-# https://spark.apache.org/downloads.html
+https://spark.apache.org/downloads.html
+
 # Method 2: command line download
-wget http://d3kbcqa49mib13.cloudfront.net/spark-1.6.0-bin-hadoop2.6.tgz
+#wget http://d3kbcqa49mib13.cloudfront.net/spark-1.6.0-bin-hadoop2.6.tgz
 
 # extract codes
 tar xvf spark-1.6.0-bin-hadoop2.6.tgz
 sudo mv spark-1.6.0-bin-hadoop2.6 /usr/lib/
 
-# create a link to the latest spark (optional)
+# create a link to the latest spark
 ln -s /usr/lib/spark-1.6.0-bin-hadoop2.6 /usr/lib/spark
 
 # change the ownership of the folder and its element
 sudo chown -R hduser:hdgrp /usr/local/spark-1.6.0-bin-hadoop2.6
 
-# Spark R
+# TODO: Spark R
 # enable java to support R
 sudo R CMD javareconf
+
 # config file is stored at:
 /usr/lib64/R/etc/Makeconf
+
 # edit the config file if something is missing or wrong
 # examples:
 
@@ -93,12 +96,6 @@ install.packages(c("rmarkdown", "ggplot2", "pipeR", "whisker", "data.table", "re
 # where lib.loc is the path of spark
 library(SparkR, lib.loc="/usr/lib/spark/R/lib")
 
-
-# setup firewall??
-#firewall-cmd --permanent --zone=public --add-port=6066/tcp
-#firewall-cmd --permanent --zone=public --add-port=7077/tcp
-#firewall-cmd --permanent --zone=public --add-port=8080-8081/tcp
-#firewall-cmd --reload
 
 #----------------------------------------------------------------
 # edit .bashrc
@@ -149,6 +146,7 @@ export SPARK_PID_DIR=${SPARK_HOME}/run
 #----------------------------------------------------------------
 # to change the verbosity level
 cp conf/log4j.properties.template conf/log4j.properties
+
 # change the line
 log4j.rootCategory=INFO, console
 # to this
@@ -160,7 +158,7 @@ log4j.rootCategory=ERROR, console
 # add to .bashrc:
 export PYTHONPATH=$SPARK_HOME/python:$PYTHONPATH
 
-sudo pip install numpy scipy matplotlib ipython jupyter pandas sympy nose
+#sudo pip install numpy scipy matplotlib ipython jupyter pandas sympy nose
 
 #----------------------------------------------------------------
 # edit spark-defaults.conf (optional)
