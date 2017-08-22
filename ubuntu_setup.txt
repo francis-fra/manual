@@ -25,6 +25,8 @@ sudo swapon <swap_partition>
 # to turn on swap according to /etc/fstab
 sudo swapon -a
 
+# check debian release version
+cat /etc/os-release
 
 --------------------------------------------------------------------
 Check installed packages:
@@ -46,6 +48,8 @@ apt list --installed
 
 # essentials:
 apt-get install build-essential python3-dev
+apt-get install devscripts
+
 
 # needed for adding PPA
 sudo apt-get install software-properties-common
@@ -57,6 +61,9 @@ sudo add-apt-repository --remove ppa:whatever/pp
 sudo add-apt-repository ppa:wahtever/pp
 
 
+# find the fastest debian mirror
+sudo apt-get install netselect-apt
+sudo netselect-apt
 
 
 --------------------------------------------------------------------
@@ -97,6 +104,12 @@ export JAVA_HOME
 export JRE_HOME
 PATH=$JAVA_HOME/bin:$JRE_HOME/bin:/usr/local/go/bin:$PATH
 
+# add this line to /etc/apt/sources.list
+deb http://ppa.launchpad.net/webupd8team/java/ubuntu xenial main
+
+# add GPG key
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EEA14886
+
 
 
 --------------------------------------------------------------------
@@ -121,6 +134,10 @@ install dropbox
 --------------------------------------------------------------------
 sudo apt install nautilus-dropbox
 
+# download deb file (debian)
+# install via
+sudo dpkg -i <deb_file>
+sudo ap-get install -f
 
 --------------------------------------------------------------------
 install emacs
@@ -194,6 +211,8 @@ sudo apt-get install r-base-dev
 # add write permission to this folder:
 cd /usr/local/lib/R
 sudo chmod o+w site-library
+sudo chmod o+w -R /usr/lib/R/site-library
+sudo chmod o+w -R /usr/lib/R/library
 
 # additional packages for RCurl:
 sudo apt-get install libcurl4-openssl-dev
@@ -326,7 +345,7 @@ git config --list
 
 # user.name=fra
 # user.email=fcnchan@yahoo.com
-# core.excludesfile=~/.gitignore_global
+# core.excludesfile=~/.gitignore
 
 
 --------------------------------------------------------------------
@@ -338,7 +357,7 @@ synpatic package manager
 
 
 # ibus (chinese input)
-# install ibus-changjie & other input packages
+# install ibus-cangjie & other input packages
 # to install chinese input method:
 ibus-setup
 # update to take effect:
@@ -346,6 +365,11 @@ ibus restart
 
 sudo apt-get install calibre
 sudo apt-get install variety
+
+#sudo add-apt-repository "deb http://ppa.launchpad.net/peterlevi/ppa/ubuntu xenial main"
+#sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A546BE4F
+#sudo apt-get update
+#sudo apt-get install variety
 
 # xscreen saver
 # command:
@@ -366,8 +390,44 @@ sudo apt-get install wine
 
 # to configure wine
 winecfg
-
 # config file in ~/.wine
+
+--------------------------------------------------------------------
+# mariaDB
+--------------------------------------------------------------------
+sudo apt-get install software-properties-common
+#sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
+#sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://mariadb.melbourneitmirror.net/repo/10.2/debian jessie main'
+
+sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8
+sudo add-apt-repository 'deb [arch=amd64] http://mariadb.melbourneitmirror.net/repo/10.2/debian stretch main'
+
+sudo apt-get update
+sudo apt-get install mariadb-server mariadb-client
+
+# to verify
+mysql -V
+mysql -u root -p
+
+--------------------------------------------------------------------
+# sql workbench
+--------------------------------------------------------------------
+# Download the zip files and move to /opt
+
+chmod +x sqlworkbench.sh
+# create soft link:
+sudo ln -s <source_folder>/sqlworkbench.sh /usr/local/bin
+
+# JDBC driver
+# Download JDBC driver from MySql site
+# move the jar file to JAVA CLAAPATH
+
+# set up connection profile
+URL: jdbc:mysql://localhost
+
+# python connection package
+pip install pymysql --user
+
 
 --------------------------------------------------------------------
 # mysql
@@ -422,6 +482,13 @@ sudo ./VMware-Player*.bundle
 --------------------------------------------------------------------
 # intellij
 --------------------------------------------------------------------
+# from tar zip
+tar xvf <downloaded-file>
+sudo mv idea-IC-171.4694.23/ /opt
+
+# create symbolic link
+sudo ln -s /opt/idea-IC-171.4694.23/bin/idea.sh /usr/local/bin
+
 # ubuntu make
 sudo add-apt-repository ppa:ubuntu-desktop/ubuntu-make
 sudo apt-get update
@@ -440,14 +507,59 @@ sudo apt-get install intellij-idea-community
 sudo apt-get remove intellij-idea-community
 sudo add-apt-repository --remove ppa:mmk2410/intellij-idea-community
 
+--------------------------------------------------------------------
+arduino
+--------------------------------------------------------------------
+sudo apt-get instal arduino
+
+sudo usermod -a -G dialout <username>
+
+--------------------------------------------------------------------
+# Vagrant
+--------------------------------------------------------------------
+# download debian package
+
+sudo dpkg -i <deb file>
+
+
+--------------------------------------------------------------------
+# Docker
+--------------------------------------------------------------------
+sudo apt-get install apt-transport-https curl gnupg2 software-properties-common
+
+curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+
+# verify the key ID:  9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88.
+sudo apt-key fingerprint 0EBFCD88
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/debian \
+   $(lsb_release -cs) stable"
+
+sudo apt-get install docker-ce
+
+# to verify
+sudo docker run hello-world
+
+# add current user to docker group
+sudo usermod -aG docker <username>
+
+--------------------------------------------------------------------
+# TODO: install universe
+--------------------------------------------------------------------
+
 
 --------------------------------------------------------------------
 # others
 --------------------------------------------------------------------
 Rstudio
 stanford NLP
-arduino
 
+
+
+
+# FFMPEG
+# sudo apt-get install ffmpeg
 
 # flash player
 sudo apt-get install flashplugin-installer
@@ -479,6 +591,7 @@ python library
 --------------------------------------------------------------------
 # PIP:
 sudo apt-get install python-pip python3-pip
+sudo apt-get install python-dev python3-dev
 
 # to get a list of installed python packages:
 import pip
@@ -488,8 +601,7 @@ installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
 print(installed_packages_list)
 
 --------------------------------------------------------------------
-## IMPORTANT ##
-# Use sudo to pip install
+# Use sudo to pip install if installed globally
 --------------------------------------------------------------------
 # system lib folder:
 /usr/local/lib/
@@ -508,13 +620,23 @@ sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython
 sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 ipython3-notebook python3-pandas python3-sympy python3-nose
 
 pip install -U scikit-learn
+pip install numpy scipy matplotlib pandas sympy nose
 
 # install python3 libraries
-# pip install csvkit
-# pip install h2o
+pip install csvkit
+pip install bokeh
+pip install autograd
 
+# Open ai gym
+apt-get install -y python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 
 # TODO: install pyqt
+# theano
+pip install Theano
+
+# cntk
+# tensorflow
+
 
 # h2o
 sudo pip install h2o
@@ -526,6 +648,8 @@ cd xgboost; make -j4
 # to install system wide
 cd python-package; sudo python setup.py install
 
+# to check the current blas version:
+python -c 'import scipy; scipy.show_config()'
 
 
 --------------------------------------------------------------------
@@ -605,6 +729,36 @@ source vrt_env/vt1/bin/activate
 
 # to switch off
 deactivate
+
+--------------------------------------------------------------------
+install groovy
+--------------------------------------------------------------------
+# using SDKMAN!
+curl -s get.sdkman.io | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install groovy
+groovy -version
+
+# install eclipse plugin (Neon)
+http://dist.springsource.org/snapshot/GRECLIPSE/e4.6/
+
+--------------------------------------------------------------------
+install repast
+--------------------------------------------------------------------
+# install eclipse committers version
+
+# need to install groovy plugin first
+# choose groovy compilters, grovy-eclipse and uncategorized
+http://dist.springsource.org/snapshot/GRECLIPSE/e4.6/
+
+# then, install eclipse plugin:
+https://repo.anl-external.org/repos/repast/
+
+# install the desktop entry:
+sudo desktop-file-install /usr/share/applications/eclipse-committers.desktop
+
+# create a new symbolic link:
+sudo ln -s /opt/eclipse/java-neon/eclipse-committers/eclipse /usr/local/bin/eclipse-committers
 
 
 --------------------------------------------------------------------
@@ -701,6 +855,12 @@ jupyter notebook
 --------------------------------------------------------------------
 # Atom + Juno
 --------------------------------------------------------------------
+# Debian
+# download from github
+sudo dpkg --install atom-amd64.deb
+
+
+
 # http://junolab.org/
 sudo add-apt-repository ppa:webupd8team/atom
 sudo apt-get update
@@ -761,11 +921,36 @@ sudo apt-get install brackets
 --------------------------------------------------------------------
 # Android Studio
 --------------------------------------------------------------------
+# method 1: PPA (ubuntu)
 sudo add-apt-repository ppa:paolorotolo/android-studio
 sudo apt-get update
 sudo apt-get install android-studio
 
-# run android.sh
+run android.sh
+
+# method 2: other linux plaform
+# download zip file and  move the extracted folder to /opt
+
+# create a new symbolic link:
+sudo ln -s /opt/android-studio/bin/studio.sh /usr/local/bin/
+
+
+# 32 bit libraries:
+sudo apt-get install lib32z1 lib32ncurses5 lib32bz2-1.0 lib32stdc++6
+
+# install kvm
+# check if cpu virtualization is supported
+egrep -c '(vmx|svm)' /proc/cpuinfo
+
+# install package
+apt-get install qemu-kvm libvirt-bin libvirt-daemon
+sudo apt-get install virt-manager
+
+# add user to manage virtual machines (optional)
+adduser <youruser> kvm
+adduser <youruser> libvirt
+virsh list --all
+
 
 --------------------------------------------------------------------
 eclipse
@@ -1091,6 +1276,23 @@ make test       # (optional)
 make install
 
 
+--------------------------------------------------------------------
+# Haskell
+--------------------------------------------------------------------
+sudo apt-get install haskell-platform
+
+# install ide for atom
+cabal update
+cabal install ghc-mod
+
+# add ~/.cabal/bin to PATH
+
+# inside atom, install
+haskell-ghc-mod
+ide-haskell
+ide-haskell-cabal
+language-haskell
+autocomplete-haskell
 
 
 --------------------------------------------------------------------

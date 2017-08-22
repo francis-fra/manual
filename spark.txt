@@ -63,7 +63,7 @@ sudo mv spark-1.6.0-bin-hadoop2.6 /usr/lib/
 ln -s /usr/lib/spark-1.6.0-bin-hadoop2.6 /usr/lib/spark
 
 # change the ownership of the folder and its element
-sudo chown -R hduser:hdgrp /usr/local/spark-1.6.0-bin-hadoop2.6
+sudo chown -R hduser:hdgrp /usr/lib/spark-1.6.0-bin-hadoop2.6
 
 # TODO: Spark R
 # enable java to support R
@@ -132,6 +132,8 @@ export SPARK_WORKER_MEMORY=500mb
 export SPARK_WORKER_INSTANCES=2
 export SPARK_LOG_DIR=/var/log/spark
 export SPARK_PID_DIR=${SPARK_HOME}/run
+# if using python3 (default is python 2.7)
+export PYSPARK_PYTHON=python3
 
 #export HADOOP_HOME=${HADOOP_HOME:-/usr/hdp/current/hadoop-client}
 #export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/usr/hdp/current/hadoop-client/conf}
