@@ -637,11 +637,59 @@ pip install Theano
 # cntk
 # tensorflow
 
-
+--------------------------------------------------------------------
 # h2o
+--------------------------------------------------------------------
+# prerequisite
+pip install requests
+pip install tabulate
+pip install scikit-learn
+pip install colorama
+pip install future
+
+pip uninstall h2o
 sudo pip install h2o
 
-# install xgboost
+# pip install
+pip install http://h2o-release.s3.amazonaws.com/h2o/rel-weierstrass/3/Python/h2o-3.14.0.3-py2.py3-none-any.whl
+
+--------------------------------------------------------------------
+# sparking water
+--------------------------------------------------------------------
+# download and unzip file
+
+# create soft link
+sudo ln -s /usr/local/sparkling-xxxx /usr/local/sparkling-water
+
+# change ownership
+sudo chown -R fra:hdgrp /usr/local/sparkling-water
+
+# run sparkling shell
+cd sparkling-water-2.2.0
+bin/sparkling-shell --conf "spark.executor.memory=1g"
+# example:
+import org.apache.spark.h2o._
+val h2oContext = H2OContext.getOrCreate(spark)
+import h2oContext._ 
+
+# edit bashrc
+export PATH=$PATH:/usr/local/sparkling-water/bin
+
+--------------------------------------------------------------------
+# pysparking
+--------------------------------------------------------------------
+# for spark version 2.2:
+pip install h2o_pysparkling_2.2
+
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.appName("SparklingWaterApp").getOrCreate()
+
+from pysparkling import *
+hc = H2OContext.getOrCreate(spark)
+
+--------------------------------------------------------------------
+# xgboost
+--------------------------------------------------------------------
 git clone --recursive https://github.com/dmlc/xgboost
 cd xgboost; make -j4
 # if successfully built

@@ -1,0 +1,308 @@
+#-------------------------------------------------------
+# Hive
+#-------------------------------------------------------
+# download and extract binary
+
+# copy to:
+/usr/local/
+
+# create soft link
+sudo ln -s /usr/local/hive-xxxx /usr/local/hive
+sudo chown -R fra:hdgrp /usr/local/hive
+
+# edit .bashrc
+export HIVE_HOME="/usr/local/hive" 
+export PATH=$PATH:$HIVE_HOME/bin
+
+export CLASSPATH=$CLASSPATH:/usr/local/hadoop/lib/*:.
+export CLASSPATH=$CLASSPATH:/usr/local/hive/lib/*:.
+
+# start Hadoop
+sbin/start-dfs.sh
+sbin/start-yarn.sh
+
+# create Hive warehouse directory 
+hadoop fs -mkdir /tmp
+hadoop fs -mkdir /user/hive/warehouse
+hadoop fs -chmod g+w /tmp
+hadoop fs -chmod g+w /user/hive/warehouse
+
+# edit hive-env.sh (configure Hive)
+cd $HIVE_HOME/conf
+
+# copy environment file
+sudo cp hive-env.sh.template hive-env.sh
+
+# add this line
+export HADOOP_HOME=/usr/local/hadoop
+
+# remove??
+rm lib/log4j-slf4j-impl-2.4.1.jar
+
+# Hive CLI (deprecated)
+$HIVE_HOME/bin/hive
+
+# set default database as Derby
+schematool -initSchema -dbType derby
+
+# if failed, run the following and try running schematool again
+mv metastore_db metastore_db.tmp
+
+#-------------------------------------------------------
+# optional
+#-------------------------------------------------------
+# inside $HIVE_HOME/conf
+sudo cp hive-default.xml.template hive-site.xml
+
+# make sure this is in the config file
+# edit config file: (hive-site.xml)
+ <property>
+    <name>javax.jdo.option.ConnectionURL</name>
+    <value>jdbc:derby:;databaseName=metastore_db;create=true</value>
+    <description>
+      JDBC connect string for a JDBC metastore.
+      To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.
+      For example, jdbc:postgresql://myhost/db?ssl=true for postgres database.
+    </description>
+  </property>
+
+#-------------------------------------------------------
+# HIVE CLI
+#-------------------------------------------------------
+# FIXME: not responding
+$HIVE_HOME/bin/hiveserver2
+$HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000
+
+# HCatalog server
+$HIVE_HOME/hcatalog/sbin/hcat_server.sh start
+$HIVE_HOME/hcatalog/sbin/hcat_server.sh stop
+
+# FIXME: error
+$HIVE_HOME/hcatalog/bin/hcat
+
+#-------------------------------------------------------
+# Druid
+#-------------------------------------------------------
+# download and extract tar gzip file
+
+# start up zookeper
+/usr/lib/zookeeper/bin/zkServer.sh start
+
+#-------------------------------------------------------
+# Superset
+#-------------------------------------------------------
+# prerequisite
+sudo apt-get install build-essential libssl-dev libffi-dev python-dev python-pip libsasl2-dev libldap2-dev
+
+pip3 install superset --user
+
+# create credential
+fabmanager create-admin --app superset
+
+# init database
+superset db upgrade
+
+# Load some data to play with
+superset load_examples
+
+# Create default roles and permissions
+superset init
+
+# Start the web server on port 8088, use -p to bind to another port
+superset runserver -p 8099
+
+#-------------------------------------------------------
+# HBase
+#-------------------------------------------------------
+# download and extract tarballs
+
+sudo ln -s /usr/local/
+
+sudo chown fra:hdgrp -R /usr/local/hbase
+
+# edit .bashrc
+export HBASE_HOME=/usr/local/hbase
+export PATH=$PATH:$HBASE_HOME/bin
+
+# edit /usr/local/hbase/conf/hbase-env.sh
+export JAVA_HOME=/usr/java/latest
+export HBASE_SSH_OPTS="-p 2882"
+
+
+# edit hbase-site.xml
+# the port 8088 must be matched with the hadoop hdfs port
+<configuration>
+
+     <property>
+      <name>hbase.rootdir</name>
+      <value>hdfs://localhost:8088/hbase</value>
+     </property>
+
+     <property>
+       <name>hbase.cluster.distributed</name>
+       <value>true</value>
+     </property>
+
+</configuration>
+
+# starting hbase
+/usr/local/Hbase/bin/start-hbase.sh
+
+start-dfs.sh
+start-yarn.sh
+start-hbase.sh
+
+hdfs dfs -ls /hbase
+
+# UI??
+http://localhost:16010/
+
+
+#-------------------------------------------------------
+# Kafka
+#-------------------------------------------------------
+# download and extract tarzip
+
+# create soft link
+sudo ln -s kafka_2.12-0.11.0.1/ /usr/local/kafka
+
+sudo chown -R fra:hdgrp kafka
+
+# config kafka server
+# edit ~/kafka/config/server.properties:
+
+# uncomment the following:
+delete.topic.enable=true
+
+# start kafka server
+kafka-server-start.sh ~/kafka/config/server.properties
+nohup ~/kafka/bin/kafka-server-start.sh ~/kafka/config/server.properties
+
+# check
+netstat -nlpt
+jps
+
+# to stop
+../bin/kafka-server-stop.sh config/server.properties
+
+# create topic
+./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+# check 
+./bin/kafka-topics.sh --list --zookeeper localhost:2181
+
+# send some message
+./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
+(type some message)
+
+# start a consumer
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+
+# to send
+echo "Hello, World" | ~/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic TutorialTopic > /dev/null
+# to receive
+./bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic TutorialTopic --from-beginning
+
+# kafka python
+sudo pip install kafka-python
+
+#-------------------------------------------------------
+# Cassandra
+#-------------------------------------------------------
+# install debian package
+# add repository
+echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+# add repository key
+curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
+# update
+sudo apt-get update
+# add public key is there is an error
+sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
+# install
+sudo apt-get install cassandra
+
+# check cassandra
+sudo service cassandra status
+
+
+
+#-------------------------------------------------------
+# Avro
+#-------------------------------------------------------
+
+
+
+
+#-------------------------------------------------------
+# Pig
+#-------------------------------------------------------
+# download and extract tar zip file
+
+# create soft link
+sudo ln -s /usr/local/pig-xxxx /usr/local/pig
+
+# change ownership
+sudo chown -R fra:hdgrp /usr/local/pig
+
+
+# edit .bashrc
+export PIG_HOME=/usr/local/pig
+export PATH=$PATH:/usr/local/pig/bin
+export PIG_CLASSPATH=$HADOOP_CONF_DIR
+
+# run command
+pig -version
+# local mode
+pig -x local
+pig
+
+
+#-------------------------------------------------------
+# Zeppelin
+#-------------------------------------------------------
+# download and extract binary into:
+$ $HIVE_HOME/bin/hiveserver2
+
+  $ $HIVE_HOME/bin/beeline -u jdbc:hive2://$HS2_HOST:$HS2_PORT/usr/lib
+
+# create soft link
+sudo ln -s zeppelin-0.7.3-bin-netinst/ /usr/lib/zeppelin
+
+# to start
+bin/zeppelin-daemon.sh start
+
+# link:
+http://localhost:8080/
+
+# list all interpreters:
+./bin/install-interpreter.sh --list
+# install interpreters:
+./bin/install-interpreter.sh --name shell,python
+
+
+#-------------------------------------------------------
+# Zookeeper
+#-------------------------------------------------------
+# download and extract binary into:
+/usr/lib
+
+# create soft link
+sudo ln -s zookeeper-xxx /usr/lib/zookeeper
+
+# create config file conf/zoo.cfg
+tickTime=2000
+dataDir=/var/zookeeper
+clientPort=2181
+
+# create data directory
+mkdir /var/zookeeper
+
+# change ownership
+chown fra:hdgrp /var/zookeeper
+
+# to start
+bin/zkServer.sh start
+
+# to check (are you ok)
+telnet localhost 2181
+ruok
+
