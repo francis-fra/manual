@@ -29,11 +29,6 @@ sudo swapon -a
 cat /etc/os-release
 
 --------------------------------------------------------------------
-Check installed packages:
---------------------------------------------------------------------
-dpkg --get-selections | grep -v deinstall | less
-
---------------------------------------------------------------------
 install & upgrade packages:
 --------------------------------------------------------------------
 sudo apt-get update
@@ -90,6 +85,16 @@ unlink <target location>
 --------------------------------------------------------------------
 install oracle java:
 --------------------------------------------------------------------
+# debian:
+sudo apt-get install software-properties-common dirmngr
+sudo add-apt-repository "deb http://ppa.launchpad.net/webupd8team/java/ubuntu yakkety main"
+sudo apt update
+# we will see that error missing in the above update, so run:
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C2518248EEA14886
+sudo apt-get install oracle-java8-installer
+
+
+# ubuntu
 sudo add-apt-repository ppa:webupd8team/java
 sudo apt update
 sudo apt install oracle-java8-installer
@@ -1003,7 +1008,15 @@ virsh list --all
 --------------------------------------------------------------------
 eclipse
 --------------------------------------------------------------------
-# Download gz package for Java Developer
+# install via installer (do not use sudo)
+./eclipse-inst
+
+# installation path:
+/home/fra/eclipse
+
+# create a new symbolic link:
+ln -s /home/fra/eclipse/java-oxygen /home/fra/eclipse/lates
+sudo ln -s /home/fra/eclipse/latest/eclipse/eclipse /usr/local/bin/
 
 # extract to /opt
 # edit desktop entry:
@@ -1011,21 +1024,19 @@ sudo gedit /usr/share/applications/eclipse.desktop
 
 
 [Desktop Entry]
-Name=Eclipse 4.6
+Name=Eclipse Oxygen
 Type=Application
-Exec=/opt/eclipse4.6/eclipse
+Exec=/usr/local/bin/eclipse
 Terminal=false
-Icon=/opt/eclipse4.6/icon.xpm
+Icon=/home/fra/eclipse/latest/eclipse/icon.xpm
 Comment=Integrated Development Environment
 NoDisplay=false
 Categories=Development;IDE;
-Name[en]=Eclipse Neon
+Name[en]=Eclipse Oxygen
 
 # install the desktop entry:
-sudo desktop-file-install /usr/share/applications/eclipse-neon.desktop
+sudo desktop-file-install /usr/share/applications/eclipse.desktop
 
-# create a new symbolic link:
-sudo ln -s /opt/eclipse/eclipse /usr/local/bin/
 
 # edit eclipse.ini
 # add the following lines
