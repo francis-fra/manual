@@ -333,7 +333,7 @@ else:
 #-------------------------------------------------------------------
 # install Tensorflow
 #-------------------------------------------------------------------
-# isntall dependencies
+# install dependencies
 sudo apt-get install libcupti-dev
 
 # need pip version 8.1 or later

@@ -222,12 +222,25 @@ pip3 install numpy scipy matplotlib pandas sympy nose scikit-learn --user
 
 # Open ai gym
 sudo apt-get install -y python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
+pip3 install gym
+pip3 install gym[atari]
 
 # install python3 libraries
 pip install csvkit
 pip install bokeh
 pip install autograd
 
+# spacy installation
+# download the gz file first
+pip3 install en_core_web_sm-1.2.0.tar.gz --user
+# link the model as en
+python3 -m spacy link en_core_web_sm en
+# other models:
+python3 -m spacy link en_core_web_md en_default
+
+
+# tkinter
+sudo apt-get install python3-tk
 
 --------------------------------------------------------------------
 Jupyter
@@ -413,19 +426,56 @@ hc = H2OContext.getOrCreate(spark)
 --------------------------------------------------------------------
 # mariaDB
 --------------------------------------------------------------------
-sudo apt-get install software-properties-common
-#sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
-#sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://mariadb.melbourneitmirror.net/repo/10.2/debian jessie main'
-
+sudo apt-get install software-properties-common dirmngr
 sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8
-sudo add-apt-repository 'deb [arch=amd64] http://mariadb.melbourneitmirror.net/repo/10.2/debian stretch main'
+sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://mirror.aarnet.edu.au/pub/MariaDB/repo/10.2/debian stretch main'
 
 sudo apt-get update
-sudo apt-get install mariadb-server mariadb-client
+sudo apt-get install mariadb-server
+sudo apt-get install mariadb-client
 
 # to verify
 mysql -V
 mysql -u root -p
+
+--------------------------------------------------------------------
+# mysql
+--------------------------------------------------------------------
+# export databases
+mysqldump -p -u fra dbname > dump.sql
+
+# install mysql
+# to check host name
+hostname
+
+# setup and import database
+sudo apt-get update
+sudo apt-get install mysql-server
+# sudo mysql_secure_installation
+# sudo mysql_install_db
+
+# to check if mysql is running
+sudo netstat -tap | grep mysql
+
+# to check the version
+mysql --version
+
+# create new user
+CREATE USER 'fra'@'localhost' IDENTIFIED BY 'password';
+
+# create database to restore
+create database testdb;
+create database stockdatadb;
+
+# grant privileges
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON testdb.* TO 'fra'@'localhost';
+GRANT SELECT, INSERT, UPDATE, EXECUTE ON stockdatadb.* TO 'fra'@'localhost';
+
+# restore database
+mysql -u root -p [database_name] < [file_name].sql
+mysql -u root -p stockdatadb < stockdatadb.sql
+mysql -u root -p testdb < testdb.sql
+
 
 --------------------------------------------------------------------
 # sql workbench
@@ -438,7 +488,7 @@ sudo ln -s <source_folder>/sqlworkbench.sh /usr/local/bin
 
 # JDBC driver
 # Download JDBC driver from MySql site
-# move the jar file to JAVA CLAAPATH
+# move the jar file to JAVA CLASSPATH
 
 # set up connection profile
 URL: jdbc:mysql://localhost
@@ -843,6 +893,40 @@ sudo mv idea-IC-171.4694.23/ /opt
 sudo ln -s /opt/idea-IC-171.4694.23/ /opt/idea
 sudo ln -s /opt/idea/bin/idea.sh /usr/local/bin
 
+--------------------------------------------------------------------
+DL4J project
+--------------------------------------------------------------------
+# create new project (Maven)
+# choose achetype: quick start
+
+# Download looging library from:
+https://www.slf4j.org/index.html
+
+# copy these jar 
+-- slf4j-log4j12-1.7.25.jar
+-- slf4j-jdk14-1.7.25.jar
+to /usr/local/lib/java
+
+--------------------------------------------------------------------
+# Mahout
+--------------------------------------------------------------------
+# git clone from source
+
+
+# edit .bashrc
+# Mahout
+export MAHOUT_HOME=/home/fra/Project/javaProj/mahout
+export MAHOUT_LOCAL=true
+
+# to build
+mvn -DskipTest clean install
+
+# to test
+mvn test
+
+# to set up IDE
+mvn eclipse:eclipse
+mvn idea:idea
 
 --------------------------------------------------------------------
 # Haskell
@@ -904,3 +988,82 @@ bin/zkServer.sh start
 # to check (are you ok)
 telnet localhost 2181
 ruok
+
+--------------------------------------------------------------------
+# Deep learning
+--------------------------------------------------------------------
+# theano
+sudo apt-get install python-dev python3-nose g++ libopenblas-dev git
+pip3 install nose2 nose-parameterized --user
+pip3 install Theano --user
+
+# tensor flow (gpu only)
+sudo apt-get install libcupti-dev
+
+# need pip version 8.1 or later
+pip3 install tensorflow
+#pip install tensorflow-gpu
+
+$ import tensorflow as tf
+$ sess = tf.InteractiveSession()
+$ sess.close()
+
+$ a = tf.constant(10)
+$ b = tf.constant(32)
+$ print(sess.run(a + b))
+
+# Keras
+pip3 install keras --user
+
+# CNTK
+sudo apt-get install openmpi-bin
+
+# install
+pip3 install https://cntk.ai/PythonWheel/CPU-Only/cntk-2.2-cp35-cp35m-linux_x86_64.whl --user
+
+
+--------------------------------------------------------------------
+# Text Mining
+--------------------------------------------------------------------
+sudo apt-get install opencc
+pip3 install jieba --user
+
+# Code location:
+/home/fra/FraDir/learn/Learnpy/Mypy/text_mining/text_training
+
+# train chinese wiki:
+
+# 1. extract text fro bzip file
+python3 process_wiki.py <bz2 file> wiki.zh.text
+
+# 2. convert traditional to simplified chinese
+opencc -i wiki.zh.text -o wiki_cn_text.txt -c t2s.json
+
+# 3. remove ascii (english) text
+python3 clean_assii.py < wiki_cn_text.txt > wiki_cn_clean.txt
+
+# 4. segment sentences
+python -m jieba wiki_cn_clean.txt > wiki_cn_clean_seg.txt -d ' '
+
+# 5. train word2vec model
+python train_word2vec_model.py wiki_cn_clean_seg.txt wiki_cn.model wiki_cn_text.vector
+
+# train japanese wiki:
+
+# mecab for japanese segment
+sudo apt-get install mecab libmecab-dev mecab-ipadic
+sudo apt-get install mecab-ipadic-utf8
+pip3 install mecab-python3 --user
+
+# 1. extract text from bzip file
+python process_wiki.py jawiki-latest-pages-articles.xml.bz2 wiki.ja.text
+
+# 2. remove ascii text??
+python3 clean_ascii.py < wiki_ja_text.txt > wiki_ja_clean.txt
+
+# 3. segment text
+mecab -O wakati wiki_ja_clean.txt -o wiki_ja_seg.txt -b 10000000
+
+# 4. train word2vec model
+# need: intput:- segment words output:- model output and vector output
+python3 train_word2vec.py wiki_ja_seg.txt wiki_ja_text.model wiki_ja_text.vector

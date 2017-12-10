@@ -400,7 +400,7 @@ winecfg
 --------------------------------------------------------------------
 # mariaDB
 --------------------------------------------------------------------
-sudo apt-get install software-properties-common
+sudo apt-get install software-properties-common dirmngr
 #sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
 #sudo add-apt-repository 'deb [arch=amd64,i386,ppc64el] http://mariadb.melbourneitmirror.net/repo/10.2/debian jessie main'
 
@@ -717,6 +717,8 @@ jupyter kernelspec list
 # to add additional kernel along with python3 (if missing)
 python2 -m pip install ipykernel
 python2 -m ipykernel install --user
+
+# edit /.local/share/jupyter/kernels/python2/kernel.json if necessary
 
 
 # Add R kernel for jupyter

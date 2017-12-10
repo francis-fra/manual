@@ -53,6 +53,15 @@ java com.operators.Precedence
 # to create html documentation
 Usage: javadoc [options] [packagenames] [sourcefiles] [@files]
 
+--------------------------------------------------------------------
+# introcs
+--------------------------------------------------------------------
+# with classpath set in .bashrc
+# run at /home/fra/FraDir/learn/introcs/src
+# Newton.java is part of the package introcs
+javac introcs/Newton.java
+java introcs.Newton 
+
 
 --------------------------------------------------------------------
 # JAR package
