@@ -178,12 +178,21 @@ sudo cp /usr/local/spark/conf/slaves.template /usr/local/spark/conf/slaves
 # calculate Pi
 /usr/lib/spark/run-example org.spache.spark.examples.SparkPi
 
+#----------------------------------------------------------------
+# Spark daemon
+#----------------------------------------------------------------
+# edit sbin/spark-daemon.sh
+replace ssh with ssh -p 2882
 
+# edit sbin/load-spark-env.sh
+export SPARK_SSH_OPTS="-p 2882"
 
+# start spark 
+sbin/start-all.sh
+sbin/stop-all.sh
 
-
-
-
+# web UI
+http://localhost:8080/
 
 
 

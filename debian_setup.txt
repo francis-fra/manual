@@ -375,6 +375,14 @@ sudo apt-get install splint
 --------------------------------------------------------------------
 # h2o
 --------------------------------------------------------------------
+# download and extract tar ball
+
+cd <h20 folder>
+java -jar h2o.jar
+
+--------------------------------------------------------------------
+# h2o - python
+--------------------------------------------------------------------
 # prerequisite
 pip3 install requests
 pip3 install tabulate
@@ -382,8 +390,8 @@ pip3 install scikit-learn
 pip3 install colorama
 pip3 install future
 
-pip uninstall h2o
-sudo pip3 install h2o
+pip3 uninstall h2o
+pip3 install h2o
 
 # pip install
 pip3 install http://h2o-release.s3.amazonaws.com/h2o/rel-weierstrass/3/Python/h2o-3.14.0.3-py2.py3-none-any.whl
@@ -414,13 +422,30 @@ export PATH=$PATH:/usr/local/sparkling-water/bin
 # pysparking
 --------------------------------------------------------------------
 # for spark version 2.2:
-pip install h2o_pysparkling_2.2
+pip install h2o_pysparkling_2.2 --user
 
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.appName("SparklingWaterApp").getOrCreate()
 
 from pysparkling import *
 hc = H2OContext.getOrCreate(spark)
+
+--------------------------------------------------------------------
+# Steam
+--------------------------------------------------------------------
+# download and extract steam tar balls
+
+sudo mv steam-1.1.6-linux-amd64 /usr/local
+
+# start jetty server
+cd <steam_folder>
+java -jar var/master/assets/jetty-runner.jar var/master/assets/ROOT.war
+
+# run steam
+./steam serve master --admin-name=admin --admin-password=admin
+
+# web UI
+localhost:9000
 
 
 --------------------------------------------------------------------
@@ -476,6 +501,25 @@ mysql -u root -p [database_name] < [file_name].sql
 mysql -u root -p stockdatadb < stockdatadb.sql
 mysql -u root -p testdb < testdb.sql
 
+# give all privileges
+GRANT ALL PRIVILEGES ON * . * TO 'fra'@'localhost';
+
+# show privileges
+show grants;
+
+# show schema
+describe schema.tablename
+
+--------------------------------------------------------------------
+# import csv file
+--------------------------------------------------------------------
+# create table schema
+csvsql abalone.csv > maketable.sql
+
+# type inside mysql cli
+LOAD DATA LOCAL INFILE 'abalone.csv' INTO TABLE abalone
+COLUMNS TERMINATED BY ',' LINES TERMINATED BY '\n' IGNORE 1 LINES ;
+
 
 --------------------------------------------------------------------
 # sql workbench
@@ -495,6 +539,128 @@ URL: jdbc:mysql://localhost
 
 # python connection package
 pip install pymysql --user
+
+--------------------------------------------------------------------
+# sqlite3
+--------------------------------------------------------------------
+sqlite3 <filename>
+
+# show all tables
+.tables
+
+# import csv
+.mode csv
+.import <filename> <tablename>
+
+--------------------------------------------------------------------
+# PostgreSQL
+--------------------------------------------------------------------
+# edit /etc/apt/sources.list.d/pgdg.list
+# add this line:
+deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
+
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt-get update 
+
+apt-get install postgresql-9.6
+
+# check server
+ps -ef | grep postgre
+
+# allow local connections:
+# edit /etc/postgresql/X.Y/main/pg_hba.conf
+
+# change thel local socket connection line as:
+# (encrypted password)
+local   all  all    md5
+# or (not password needed)
+local   all  all    trust
+
+# reload postgres
+/etc/init.d/postgresql reload
+
+--------------------------------------------------------------------
+# login as user postgres:
+sudo -u postgres bash
+
+# login as postgres and start psql client
+sudo -u postgres psql postgres
+
+# start postgres client
+# default database is the same as username
+psql
+psql -U <username> -d <database>
+
+# list all users:
+<user>=# \du
+
+# set user password
+<user>=# \password <user>
+
+--------------------------------------------------------------------
+# create user login (at bash)
+createuser --interactive fra
+# create new user with password
+createuser -P fra
+# alternatively,
+postgres=# CREATE USER yourname WITH SUPERUSER PASSWORD 'yourpassword';
+
+# create new database
+createdb ucidb
+
+# grant permission to create db
+<user>=# ALTER USE <user> CREATEDB;
+
+# commands:
+# list all tables
+\dt
+# connect to database <db>
+\c db
+# show schema
+\d+ <tablename>
+
+
+--------------------------------------------------------------------
+# import csv file
+--------------------------------------------------------------------
+# create table schema
+csvsql abalone.csv > maketable.sql
+psql -d <dbname> < maketable.sql
+
+# type inside cli
+\copy <table name> FROM <csv file> csv header;
+
+--------------------------------------------------------------------
+# Docker
+--------------------------------------------------------------------
+sudo apt-get remove docker docker-engine docker.io
+
+# pre-requisite
+sudo apt-get install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+
+# add official GPG key:
+curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo apt-key add -
+
+# set up the stable repository
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") $(lsb_release -cs) stable"
+
+# update repository
+sudo apt-get update
+
+sudo apt-get install docker-ce
+
+# verfiy installation
+sudo docker version
+sudo docker -D info
+sudo docker run hello-world
+
+--------------------------------------------------------------------
+# TODO: Download docker image
+--------------------------------------------------------------------
+sudo docker pull <image>, e.g. sudo docker pull busybox
+
+# to run
+sudo docker run busybox echo "hello"
 
 
 
@@ -912,11 +1078,14 @@ to /usr/local/lib/java
 --------------------------------------------------------------------
 # git clone from source
 
-
 # edit .bashrc
 # Mahout
 export MAHOUT_HOME=/home/fra/Project/javaProj/mahout
 export MAHOUT_LOCAL=true
+
+export MASTER=local[*]
+# to point to a cluster with spark running
+export MASTER=spark://localhost:7077
 
 # to build
 mvn -DskipTest clean install
@@ -924,9 +1093,14 @@ mvn -DskipTest clean install
 # to test
 mvn test
 
-# to set up IDE
+# to set up IDE for each project
+# create a POM file, then
 mvn eclipse:eclipse
 mvn idea:idea
+
+# run mahout's spark shell
+mahout spark-shell
+
 
 --------------------------------------------------------------------
 # Haskell

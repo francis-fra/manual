@@ -315,6 +315,10 @@ jps
 #-----------------------------------------------------------------
 # troubleshoot
 #-----------------------------------------------------------------
+# to find out config value
+hdfs getconf -confKey fs.defaultFS
+# hdfs://localhost:9000
+
 netstat -plten | grep java
 
 # to check if port is opened
