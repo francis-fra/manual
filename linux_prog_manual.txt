@@ -1,7 +1,83 @@
 #------------------------------------------------------------
 # Postgresql
 #------------------------------------------------------------
+# login as user postgres:
+sudo -u postgres bash
 
+# login as postgres and start psql client
+sudo -u postgres psql postgres
+
+# start postgres client
+# default database is the same as username
+psql
+psql -U <username> -d <database>
+
+#--------------------------------------------------------------------
+# admin
+#--------------------------------------------------------------------
+# create user login (at bash)
+createuser --interactive fra
+
+# create new user with password
+createuser -P fra
+# alternatively,
+postgres=# CREATE USER yourname WITH SUPERUSER PASSWORD 'yourpassword';
+
+# create new database
+createdb ucidb
+# alternatively,
+<user>=# CREATE DATABASE <dbname> WITH OWNER = <ownerName>;
+
+# grant permission to create db
+<user>=# ALTER USE <user> CREATEDB;
+# grant permission
+<user>=# GRANT <privilege> TO <user>;
+
+#--------------------------------------------------------------------
+# commands:
+#--------------------------------------------------------------------
+# list all tables
+\dt
+# connect to database <db>
+\c db
+# show schema
+\d+ <tablename>
+
+# list all users:
+<user>=# \du
+
+# set user password
+<user>=# \password <user>
+
+# run query at terminal, e.g.
+psql -d ucidb -c "select * from abalone limit 10"
+
+
+--------------------------------------------------------------------
+# import csv file to postgressql database
+--------------------------------------------------------------------
+# create table schema
+csvsql abalone.csv > maketable.sql
+psql -d <dbname> < maketable.sql
+
+# load data (type inside cli)
+\copy <table name> FROM <csv file>  CSV HEADER;
+
+# export table to
+\copy customers TO '/tmp/customers.csv' CSV HEADER;
+
+--------------------------------------------------------------------
+# extension
+--------------------------------------------------------------------
+SELECT name, default_version, installed_version, left(comment,30) As comment
+FROM pg_available_extensions
+WHERE installed_version IS NOT NULL
+ORDER BY name;
+
+# to install extension:
+# download extension file, then
+CREATE EXTENSION <extension>, e.g:
+CREATE EXTENSION fuzzystrmatch;
 
 
 #------------------------------------------------------------

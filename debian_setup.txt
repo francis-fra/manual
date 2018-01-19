@@ -242,6 +242,10 @@ python3 -m spacy link en_core_web_md en_default
 # tkinter
 sudo apt-get install python3-tk
 
+# high numerical precision
+sudo apt-get install libmpfr-dev
+pip3 install bigfloat --user
+
 --------------------------------------------------------------------
 Jupyter
 --------------------------------------------------------------------
@@ -289,6 +293,7 @@ sudo chmod o+w -R /usr/lib/R/library
 sudo apt-get install libcurl4-openssl-dev
 sudo apt-get install libxml2-dev
 sudo apt-get install libssl-dev
+sudo apt-get install libnlopt-dev
 
 --------------------------------------------------------------------
 eclipse
@@ -352,6 +357,32 @@ Atom
 sudo dpkg -i atom-amd64.deb
 # Install Atom's dependencies if they are missing
 sudo apt-get -f install
+
+--------------------------------------------------------------------
+Virtual Box
+--------------------------------------------------------------------
+# add to /etc/apt/sources.list
+deb https://download.virtualbox.org/virtualbox/debian stretch contrib
+
+# download public key from web page
+
+# add these keys with:
+sudo apt-key add oracle_vbox_2016.asc
+
+# install:
+sudo apt-get update
+sudo apt-get install virtualbox-5.2
+
+sudo apt-get install dkms
+
+
+--------------------------------------------------------------------
+Vagrant
+--------------------------------------------------------------------
+sudo dpkg -i xxx.deb
+sudo apt-get update
+sudo apt-get install vagrant
+
 
 --------------------------------------------------------------------
 key applications
@@ -578,57 +609,6 @@ local   all  all    trust
 
 # reload postgres
 /etc/init.d/postgresql reload
-
---------------------------------------------------------------------
-# login as user postgres:
-sudo -u postgres bash
-
-# login as postgres and start psql client
-sudo -u postgres psql postgres
-
-# start postgres client
-# default database is the same as username
-psql
-psql -U <username> -d <database>
-
-# list all users:
-<user>=# \du
-
-# set user password
-<user>=# \password <user>
-
---------------------------------------------------------------------
-# create user login (at bash)
-createuser --interactive fra
-# create new user with password
-createuser -P fra
-# alternatively,
-postgres=# CREATE USER yourname WITH SUPERUSER PASSWORD 'yourpassword';
-
-# create new database
-createdb ucidb
-
-# grant permission to create db
-<user>=# ALTER USE <user> CREATEDB;
-
-# commands:
-# list all tables
-\dt
-# connect to database <db>
-\c db
-# show schema
-\d+ <tablename>
-
-
---------------------------------------------------------------------
-# import csv file
---------------------------------------------------------------------
-# create table schema
-csvsql abalone.csv > maketable.sql
-psql -d <dbname> < maketable.sql
-
-# type inside cli
-\copy <table name> FROM <csv file> csv header;
 
 --------------------------------------------------------------------
 # Docker
