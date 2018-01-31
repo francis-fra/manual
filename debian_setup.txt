@@ -274,6 +274,32 @@ sudo apt-get install libssl-dev
 jupyter notebook
 
 --------------------------------------------------------------------
+Toree
+--------------------------------------------------------------------
+pip3 install <toree URL> --user
+
+# toree URL (example):
+https://dist.apache.org/repos/dist/dev/incubator/toree/0.2.0/snapshots/dev1/toree-pip/toree-0.2.0.dev1.tar.gz
+
+# change write permission if jupyter is installed in global:
+sudo chmod -R o+w /usr/local/share/jupyter
+
+# user location:
+~/.local/share/jupyter/kernels/
+
+# install toree
+jupyter toree install --spark_home=$SPARK_HOME --user
+
+--------------------------------------------------------------------
+jupyter scala
+--------------------------------------------------------------------
+git clone https://github.com/jupyter-scala/jupyter-scala
+
+# edit & run scipt:
+# SCALA_VERSION=2.12.2
+./jupyter-scala
+
+--------------------------------------------------------------------
 R
 --------------------------------------------------------------------
 sudo apt-get update
@@ -913,11 +939,45 @@ sudo dpkg -i scala-2.12.3.deb
 sudo apt-get update
 sudo apt-get install scala
 
+--------------------------------------------------------------------
+sbt
+--------------------------------------------------------------------
 # sbt installation
 echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
 sudo apt-get update
 sudo apt-get install sbt
+
+--------------------------------------------------------------------
+# set up new project
+sbt new sbt/scala-seed.g8
+cd <project folder>
+# start sbt shell
+sbt
+# compile
+run
+# quit shell
+exit (Ctrl-D)
+
+# build definition file:
+build.sbt
+
+--------------------------------------------------------------------
+# install breeze
+
+# edit build.sbt:
+
+organization := "com.example"
+name := "xxx"
+scalaVersion := "2.12.3"
+
+libraryDependencies ++= Seq(
+"org.scalanlp" %% "breeze" % "0.13.2",
+"org.scalanlp" %% "breeze-natives" % "0.13.2"
+)
+
+# pre-requisite
+sudo apt-get install libatlas3-base libopenblas-base
 
 
 #---------------------------------------------------------
@@ -957,8 +1017,8 @@ cp spark-env.sh.template spark-env.sh
 
 # edit $SPARK_HOME/conf/spark-env.sh
 export SPARK_MASTER_IP=127.0.0.1 
-export SPARK_WORKER_CORES=1 
-export SPARK_WORKER_MEMORY=500mb 
+export SPARK_WORKER_CORES=2 
+export SPARK_WORKER_MEMORY=2g 
 export SPARK_WORKER_INSTANCES=2
 export SPARK_LOG_DIR=/var/log/spark
 export SPARK_PID_DIR=${SPARK_HOME}/run
@@ -975,6 +1035,45 @@ cp conf/log4j.properties.template conf/log4j.properties
 log4j.rootCategory=INFO, console
 # to this
 log4j.rootCategory=ERROR, console
+
+#---------------------------------------------------------
+# Starting spark
+#---------------------------------------------------------
+# start up
+# this must be started before runing spark-shell
+/opt/spark-latest/sbin/start-master.sh
+
+# You can monitor Spark using Web GUI
+localhost:4040/jobs
+localhost:8080
+
+#----------------------------------------------------------------
+# Spark daemon
+#----------------------------------------------------------------
+# edit sbin/spark-daemon.sh
+replace ssh with ssh -p 2882
+
+# optinal: edit sbin/load-spark-env.sh
+#export SPARK_SSH_OPTS="-p 2882"
+
+# start spark master
+sbin/start-all.sh
+
+# start slave
+sbin/start-slave.sh spark://localhost:7077
+
+# stop master
+sbin/stop-master.sh
+sbin/stop-slave.sh
+
+# start all
+sbin/start-all.sh
+
+# stop all
+sbin/stop-all.sh
+
+# web UI
+http://localhost:8080/
 
 
 --------------------------------------------------------------------
@@ -1004,9 +1103,9 @@ sudo ln -s /usr/local/sparkling-xxxx /usr/local/sparkling-water
 # change ownership
 sudo chown -R fra:hdgrp /usr/local/sparkling-water
 
-# run sparkling shell
-cd sparkling-water-2.2.0
+# run sparkling shell (spark daemon must be started)
 bin/sparkling-shell --conf "spark.executor.memory=1g"
+
 # example:
 import org.apache.spark.h2o._
 val h2oContext = H2OContext.getOrCreate(spark)
@@ -1109,8 +1208,13 @@ curl https://sh.rustup.rs -sSf | sh
 # bin files will be place at:
 $HOME/.cargo/bin
 
+# keep update
+rustup update
+rustup self update
 
-# 
+# check version
+rustc --version
+
 # to uninstall
 sudo /usr/local/lib/rustlib/uninstall.sh
 

@@ -33,7 +33,7 @@ bin/zkServer.sh stop
 
 
 #-------------------------------------------------------
-# FIXME: Hive
+# Hive
 #-------------------------------------------------------
 # download and extract binary
 
@@ -62,6 +62,9 @@ hadoop fs -mkdir /user/hive/warehouse
 hadoop fs -chmod g+w /tmp
 hadoop fs -chmod g+w /user/hive/warehouse
 
+#-------------------------------------------------------
+# hive-env.sh
+#-------------------------------------------------------
 # edit hive-env.sh (configure Hive)
 cd $HIVE_HOME/conf
 
@@ -70,45 +73,71 @@ sudo cp hive-env.sh.template hive-env.sh
 
 # add this line
 export HADOOP_HOME=/usr/local/hadoop
+export HADOOP_HEAPSIZE=512
 
 # multiple SLF4J: remove??
-#rm lib/log4j-slf4j-impl-2.4.1.jar
+#rm lib/log4j-slf4j-impl-*.jar
 
 # Hive CLI (deprecated)
 $HIVE_HOME/bin/hive
 
 # HiveServer2 and Beeline
+
+#-------------------------------------------------------
+# Install Derby
+#-------------------------------------------------------
+wget http://apache.mirror.digitalpacific.com.au//db/derby/db-derby-10.14.1.0/db-derby-10.14.1.0-bin.tar.gz
+sudo tar xvzf db-derby-10.14.1.0-bin.tar.gz -C /usr/local
+# create soft link
+sudo ln -s /usr/local/db-derby-xxx /usr/local/derby
+
+# edit .bashrc
+export DERBY_HOME=/usr/local/derby
+export PATH=$PATH:$DERBY_HOME/bin
+export CLASSPATH=$CLASSPATH:$DERBY_HOME/lib/derby.jar:$DERBY_HOME/lib/derbytools.jar
+
+# check derby status
+java org.apache.derby.tools.sysinfo
+# output:
+--------- Derby Information --------
+[/usr/local/db-derby-10.14.1.0-bin/lib/derby.jar] 10.14.1.0 - (1808820)
+[/usr/local/db-derby-10.14.1.0-bin/lib/derbytools.jar] 10.14.1.0 - (1808820)
+[/usr/local/apache-hive-2.3.2-bin/lib/derbynet-10.11.1.1.jar] 10.11.1.1 - (1616546)
+[/usr/local/apache-hive-2.3.2-bin/lib/derbyclient-10.11.1.1.jar] 10.11.1.1 - (1616546)
+[/usr/local/apache-hive-2.3.2-bin/lib/derby-10.10.2.0.jar] 10.10.2.0 - (1582446)
+------------------------------------------------------
+
+# create metastore data
+mdir $DERBY_HOME/data
+
 # set default database as Derby
 schematool -initSchema -dbType derby
+# output:
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/usr/local/apache-hive-2.3.2-bin/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/usr/local/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+Metastore connection URL:	 jdbc:derby:;databaseName=metastore_db;create=true
+Metastore Connection Driver :	 org.apache.derby.jdbc.EmbeddedDriver
+Metastore connection User:	 APP
+Starting metastore schema initialization to 2.3.0
+Initialization script hive-schema-2.3.0.derby.sql
+Initialization script completed
+schemaTool completed
 
 # if failed, run the following and try running schematool again
 mv metastore_db metastore_db.tmp
 
-# check derby status
-java org.apache.derby.tools.sysinfo
+# start up ij (interative SQL)
+java org.apache.derby.tools.ij
 
-# FIXME: to run HiveServer2
-hiveserver2
-or
-hive --service hiveserver2
-
-# start beeline
-beeline
-
+#-------------------------------------------------------
+# hive-site.xml
+#-------------------------------------------------------
 # inside $HIVE_HOME/conf
 sudo cp hive-default.xml.template hive-site.xml
 
-# check if hiveserver2 has been started
-sudo service hive-server2 status
-
-
-$ $HIVE_HOME/bin/hiveserver2
-$ $HIVE_HOME/bin/beeline -u jdbc:hive2://$HS2_HOST:$HS2_PORT/usr/lib
-
-
-#-------------------------------------------------------
-# optional
-#-------------------------------------------------------
 # make sure this is in the config file
 # edit config file: (hive-site.xml)
 
@@ -136,8 +165,45 @@ $ $HIVE_HOME/bin/beeline -u jdbc:hive2://$HS2_HOST:$HS2_PORT/usr/lib
     <description>Temporary local directory for added resources in the remote file system.</description>
   </property>
 
+# create a file named jpox.properties:
+
+javax.jdo.PersistenceManagerFactoryClass =
+
+org.jpox.PersistenceManagerFactoryImpl
+org.jpox.autoCreateSchema = false
+org.jpox.validateTables = false
+org.jpox.validateColumns = false
+org.jpox.validateConstraints = false
+org.jpox.storeManagerType = rdbms
+org.jpox.autoCreateSchema = true
+org.jpox.autoStartMechanismMode = checked
+org.jpox.transactionIsolation = read_committed
+javax.jdo.option.DetachAllOnCommit = true
+javax.jdo.option.NontransactionalRead = true
+javax.jdo.option.ConnectionDriverName = org.apache.derby.jdbc.ClientDriver
+javax.jdo.option.ConnectionURL = jdbc:derby://hadoop1:1527/metastore_db;create = true
+javax.jdo.option.ConnectionUserName = APP
+javax.jdo.option.ConnectionPassword = mine
+
 #-------------------------------------------------------
-# HIVE CLI
+# TODO: HiveServer
+#-------------------------------------------------------
+# FIXME: to run HiveServer2
+hiveserver2
+or
+hive --service hiveserver2
+
+# start beeline
+beeline
+
+# check if hiveserver2 has been started
+sudo service hive-server2 status
+
+$ $HIVE_HOME/bin/hiveserver2
+$ $HIVE_HOME/bin/beeline -u jdbc:hive2://$HS2_HOST:$HS2_PORT/usr/lib
+
+#-------------------------------------------------------
+# TODO: HIVE CLI
 #-------------------------------------------------------
 # FIXME: not responding??
 $HIVE_HOME/bin/hiveserver2
@@ -150,6 +216,13 @@ $HIVE_HOME/hcatalog/sbin/hcat_server.sh stop
 
 # FIXME: error
 $HIVE_HOME/hcatalog/bin/hcat
+
+# python database package
+pip3 install pyhive --user
+pip3 install psycopg2 --user
+pip3 install mysqlclient --user
+
+
 
 #-------------------------------------------------------
 # Druid
@@ -343,6 +416,9 @@ start-hbase.sh
 # check directory
 hdfs dfs -ls /hbase
 
+# must start zookeeper first
+zkServer.sh start
+
 # shell CLI
 hbase shell
 
@@ -398,7 +474,7 @@ echo "Hello, World" | ~/kafka/bin/kafka-console-producer.sh --broker-list localh
 sudo pip install kafka-python
 
 #-------------------------------------------------------
-# Cassandra
+# TODO: Cassandra
 #-------------------------------------------------------
 # install debian package
 # add repository
@@ -409,6 +485,7 @@ curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
 sudo apt-get update
 # add public key is there is an error
 sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
+
 # install
 sudo apt-get install cassandra
 
@@ -422,9 +499,13 @@ nodetool status
 
 
 #-------------------------------------------------------
-# Avro
+# TODO: Avro
 #-------------------------------------------------------
 
+
+#-------------------------------------------------------
+# TODO: Phoenix
+#-------------------------------------------------------
 
 
 

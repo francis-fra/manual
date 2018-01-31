@@ -1,4 +1,44 @@
 #------------------------------------------------------------
+# Hadoop / Map Reduce
+#------------------------------------------------------------
+# edit bashrc:
+export HADOOP_CLASSPATH=$JAVA_HOME/lib/tools.jar
+
+# to compile map reduce files
+hadoop com.sun.tools.javac.Main <java_src_files>
+
+# create jar file
+jar cf <output.jar> <compiled.class>
+
+# start hadoop
+start-dfs.sh
+start-yarn.sh
+
+# start spark daemon
+$SPARK_HOME/sbin/start-all.sh
+
+#------------------------------------------------------------
+# running wordcount on hadoop
+
+# compile
+hadoop com.sun.tools.javac.Main WordCount.java WordMapper.java SumReducer.java
+# pack into jar file
+jar cf wc.jar *.class
+# copy source file to hdfs
+hdfs dfs -copyFromLocal shakespeare.txt /user/fra/shakespeare.txt
+# submit map reduce job
+hadoop jar wc.jar WordCount shakespeare.txt wordcounts
+
+# python map reduce
+hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+  -input /user/fra/flights.csv \
+  -output average_delay \
+  -mapper mapper.py \
+  -reducer reducer.py \
+  -file mapper.py \
+  -file reducer.py
+
+#------------------------------------------------------------
 # Postgresql
 #------------------------------------------------------------
 # login as user postgres:
