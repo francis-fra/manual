@@ -39,6 +39,110 @@ hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
   -file reducer.py
 
 #------------------------------------------------------------
+# Emacs .emacs file
+#------------------------------------------------------------
+;; BASIC CUSTOMIZATION
+;; --------------------------------------
+
+(setq inhibit-startup-message t) ;; hide the startup message
+(global-linum-mode t) ;; enable line numbers globally
+(column-number-mode t) ;; show column numbers in the stats bar
+(require 'ido)
+(ido-mode t)
+
+; don't show the menu bar
+(menu-bar-mode nil)
+; don't show the tool bar
+(require 'tool-bar)
+(tool-bar-mode nil)
+
+; always use spaces, not tabs, when indenting
+(setq indent-tabs-mode nil)
+
+
+# highlight current line
+# download el file and save it to .emacs.d/hightlight-current-line
+
+; highlight the current line
+(require 'highlight-current-line)
+(global-hl-line-mode t)
+(setq highlight-current-line-globally t)
+(setq highlight-current-line-high-faces nil)
+(setq highlight-current-line-whole-line nil)
+(setq hl-line-face (quote highlight))
+
+# elpy
+# prerequisite
+pip3 install jedi flake8 autopep8 yapf rope importmagic --user
+
+# install script:
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/"))
+
+# at minibuf
+M-x package-refresh-contents
+M-x package-install RET elpy RET
+M-x package-install RET ein RET
+
+# edit .emacs
+(package-initialize)
+(elpy-enable)
+
+# set python3
+(setq python-shell-interpreter "python3"
+      python-shell-interpreter-args "-i")
+
+# to check elpy config
+(elpy-config)
+
+# install packages:
+(setq package-archives
+  '(("gnu" . "http://elpa.gnu.org/packages/")
+    ("marmalade" . "https://marmalade-repo.org/packages/")
+    ("melpa" . "http://melpa.milkbox.net/packages/")))
+
+;; ein
+(require 'ein)
+(require 'ein-loaddefs)
+(require 'ein-notebook)
+
+
+;; ESS
+# download and extract zip file
+(add-to-list 'load-path "/path/to/ESS/lisp/")
+(load "ess-site")
+
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+
+
+#------------------------------------------------------------
+# to start jupyter:
+M-x ein:jupyter-server-start
+# to stop:
+M-x ein:jupyter-server-stop
+
+
+
+
+#------------------------------------------------------------
+# Toree
+#------------------------------------------------------------
+# magic
+
+%AddJar file:///usr/local/lib/java/postgresql-42.2.1.jar
+
+#------------------------------------------------------------
+# jupyter-scala
+#------------------------------------------------------------
+# magic
+
+import $ivy.`com.typesafe.slick::slick:3.2.1`
+
+
+#------------------------------------------------------------
 # Postgresql
 #------------------------------------------------------------
 # login as user postgres:
@@ -48,9 +152,13 @@ sudo -u postgres bash
 sudo -u postgres psql postgres
 
 # start postgres client
-# default database is the same as username
+v# default database is the same as username
 psql
 psql -U <username> -d <database>
+
+# e.g.
+# psql -U fra -d ucidb
+
 
 #--------------------------------------------------------------------
 # admin
@@ -508,7 +616,15 @@ rbp : frame pointer
 rip : execution pointer
 rsp : stack pointer
 
+#---------------------------------------------------------------------
+# check port usage:
 
+netstat -tulpn | grep LISTEN
+
+# write to port
+nc -lk 9999
+
+cat data.txt | ncat -l -p 9999
 
 #---------------------------------------------------------------------
 # check intstruction (5 lines) at register rip
@@ -644,3 +760,300 @@ Ctrl-ALt_Shift-S
 # Modules -> Dependencies
 # add external libraries here
 
+--------------------------------------------------------------------
+Intellij scala / spark project setup
+--------------------------------------------------------------------
+# create new scala project (sbt)
+
+# project structure:
+
+-- files *.sc are scala worksheet files
+
+-- plugins.sbt
+# example: sbt-assembly
+   addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.6")
+
+
+-- build.sbt
+# example: spark dependencies
+
+name := "LearnSpark"
+
+version := "0.1"
+
+#scalaVersion := "2.12.3"
+scalaVersion := "2.11.8"
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" % "spark-core_2.11" % "2.2.0",
+  "org.apache.spark" % "spark-sql_2.11" % "2.2.0"
+)
+
+# to import dependencies
+proejct structure -> Module -> Dependencies
+
+# turn off run workshet inthe compiler process
+@ Settings -> languages / Frameworks -> scala worksheet
+
+# send command to scala console
+# Ctrl-Shift-X
+
+--------------------------------------------------------------------
+Simple sbt / spark project
+--------------------------------------------------------------------
+# to create project structure:
+sbt
+
+./build.sbt
+./src
+./src/main
+./src/main/scala
+
+# create source file: SimpleApp.scala
+./src/main/scala/SimpleApp.scala
+
+/* SimpleApp.scala */
+import org.apache.spark.sql.SparkSession
+
+object SimpleApp {
+  def main(args: Array[String]) {
+    val logFile = "YOUR_SPARK_HOME/README.md" // Should be some file on your system
+    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
+    val logData = spark.read.textFile(logFile).cache()
+    val numAs = logData.filter(line => line.contains("a")).count()
+    val numBs = logData.filter(line => line.contains("b")).count()
+    println(s"Lines with a: $numAs, Lines with b: $numBs")
+    spark.stop()
+  }
+}
+
+# edit build.sbt
+name := "Simple Project"
+version := "1.0"
+scalaVersion := "2.11.8"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.2.0"
+
+
+# sbt version:
+project/build.properties
+sbt.version=1.1.0
+#sbt.version=0.13.16
+
+
+# to package jars
+# change directory to the project level
+sbt package
+
+# spark-submit to run:
+spark-submit --class "SimpleApp" --master local[4] target/scala-2.11/simple-project_2.11-1.0.jar 
+
+--------------------------------------------------------------------
+# SBT: set up new project
+--------------------------------------------------------------------
+# Hello world template
+sbt new sbt/scala-seed.g8
+cd <project folder>
+
+# start sbt shell
+sbt
+# compile / package / run
+sbt [compile|package|run]
+
+# quit shell
+exit (Ctrl-D)
+
+# build definition file:
+build.sbt
+
+--------------------------------------------------------------------
+# SBT: spark project with giter8
+--------------------------------------------------------------------
+# giter8 can be called from sbt, e.g.
+sbt new eed3si9n/hello.g8
+
+# g8 spark Project Template
+sbt new holdenk/sparkProjectTemplate.g8
+
+# update:
+-- ./project/plugins.sbt
+-- ./project/build.properties
+-- build.sbt
+
+# testing
+sbt "run inputFile.txt outputFile.txt"
+# submit command:
+spark-submit \
+  --class com.example.sparkgiter.CountingLocalApp \
+  ./target/scala-2.11/sparkgiter_2.11-0.0.1.jar \
+  ./alice_wonderland.txt ./output  
+
+--------------------------------------------------------------------
+# sbt + spark log4j
+--------------------------------------------------------------------
+# create src/main/resources
+# copy log4j.properties to this folder
+
+# add this line in build.sbt
+javaOptions in run ++= Seq("-Dlog4j.configuration=log4j.properties")
+
+# log4j control in code:
+import org.apache.log4j.{Level, Logger, LogManager}
+LogManager.getRootLogger.setLevel(Level.OFF)
+
+# alternatively,
+val rootLogger = Logger.getRootLogger()
+rootLogger.setLevel(Level.ERROR)
+LogManager.getRootLogger.setLevel(Level.OFF)
+
+  
+--------------------------------------------------------------------
+# Scala deployment
+--------------------------------------------------------------------
+# to show multiple main classes
+sbt 
+show discoveredMainClasses
+
+# package jars 
+sbt package
+
+# list
+jar tvf target/scala-2.10/basic_2.10-1.0.jar
+
+# run by scala
+scala target/scala-2.10/basic_2.10-1.0.jar
+
+# for java to run
+java -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:target/scala-2.10/basic_2.10-1.0.jar" foo.bar.baz.Main
+
+# assemble all jar
+sbt assembly
+
+--------------------------------------------------------------------
+# Scala jupyter notebook
+--------------------------------------------------------------------
+# Toree: import jar files
+%AddJar file:///usr/local/lib/java/mysql-connector-java-5.1.42-bin.jar
+
+# jupyter-scala: add library dependencies
+import $ivy.`org.scalanlp::breeze:0.13.2`
+
+
+--------------------------------------------------------------------
+# Project status:
+--------------------------------------------------------------------
+ideaProj:
+
+-- scalaTest
+scalaVersion: 2.11.8
+sbt version : 0.13.16
+OK  	    : Yes
+spark	    : Yes
+setup	    : Intellij
+
+build.sbt:
+libraryDependencies ++= Seq(
+  "org.apache.spark" %% "spark-core" % "2.2.0" % "provided",
+  "org.apache.spark" %% "spark-streaming" % "2.2.0" % "provided",
+  "org.apache.spark" %% "spark-sql" % "2.2.0" % "provided"
+)
+
+plugins.sbt:
+addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
+resolvers += "sonatype-releases" at "https://oss.sonatype.org/content/repositories/releases/"
+resolvers += "Spark Package Main Repo" at "https://dl.bintray.com/spark-packages/maven"
+addSbtPlugin("org.spark-packages" % "sbt-spark-package" % "0.2.6")
+addSbtPlugin("com.jsuereth" % "sbt-pgp" % "1.1.0")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
+
+
+
+-- LearnSpark
+scalaVersion: 2.11.8
+sbt version : 0.13.16
+OK  	    : No
+spark	    : Yes
+setup	    : Intellij
+error	    :
+
+
+
+sparkProj:
+-- hello
+scalaVersion: 2.12.3
+sbt version : 1.1.0
+OK  	    : Yes
+spark	    : No
+setup	    : sbt project
+error	    :
+
+-- simple/simpleapp
+scalaVersion: 2.11.8
+sbt version : 1.0.2
+OK  	    : No
+spark	    : Yes
+setup	    : sbt project
+error	    : org.apache.spark.SparkException: A master URL must be set in your configuration
+
+
+-- sparksbt/spark-pika
+scalaVersion: 2.11.8
+sbt version : 0.13.16
+OK  	    : No
+spark	    : Yes
+setup	    : github download
+error	    : java.lang.NoClassDefFoundError: org/apache/spark/SparkConf
+run	    : sbt "run alice_wonderland.txt output"
+
+
+-- sparksbt/spark-daria
+scalaVersion: 
+sbt version : 
+OK  	    : 
+spark	    : 
+setup	    : 
+error	    : 
+
+
+
+-- sparksbt/spark-git
+scalaVersion: 2.11.8
+sbt version : 0.13.16
+OK  	    : Yes
+spark	    : Yes
+setup	    : giter8
+error	    : 
+run	    : sbt "run alice_wonderland.txt output"
+
+
+
+-- standalone/first
+scalaVersion: 2.11.8
+sbt version : 0.13.16
+OK  	    : Yes
+spark	    : Yes
+setup	    : sbt project
+
+# to compile:
+sbt clean package
+# submit command:
+spark-submit \
+  --class example.first \
+  ./target/scala-2.11/hello_2.11-0.1.0-SNAPSHOT.jar
+
+
+-- standalone/mini-complete-example
+scalaVersion: 2.11.8
+sbt version : 0.13.16
+OK  	    : Yes
+spark	    : Yes
+setup	    : learn spark download
+error	    : 
+run	    : sbt "run alice_wonderland.txt output"
+
+# submit command:
+spark-submit \
+  --class com.oreilly.learningsparkexamples.mini.scala.WordCount \
+  ./target/scala-2.11/learning-spark-mini-example_2.11-0.0.1.jar \
+  ./alice_wonderland.txt ./output
+  

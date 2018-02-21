@@ -50,6 +50,8 @@ export PATH=$PATH:$HIVE_HOME/bin
 
 export CLASSPATH=$CLASSPATH:/usr/local/hadoop/lib/*:.
 export CLASSPATH=$CLASSPATH:/usr/local/hive/lib/*:.
+# for spark / hive connectivity
+export CLASSPATH=$CLASSPATH:/usr/local/hive/conf/*:.
 
 # start Hadoop
 sbin/start-dfs.sh
@@ -81,7 +83,7 @@ export HADOOP_HEAPSIZE=512
 # Hive CLI (deprecated)
 $HIVE_HOME/bin/hive
 
-# HiveServer2 and Beeline
+# FIXME: HiveServer2 and Beeline
 
 #-------------------------------------------------------
 # Install Derby
@@ -135,6 +137,9 @@ java org.apache.derby.tools.ij
 #-------------------------------------------------------
 # hive-site.xml
 #-------------------------------------------------------
+# create local database location
+mkdir /home/fra/bdw
+
 # inside $HIVE_HOME/conf
 sudo cp hive-default.xml.template hive-site.xml
 
@@ -143,19 +148,12 @@ sudo cp hive-default.xml.template hive-site.xml
 
  <property>
     <name>javax.jdo.option.ConnectionURL</name>
-    <value>jdbc:derby:;databaseName=metastore_db;create=true</value>
+    <value>jdbc:derby:;databaseName=/home/fra/bdw/metastore_db;create=true</value>
     <description>
       JDBC connect string for a JDBC metastore.
       To use SSL to encrypt/authenticate the connection, provide database-specific SSL flag in the connection URL.
       For example, jdbc:postgresql://myhost/db?ssl=true for postgres database.
     </description>
-  </property>
-
-  <property>
-    <name>hive.exec.local.scratchdir</name>
-    <!-- <value>${system:java.io.tmpdir}/${system:user.name}</value> -->
-    <value>/tmp/${system:user.name}</value>
-    <description>Local scratch space for Hive jobs</description>
   </property>
   
   <property>
@@ -164,6 +162,15 @@ sudo cp hive-default.xml.template hive-site.xml
     <value>/tmp/${hive.session.id}_resources</value>
     <description>Temporary local directory for added resources in the remote file system.</description>
   </property>
+
+  <property>
+    <name>hive.exec.local.scratchdir</name>
+    <!-- <value>${system:java.io.tmpdir}/${system:user.name}</value> -->
+    <!-- <value>/tmp/${system:user.name}</value> -->
+    <value>/tmp/fra</value>
+    <description>Local scratch space for Hive jobs</description>
+  </property>
+
 
 # create a file named jpox.properties:
 
@@ -186,24 +193,24 @@ javax.jdo.option.ConnectionUserName = APP
 javax.jdo.option.ConnectionPassword = mine
 
 #-------------------------------------------------------
-# TODO: HiveServer
+# FIXME: HiveServer
 #-------------------------------------------------------
 # FIXME: to run HiveServer2
 hiveserver2
 or
 hive --service hiveserver2
+# check
+nestat -nl | grep 10000
 
 # start beeline
 beeline
 
-# check if hiveserver2 has been started
+# check if hiveserver2 has been started (nothing)
 sudo service hive-server2 status
 
 $ $HIVE_HOME/bin/hiveserver2
 $ $HIVE_HOME/bin/beeline -u jdbc:hive2://$HS2_HOST:$HS2_PORT/usr/lib
 
-#-------------------------------------------------------
-# TODO: HIVE CLI
 #-------------------------------------------------------
 # FIXME: not responding??
 $HIVE_HOME/bin/hiveserver2
@@ -293,6 +300,16 @@ superset init
 
 # Start the web server on port 8088, use -p to bind to another port
 superset runserver -p 8099
+
+# add databases:
+# postgresql
+postgresql+psycopg2://username@/db
+
+# mysql
+mysql://username:password@localhost
+
+# postgresql config: /etc/postgresql/9.6/main//pg_hba.conf
+
 
 #-------------------------------------------------------
 # Metabase
@@ -547,10 +564,74 @@ sudo chown -R fra:hdgrp /usr/local/zeppelin
 # to start
 sudo bin/zeppelin-daemon.sh start
 
-# link:
-http://localhost:8080/
+# edit server port in conf/zeppelin-site.xml
+# default port is 8080, but it is same as spark
+<property>
+  <name>zeppelin.server.port</name>
+  <value>9001</value>
+  <description>Server port.</description>
+</property>
 
-# start with a service manager
+# link:
+http://localhost:9001/
+
+# start
+bin/zeppelin-daemon.sh start
+
+# stop 
+bin/zeppelin-daemon.sh start
+
+#---------------------------------------------------------------
+# list all interpreters:
+./bin/install-interpreter.sh --list
+
+# install interpreters:
+sudo ./bin/install-interpreter.sh --name shell,python
+
+# user login:
+# edit conf/shiro.ini for login/password
+cp conf/shiro.ini.template shiro.ini
+
+# make sure this line is commented to prevent anonymous login
+#/** = anon
+
+# login and passwords are listed in [users] section
+# default:
+admin = password1, admin
+user1 = password2, role1, role2
+user2 = password3, role3
+user3 = password4, role2
+
+#---------------------------------------------------------------
+# FIXME: jars conflict issue
+#---------------------------------------------------------------
+# if daemon start failed, check the ./log folder:
+org.eclipse.jetty.util.resource.Resource.getAlias()Ljava/net/URL;
+java.lang.NoSuchMethodError: org.eclipse.jetty.util.resource.Resource.getAlias()Ljava/net/URL;
+
+# to avoid jars conflict, reset the CLASSPATH in zeppelin:
+# copy startup shell script:
+cp zeppelin-daemon.sh zeppelin-dumb-dameon.sh
+
+# replace this line
+CLASSPATH+=":${ZEPPELIN_CLASSPATH}"
+with
+CLASSPATH=":${ZEPPELIN_CLASSPATH}"
+
+# root out:
+ZEPPELIN_CLASSPATH: ::/usr/local/zeppelin-0.7.3-bin-netinst/lib/interpreter/*:/usr/local/zeppelin-0.7.3-bin-netinst/lib/*:/usr/local/zeppelin-0.7.3-bin-netinst/*::/usr/local/zeppelin-0.7.3-bin-netinst/conf
+
+# fra '=' replace
+ZEPPELIN_CLASSPATH: ::/usr/local/zeppelin/lib/interpreter/*:/usr/local/zeppelin/lib/*:/usr/local/zeppelin/*::/usr/local/zeppelin/conf
+
+# fra
+ZEPPELIN_CLASSPATH: :./:/usr/local/lib/java:/home/fra/FraDir/learn/introcs/src/stdlib-package.jar:/home/fra/FraDir/learn/introcs/src/stdlib.jar:/home/fra/FraDir/learn/LearnJava/simsimplified/pj2.jar:/usr/local/hadoop/lib/*:/usr/local/hive/lib/*:/usr/local/hive/conf/*:/usr/local/derby/lib/*:/usr/local/zeppelin/lib/interpreter/*:/usr/local/zeppelin/lib/*:/usr/local/zeppelin/*::/usr/local/zeppelin/conf
+
+# fra re-arranged
+ZEPPELIN_CLASSPATH: :/usr/local/zeppelin/lib/interpreter/*:/usr/local/zeppelin/lib/*:/usr/local/zeppelin/*::/usr/local/zeppelin/conf:./:/usr/local/lib/java:/home/fra/FraDir/learn/introcs/src/stdlib-package.jar:/home/fra/FraDir/learn/introcs/src/stdlib.jar:/home/fra/FraDir/learn/LearnJava/simsimplified/pj2.jar:/usr/local/hadoop/lib/*:/usr/local/hive/lib/*:/usr/local/hive/conf/*:/usr/local/derby/lib/*
+
+
+
 #---------------------------------------------------------------
 # optional: create new file /etc/init/zeppelin.conf
 #---------------------------------------------------------------
@@ -569,22 +650,6 @@ respawn limit 7 5
 # zeppelin was installed in /usr/local/zeppelin in this example
 chdir /usr/local/zeppelin
 exec bin/zeppelin-daemon.sh upstart
-
-#---------------------------------------------------------------
-# list all interpreters:
-./bin/install-interpreter.sh --list
-
-# install interpreters:
-sudo ./bin/install-interpreter.sh --name shell,python
-
-# optional: to create credential
-cp conf/shiro.ini.template shiro.ini
-
-# make sure this line is commented to prevent anonymous login
-#/** = anon
-
-# login and passwords are listed in [users] section
-
 
 
 

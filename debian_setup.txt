@@ -238,13 +238,27 @@ python3 -m spacy link en_core_web_sm en
 # other models:
 python3 -m spacy link en_core_web_md en_default
 
-
 # tkinter
 sudo apt-get install python3-tk
 
 # high numerical precision
 sudo apt-get install libmpfr-dev
 pip3 install bigfloat --user
+
+# database
+# mysql (mariadb)
+sudo apt-get install libmariadbclient-dev
+pip3 install mysqlclient
+# postgresql
+pip3 install psycopg2
+# SparkSQL
+pip3 install pyhive
+
+# mysql connector
+# download deb from MySQL
+dpkg -i <package.db>
+
+
 
 --------------------------------------------------------------------
 Jupyter
@@ -948,19 +962,8 @@ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89
 sudo apt-get update
 sudo apt-get install sbt
 
---------------------------------------------------------------------
-# set up new project
-sbt new sbt/scala-seed.g8
-cd <project folder>
-# start sbt shell
-sbt
-# compile
-run
-# quit shell
-exit (Ctrl-D)
-
-# build definition file:
-build.sbt
+# upgrade sbt version
+sbt sbtVersion
 
 --------------------------------------------------------------------
 # install breeze
@@ -979,6 +982,19 @@ libraryDependencies ++= Seq(
 # pre-requisite
 sudo apt-get install libatlas3-base libopenblas-base
 
+#---------------------------------------------------------
+# conscript + giter8
+#---------------------------------------------------------
+# edit .bashrc
+export CONSCRIPT_HOME="$HOME/.conscript"
+export CONSCRIPT_OPTS="-XX:MaxPermSize=512M -Dfile.encoding=UTF-8"
+export PATH=$CONSCRIPT_HOME/bin:$PATH
+
+# install conscript
+curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
+
+# install / upgrade giter8
+cs foundweekends/giter8
 
 #---------------------------------------------------------
 # install spark
@@ -1001,6 +1017,9 @@ export SPARK_HOME=/usr/lib/spark
 export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
 #export PYTHONPATH=$SPARK_HOME/python:$PYTHONPATH
 export PYTHONPATH=$SPARK_HOME/python/lib/pyspark.zip:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$PYTHONPATH
+# same as spark-env.sh
+export PYSPARK_PYTHON=python3
+export PYSPARK_DRIVER_PYTHON=python3
 
 
 # create log and pid directories
@@ -1008,6 +1027,12 @@ sudo mkdir /var/log/spark
 sudo chown fra:hdgrp /var/log/spark
 sudo -u fra mkdir $SPARK_HOME/run
 
+# eclipse preferences
+under python environment:
+SPARK_HOME=/usr/lib/spark
+PYSPARK_SUBMIT_ARGS=--master local[*] --queue PyDevSpark pyspark-shell
+SPARK_CONF_DIR=/usr/lib/spark/conf
+PYSPARK_PYTHON=python3
 
 #----------------------------------------------------------------
 # spark-env.sh
@@ -1024,6 +1049,7 @@ export SPARK_LOG_DIR=/var/log/spark
 export SPARK_PID_DIR=${SPARK_HOME}/run
 # if using python3 (default is python 2.7)
 export PYSPARK_PYTHON=python3
+export PYSPARK_DRIVER_PYTHON=python3
 
 #----------------------------------------------------------------
 # conf/log4j.properties
@@ -1074,6 +1100,18 @@ sbin/stop-all.sh
 
 # web UI
 http://localhost:8080/
+
+--------------------------------------------------------------------
+# jupyter + pyspark
+--------------------------------------------------------------------
+# edit /.local/share/jupyter/kernels/python2/kernel.json
+
+# add these to the file
+ "env": {
+     "PYSPARK_PYTHON": "python",
+     "PYSPARK_DRIVER_PYTHON": "python",
+     "SPARK_CONF_DIR": "/usr/lib/spark/conf"
+ }
 
 
 --------------------------------------------------------------------
