@@ -953,6 +953,7 @@ sudo dpkg -i scala-2.12.3.deb
 sudo apt-get update
 sudo apt-get install scala
 
+
 --------------------------------------------------------------------
 sbt
 --------------------------------------------------------------------
@@ -1238,8 +1239,22 @@ language-haskell
 autocomplete-haskell
 
 --------------------------------------------------------------------
-# Rust
+# Haskell jupyter
 --------------------------------------------------------------------
+sudo apt-get install -y python3-pip git libtinfo-dev libzmq3-dev libcairo2-dev libpango1.0-dev libmagic-dev libblas-dev liblapack-dev
+
+curl -sSL https://get.haskellstack.org/ | sh
+git clone https://github.com/gibiansky/IHaskell
+cd IHaskell
+pip3 install -r requirements.txt --user
+stack install gtk2hs-buildtools
+stack install --fast
+ihaskell install --stack
+
+
+--------------------------------------------------------------------
+# Rust
+ --------------------------------------------------------------------
 # Download and run install script
 curl https://sh.rustup.rs -sSf | sh
 

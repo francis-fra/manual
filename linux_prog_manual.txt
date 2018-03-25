@@ -84,6 +84,7 @@ pip3 install jedi flake8 autopep8 yapf rope importmagic --user
 M-x package-refresh-contents
 M-x package-install RET elpy RET
 M-x package-install RET ein RET
+M-x package-install RET haskell-mode RET
 
 # edit .emacs
 (package-initialize)
@@ -117,6 +118,16 @@ M-x package-install RET ein RET
 (add-to-list 'package-archives
              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
 
+;; package archives
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-archives
+   (quote
+    (("gnu" . "http://elpa.gnu.org/packages/")
+     ("melpa-stable" . "http://stable.melpa.org/packages/")))))
 
 #------------------------------------------------------------
 # to start jupyter:
@@ -125,22 +136,41 @@ M-x ein:jupyter-server-start
 M-x ein:jupyter-server-stop
 
 
-
-
 #------------------------------------------------------------
 # Toree
 #------------------------------------------------------------
-# magic
+# start spark session
+import org.apache.spark.sql.SparkSession
+val spark = SparkSession.
+        builder().
+        getOrCreate()	
+import spark.implicits._
 
+
+# magic
 %AddJar file:///usr/local/lib/java/postgresql-42.2.1.jar
+
+# dependencies
+%AddDeps au.com.bytecode opencsv 2.4
+import au.com.bytecode.opencsv.CSVReader
+
+%AddDeps org.scalanlp breeze_2.11 0.13.2
+%AddDeps org.scalanlp breeze-viz_2.11 0.13.2
+%AddDeps org.scalanlp breeze-natives_2.11 0.13.2
 
 #------------------------------------------------------------
 # jupyter-scala
 #------------------------------------------------------------
 # magic
 
+# dependencies
 import $ivy.`com.typesafe.slick::slick:3.2.1`
 
+#import $ivy.`org.vegas-viz::vegas:0.3.12`
+
+import $ivy.`org.scalanlp::breeze-natives:0.13.2`
+import $ivy.`org.scalanlp::breeze-viz:0.13.2`
+import $ivy.`org.scalanlp::breeze:0.13.2`
 
 #------------------------------------------------------------
 # Postgresql
@@ -741,6 +771,27 @@ http://localhost:9000/
 # for additional libraries, e.g. javaassist and xom, place them under a lib folder (e.g. IdeaProjects/ThinkinJava/lib)
 # To import the libraries, put the lib folder in the Modeules->dependencies 
 
+# to get rid of java 1.5 warning:
+# add to pom.xml
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+# in settings -> Build, Execution, Deployment -> Compiler -> Java Compiler
+# make sure target bytecode version is 1.8
+
 --------------------------------------------------------------------
 Intellij project setup
 --------------------------------------------------------------------
@@ -797,6 +848,34 @@ proejct structure -> Module -> Dependencies
 
 # send command to scala console
 # Ctrl-Shift-X
+
+--------------------------------------------------------------------
+# FIXME: emacs scala
+--------------------------------------------------------------------
+(use-package ensime
+  :ensure t
+  :pin melpa-stable)
+
+-- sbt.version=0.13.16
+libraryDependencies  ++= Seq(
+   "org.ensime" % "sbt-ensime" % "2.4.0"
+)
+
+
+--------------------------------------------------------------------
+Scala compilation
+--------------------------------------------------------------------
+# project structure:
+src/main/scala/com/fra/*.scala
+
+# to complie:
+scalac src/main/scala/com/fra/*.scala
+
+# to execute: (package com.fra)
+# at the top of project, run:
+src/main/scala$ scala com.fra.main
+
+
 
 --------------------------------------------------------------------
 Simple sbt / spark project
@@ -893,9 +972,12 @@ spark-submit \
 # create src/main/resources
 # copy log4j.properties to this folder
 
-# add this line in build.sbt
+# add these lines to build.sbt
 javaOptions in run ++= Seq("-Dlog4j.configuration=log4j.properties")
-
+fork := true,
+showSuccess := false,
+logLevel in run := Level.Warn
+    
 # log4j control in code:
 import org.apache.log4j.{Level, Logger, LogManager}
 LogManager.getRootLogger.setLevel(Level.OFF)
@@ -905,7 +987,27 @@ val rootLogger = Logger.getRootLogger()
 rootLogger.setLevel(Level.ERROR)
 LogManager.getRootLogger.setLevel(Level.OFF)
 
-  
+--------------------------------------------------------------------
+# sbt + spark build.sbt
+--------------------------------------------------------------------
+sparkVersion := "2.2.0",
+sparkComponents := Seq(),
+
+// additional libraries
+libraryDependencies ++= Seq(
+"org.apache.spark" %% "spark-streaming" % "2.2.0" % "provided",
+"org.apache.spark" %% "spark-sql" % "2.2.0" % "provided",
+
+"org.rogach" %% "scallop" % "3.1.1"
+),
+
+// must have
+run in Compile := Defaults.runTask(fullClasspath in Compile, mainClass in (Compile, run), runner in (Compile, run)).evaluated,
+
+// suppress log output
+fork := true,
+showSuccess := false
+
 --------------------------------------------------------------------
 # Scala deployment
 --------------------------------------------------------------------
