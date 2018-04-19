@@ -198,6 +198,14 @@ rsync -avz /home/fra/Documents fra@192.168.1.10:/home/fra/
 scp -P <port_number> -r folder fra@192.1.168.1:/home/fra/Downloads
 
 --------------------------------------------------------------------
+VIM
+--------------------------------------------------------------------
+sudo apt-get install vim
+
+# install plugin from:
+https://github.com/amix/vimrc
+
+--------------------------------------------------------------------
 Python
 --------------------------------------------------------------------
 # pip
@@ -381,7 +389,75 @@ The R home should be in : /usr/lib/R
 use Rterm not RJ!!
 
 --------------------------------------------------------------------
-pyDev
+# Node.js
+--------------------------------------------------------------------
+curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+
+sudo apt-get install nodejs
+
+# check version
+node -v
+npm -v
+
+testing install:
+emacs http_server.js
+
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(3000, "127.0.0.1");
+console.log('Server running at http://127.0.0.1:3000/');
+
+--------------------------------------------------------------------
+# npm
+--------------------------------------------------------------------
+# install package (global)
+npm install <pacakge> -g
+
+# install package (local)
+npm install <pacakge>
+
+# update
+npm update
+
+# remove
+npm uninstall <package>
+
+# list package
+npm list
+
+
+# alternatively:
+# sudo apt-get nodejs-legacy npm
+
+--------------------------------------------------------------------
+# Jupyter Node JS
+--------------------------------------------------------------------
+git clone https://github.com/notablemind/jupyter-nodejs.git
+cd jupyter-nodejs
+mkdir -p ~/.ipython/kernels/nodejs/
+npm install && node install.js
+npm run build
+npm run build-ext
+jupyter console --kernel nodejs
+
+
+--------------------------------------------------------------------
+# Node packages
+--------------------------------------------------------------------
+# FIXME:
+npm install dstools -g
+
+--------------------------------------------------------------------
+# Heroku
+--------------------------------------------------------------------
+# run:
+wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
+
+--------------------------------------------------------------------
+# pyDev
 --------------------------------------------------------------------
 # Help -> Install new software
 # Enter:
@@ -391,7 +467,7 @@ http://pydev.org/updates
 Preference .> PyDev -> Interpreters -> Python interpreters
 
 --------------------------------------------------------------------
-Atom
+# Atom
 --------------------------------------------------------------------
 # Install Atom
 sudo dpkg -i atom-amd64.deb
@@ -484,7 +560,7 @@ bin/sparkling-shell --conf "spark.executor.memory=1g"
 # example:
 import org.apache.spark.h2o._
 val h2oContext = H2OContext.getOrCreate(spark)
-import h2oContext._ 
+import h2oContext._
 
 # edit bashrc
 export PATH=$PATH:/usr/local/sparkling-water/bin
@@ -631,7 +707,7 @@ sqlite3 <filename>
 deb http://apt.postgresql.org/pub/repos/apt/ stretch-pgdg main
 
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
-sudo apt-get update 
+sudo apt-get update
 
 apt-get install postgresql-9.6
 
@@ -714,7 +790,7 @@ hostname
 wget http://apache.claz.org/hadoop/common/stable/hadoop-xxx.tar.gz
 tar -xzvf hadoop-xxx.tar.gz
 
-sudo mv hadoop-xxx /usr/local/hadoop 
+sudo mv hadoop-xxx /usr/local/hadoop
 
 ## Assign ownership of this folder to Hadoop user
 sudo chown fra:hdgrp -R /usr/local/hadoop
@@ -742,7 +818,7 @@ export HADOOP_SSH_OPTS="-p <port_num>"
 #-----------------------------------------------------------------
 ## Update $HOME/.bashrc
 
-## Update hduser configuration file by appending the 
+## Update hduser configuration file by appending the
 ## following environment variables at the end of this file.
 
 # Update $HOME/.bash_profile or .bashrc
@@ -799,12 +875,12 @@ which javac
       <name>dfs.replication</name>
       <value>1</value>
  </property>
- 
+
  <property>
       <name>dfs.namenode.name.dir</name>
       <value>file:/usr/local/hadoop_tmp/hdfs/namenode</value>
  </property>
- 
+
  <property>
       <name>dfs.datanode.data.dir</name>
       <value>file:/usr/local/hadoop_tmp/hdfs/datanode</value>
@@ -821,7 +897,7 @@ which javac
       <name>yarn.nodemanager.aux-services</name>
       <value>mapreduce_shuffle</value>
   </property>
-  
+
   <property>
       <name>yarn.nodemanager.aux-services.mapreduce.shuffle.class</name>
       <value>org.apache.hadoop.mapred.ShuffleHandler</value>
@@ -1042,9 +1118,9 @@ cd /usr/lib/spark/conf/
 cp spark-env.sh.template spark-env.sh
 
 # edit $SPARK_HOME/conf/spark-env.sh
-export SPARK_MASTER_IP=127.0.0.1 
-export SPARK_WORKER_CORES=2 
-export SPARK_WORKER_MEMORY=2g 
+export SPARK_MASTER_IP=127.0.0.1
+export SPARK_WORKER_CORES=2
+export SPARK_WORKER_MEMORY=2g
 export SPARK_WORKER_INSTANCES=2
 export SPARK_LOG_DIR=/var/log/spark
 export SPARK_PID_DIR=${SPARK_HOME}/run
@@ -1148,7 +1224,7 @@ bin/sparkling-shell --conf "spark.executor.memory=1g"
 # example:
 import org.apache.spark.h2o._
 val h2oContext = H2OContext.getOrCreate(spark)
-import h2oContext._ 
+import h2oContext._
 
 # edit bashrc
 export PATH=$PATH:/usr/local/sparkling-water/bin
@@ -1186,7 +1262,7 @@ DL4J project
 # Download looging library from:
 https://www.slf4j.org/index.html
 
-# copy these jar 
+# copy these jar
 -- slf4j-log4j12-1.7.25.jar
 -- slf4j-jdk14-1.7.25.jar
 to /usr/local/lib/java
@@ -1254,7 +1330,7 @@ ihaskell install --stack
 
 --------------------------------------------------------------------
 # Rust
- --------------------------------------------------------------------
+--------------------------------------------------------------------
 # Download and run install script
 curl https://sh.rustup.rs -sSf | sh
 
@@ -1272,6 +1348,77 @@ rustc --version
 sudo /usr/local/lib/rustlib/uninstall.sh
 
 rustup self uninstall
+
+--------------------------------------------------------------------
+# Clojure
+--------------------------------------------------------------------
+curl -O https://download.clojure.org/install/linux-install-1.9.0.358.sh
+chmod +x linux-install-1.9.0.358.sh
+sudo ./linux-install-1.9.0.358.sh
+
+# to run:
+clojure
+
+--------------------------------------------------------------------
+# Clojure jupyter
+--------------------------------------------------------------------
+git clone https://github.com/clojupyter/clojupyter
+cd clojupyter
+make
+make install
+
+--------------------------------------------------------------------
+# Leiningen
+--------------------------------------------------------------------
+# Download lein script
+
+# make it executable
+
+# place in in /usr/local/bin
+
+# need to unset CLASSPATH first
+unset CLASSPATH
+
+# install:
+lein
+
+# reun repl
+lein repl
+
+--------------------------------------------------------------------
+# Atom proto-repl
+--------------------------------------------------------------------
+# key commands
+startup: ctrl+, l
+connect: ctrl+, y
+
+# to load dependencies
+# must start atom from the project level directory
+
+# typical project.clj dependencies:
+:dependencies [[org.clojure/clojure "1.8.0"]
+               [incanter/incanter "1.5.5"]
+               [org.clojure/math.numeric-tower "0.0.4"]
+               [me.raynes/fs "1.4.6"]
+               [proto-repl "0.3.1"]
+               [proto-repl-charts "0.3.1"]]
+
+--------------------------------------------------------------------
+# Cursive
+--------------------------------------------------------------------
+# registration:
+Help -> register Cursive
+
+# create leinegen project
+# Settings -> keymap -> cursive -> Send form before caret to REPL
+
+# set up REPL
+run/debug configuration -> Clojure REPL
+
+--------------------------------------------------------------------
+# Erlang
+--------------------------------------------------------------------
+sudo apt-get install erlang
 
 #-------------------------------------------------------
 # Zookeeper

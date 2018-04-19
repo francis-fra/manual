@@ -850,6 +850,24 @@ proejct structure -> Module -> Dependencies
 # Ctrl-Shift-X
 
 --------------------------------------------------------------------
+# scala test
+--------------------------------------------------------------------
+# add these to build.sbt
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+
+# add this to global - does not work in plugins.sbt!! (e.g.  ~/.sbt/0.13/global.sbt)
+resolvers += "Artima Maven Repository" at "http://repo.artima.com/releases"
+
+# add these to plugins.sbt
+addSbtPlugin("com.artima.supersafe" % "sbtplugin" % "1.1.3")
+
+# test source files should be stored in src/test/scala
+
+# run test:
+sbt test
+
+--------------------------------------------------------------------
 # FIXME: emacs scala
 --------------------------------------------------------------------
 (use-package ensime
@@ -944,6 +962,18 @@ exit (Ctrl-D)
 # build definition file:
 build.sbt
 
+# create doc (at target/scala-xxx/api/)
+sbt doc
+
+# run-main: sbt with multiple main
+sbt "run-main ai.fra.Foo"
+
+# alternatively, add a line in build.sbt
+mainClass in (Compile, run) := Some("ai.fra.Foo")
+
+# log level: build.sbt
+set logLevel := Level.Debug | Level.Info | Level.Warning | Level.Error
+
 --------------------------------------------------------------------
 # SBT: spark project with giter8
 --------------------------------------------------------------------
@@ -1028,7 +1058,22 @@ scala target/scala-2.10/basic_2.10-1.0.jar
 java -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:target/scala-2.10/basic_2.10-1.0.jar" foo.bar.baz.Main
 
 # assemble all jar
+
+# add this line to plugin.sbt:
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.5")
+
+# add these two lines to build.sbt
+import AssemblyKeys._
+assemblySettings
+
+# run 
 sbt assembly
+
+# to run jars in scala:
+scala target/scala-xxx/xxxx.jar
+
+# to run jars in java, scala-library.jar is required:
+java -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:target/scala-xxxx/xxxx.jar" ai.fra.Main
 
 --------------------------------------------------------------------
 # Scala jupyter notebook
