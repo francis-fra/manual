@@ -1,120 +1,166 @@
-#-------------------------------------------------------
-# Zookeeper
-#-------------------------------------------------------
-# download and extract binary into:
+### Zookeeper
+Download and extract binary into:
+```
 /usr/local
+```
 
-# create soft link
+Create soft link
+```
 sudo ln -s zookeeper-xxx /usr/local/zookeeper
+```
 
-# create config file conf/zoo.cfg
+Create config file conf/zoo.cfg
+```
 tickTime=2000
 dataDir=/var/zookeeper
 clientPort=2181
+```
 
-# create data directory
+Create data directory
+```
 mkdir /var/zookeeper
+```
 
-# change ownership
+To change ownership
+```
 chown fra:hdgrp /var/zookeeper
+```
 
-# to start
+To start
+```
 bin/zkServer.sh start
+```
 
-# to check (are you ok)
+To check (are you ok)
+```
 telnet localhost 2181
 ruok
+```
 
-# start CLI
+To start CLI
+```
 bin/zkCli.sh
+```
 
-# to stop server
+To stop server
+```
 bin/zkServer.sh stop
+```
 
+### Hive
+Download and extract binary
 
-#-------------------------------------------------------
-# Hive
-#-------------------------------------------------------
-# download and extract binary
-
-# copy to:
+copy to:
+```
 /usr/local/
+```
 
-# create soft link
+create soft link
+```
 sudo ln -s /usr/local/hive-xxxx /usr/local/hive
 sudo chown -R fra:hdgrp /usr/local/hive
+```
 
-# edit .bashrc
+edit .bashrc
+```
 export HIVE_HOME="/usr/local/hive" 
 export PATH=$PATH:$HIVE_HOME/bin
 
 export CLASSPATH=$CLASSPATH:/usr/local/hadoop/lib/*:.
 export CLASSPATH=$CLASSPATH:/usr/local/hive/lib/*:.
-# for spark / hive connectivity
+```
+For spark / hive connectivity
+```
 export CLASSPATH=$CLASSPATH:/usr/local/hive/conf/*:.
+```
 
-# start Hadoop
+start Hadoop
+```
 sbin/start-dfs.sh
 sbin/start-yarn.sh
+```
 
-# create Hive warehouse directory 
+Create Hive warehouse directory 
+```
 hadoop fs -mkdir /tmp
 hadoop fs -mkdir /user/hive
 hadoop fs -mkdir /user/hive/warehouse
 hadoop fs -chmod g+w /tmp
 hadoop fs -chmod g+w /user/hive/warehouse
+```
 
-#-------------------------------------------------------
-# hive-env.sh
-#-------------------------------------------------------
-# edit hive-env.sh (configure Hive)
+###### hive-env.sh
+edit hive-env.sh (configure Hive)
+```
 cd $HIVE_HOME/conf
+```
 
-# copy environment file
+copy environment file
+```
 sudo cp hive-env.sh.template hive-env.sh
+```
 
-# add this line
+add this line
+```
 export HADOOP_HOME=/usr/local/hadoop
 export HADOOP_HEAPSIZE=512
+```
 
-# multiple SLF4J: remove??
-#rm lib/log4j-slf4j-impl-*.jar
+Optional: multiple SLF4J exists 
+```
+rm lib/log4j-slf4j-impl-*.jar
+```
 
-# Hive CLI (deprecated)
+Hive CLI (deprecated)
+```
 $HIVE_HOME/bin/hive
+```
 
-# FIXME: HiveServer2 and Beeline
+FIXME: HiveServer2 and Beeline
 
-#-------------------------------------------------------
-# Install Derby
-#-------------------------------------------------------
+###### Install Derby
+```
 wget http://apache.mirror.digitalpacific.com.au//db/derby/db-derby-10.14.1.0/db-derby-10.14.1.0-bin.tar.gz
 sudo tar xvzf db-derby-10.14.1.0-bin.tar.gz -C /usr/local
-# create soft link
+```
+1. Create soft link
+```
 sudo ln -s /usr/local/db-derby-xxx /usr/local/derby
+```
 
-# edit .bashrc
+2. Edit .bashrc
+```
 export DERBY_HOME=/usr/local/derby
 export PATH=$PATH:$DERBY_HOME/bin
 export CLASSPATH=$CLASSPATH:$DERBY_HOME/lib/derby.jar:$DERBY_HOME/lib/derbytools.jar
+```
 
-# check derby status
+3. Check derby status
+```
 java org.apache.derby.tools.sysinfo
-# output:
+```
+
+Sample Output:
+```
 --------- Derby Information --------
 [/usr/local/db-derby-10.14.1.0-bin/lib/derby.jar] 10.14.1.0 - (1808820)
 [/usr/local/db-derby-10.14.1.0-bin/lib/derbytools.jar] 10.14.1.0 - (1808820)
 [/usr/local/apache-hive-2.3.2-bin/lib/derbynet-10.11.1.1.jar] 10.11.1.1 - (1616546)
 [/usr/local/apache-hive-2.3.2-bin/lib/derbyclient-10.11.1.1.jar] 10.11.1.1 - (1616546)
 [/usr/local/apache-hive-2.3.2-bin/lib/derby-10.10.2.0.jar] 10.10.2.0 - (1582446)
-------------------------------------------------------
+```
 
-# create metastore data
+4. create metastore data
+```
 mdir $DERBY_HOME/data
+```
 
-# set default database as Derby
+5. set default database as Derby
+```
 schematool -initSchema -dbType derby
-# output:
+```
+Sample output:
+```
 SLF4J: Class path contains multiple SLF4J bindings.
 SLF4J: Found binding in [jar:file:/usr/local/apache-hive-2.3.2-bin/lib/log4j-slf4j-impl-2.6.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
 SLF4J: Found binding in [jar:file:/usr/local/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.10.jar!/org/slf4j/impl/StaticLoggerBinder.class]
@@ -127,25 +173,31 @@ Starting metastore schema initialization to 2.3.0
 Initialization script hive-schema-2.3.0.derby.sql
 Initialization script completed
 schemaTool completed
+```
 
-# if failed, run the following and try running schematool again
+6. if failed, run the following and try running schematool again
+```
 mv metastore_db metastore_db.tmp
+```
 
-# start up ij (interative SQL)
+7. start up ij (interative SQL)
+```
 java org.apache.derby.tools.ij
+```
 
-#-------------------------------------------------------
-# hive-site.xml
-#-------------------------------------------------------
-# create local database location
+###### hive-site.xml
+Create local database location
+```
 mkdir /home/fra/bdw
+```
 
-# inside $HIVE_HOME/conf
+Copy from template, location: $HIVE_HOME/conf
+```
 sudo cp hive-default.xml.template hive-site.xml
+```
 
-# make sure this is in the config file
-# edit config file: (hive-site.xml)
-
+Edit config file: (hive-site.xml)
+```
  <property>
     <name>javax.jdo.option.ConnectionURL</name>
     <value>jdbc:derby:;databaseName=/home/fra/bdw/metastore_db;create=true</value>
@@ -171,9 +223,11 @@ sudo cp hive-default.xml.template hive-site.xml
     <description>Local scratch space for Hive jobs</description>
   </property>
 
+```
 
-# create a file named jpox.properties:
+Create a file named jpox.properties:
 
+```
 javax.jdo.PersistenceManagerFactoryClass =
 
 org.jpox.PersistenceManagerFactoryImpl
@@ -191,140 +245,173 @@ javax.jdo.option.ConnectionDriverName = org.apache.derby.jdbc.ClientDriver
 javax.jdo.option.ConnectionURL = jdbc:derby://hadoop1:1527/metastore_db;create = true
 javax.jdo.option.ConnectionUserName = APP
 javax.jdo.option.ConnectionPassword = mine
+```
 
-#-------------------------------------------------------
-# FIXME: HiveServer
-#-------------------------------------------------------
-# FIXME: to run HiveServer2
+###### FIXME: HiveServer
+FIXME: to run HiveServer2
+```
 hiveserver2
 or
 hive --service hiveserver2
-# check
+```
+check
+```
 nestat -nl | grep 10000
+```
 
-# start beeline
+start beeline
+```
 beeline
+```
 
-# check if hiveserver2 has been started (nothing)
+check if hiveserver2 has been started (nothing)
+```
 sudo service hive-server2 status
 
 $ $HIVE_HOME/bin/hiveserver2
 $ $HIVE_HOME/bin/beeline -u jdbc:hive2://$HS2_HOST:$HS2_PORT/usr/lib
+```
 
-#-------------------------------------------------------
-# FIXME: not responding??
+FIXME: not responding??
+```
 $HIVE_HOME/bin/hiveserver2
 $HIVE_HOME/bin/beeline -u jdbc:hive2://localhost:10000
+```
 
-# HCatalog server
-# need to install HCatalog first
+HCatalog server (need to install HCatalog first)
+```
 $HIVE_HOME/hcatalog/sbin/hcat_server.sh start
 $HIVE_HOME/hcatalog/sbin/hcat_server.sh stop
+```
 
-# FIXME: error
+FIXME: error
+```
 $HIVE_HOME/hcatalog/bin/hcat
+```
 
-# python database package
+Some python database package
+```
 pip3 install pyhive --user
 pip3 install psycopg2 --user
 pip3 install mysqlclient --user
+```
 
-
-
-#-------------------------------------------------------
-# Druid
-#-------------------------------------------------------
-# download and extract tar gzip file
+### Druid
+Download and extract tar gzip file
+```
 curl -O http://static.druid.io/artifacts/releases/druid-0.11.0-bin.tar.gz
 tar -xzf druid-0.11.0-bin.tar.gz
 sudo mv druid-xxx /usr/local
 
 sudo ln -s /usr/local/druid-xxx /usr/local/drid
 sudo chown -R fra:hdgrp /usr/local/hive
+```
 
-
-# start up zookeper
+Start up zookeper
+```
 /usr/local/zookeeper/bin/zkServer.sh start
-
-# start up Druid services
+```
+Start up Druid services
+```
 bin/init
+```
 
-#-------------------------------------------------------
-# Testing: load batch data test
-#-------------------------------------------------------
+###### Testing: load batch data test
+```
 java `cat conf-quickstart/druid/historical/jvm.config | xargs` -cp "conf-quickstart/druid/_common:conf-quickstart/druid/historical:lib/*" io.druid.cli.Main server historical
 java `cat conf-quickstart/druid/broker/jvm.config | xargs` -cp "conf-quickstart/druid/_common:conf-quickstart/druid/broker:lib/*" io.druid.cli.Main server broker
 java `cat conf-quickstart/druid/coordinator/jvm.config | xargs` -cp "conf-quickstart/druid/_common:conf-quickstart/druid/coordinator:lib/*" io.druid.cli.Main server coordinator
 java `cat conf-quickstart/druid/overlord/jvm.config | xargs` -cp "conf-quickstart/druid/_common:conf-quickstart/druid/overlord:lib/*" io.druid.cli.Main server overlord
 java `cat conf-quickstart/druid/middleManager/jvm.config | xargs` -cp "conf-quickstart/druid/_common:conf-quickstart/druid/middleManager:lib/*" io.druid.cli.Main server middleManager
-
-# submit a task
+```
+Submit a task
+```
 curl -X 'POST' -H 'Content-Type:application/json' -d @quickstart/wikiticker-index.json localhost:8090/druid/indexer/v1/task
+```
 
-
-#-------------------------------------------------------
-# Testing: load streaming data test
-#-------------------------------------------------------
-# download tranquility library
+###### Testing: load streaming data test
+```
+Download tranquility library
 curl -O http://static.druid.io/tranquility/releases/tranquility-distribution-0.8.0.tgz
 tar -xzf tranquility-distribution-0.8.0.tgz
 cd tranquility-distribution-0.8.0
+```
 
-# move to /usr/local
+move to /usr/local
+```
 bin/tranquility server -configFile /usr/local/druid/conf-quickstart/tranquility/server.json
 
 bin/generate-example-metrics | curl -XPOST -H'Content-Type: application/json' --data-binary @- http://localhost:8200/v1/post/metrics
+```
 
-# TODO: druid console
+Duid console
+```
 http://localhost:8090/console.html.
+```
 
-#-------------------------------------------------------
-# Superset
-#-------------------------------------------------------
-# prerequisite
+### Superset
+prerequisite
+```
 sudo apt-get install build-essential libssl-dev libffi-dev python-dev python-pip libsasl2-dev libldap2-dev
 
 pip3 install superset --user
+```
 
-# create credential
+create credential
+```
 fabmanager create-admin --app superset
+```
 
-# init database
+initialize database
+```
 superset db upgrade
+```
 
-# Load some data to play with
+Load some data to play with
+```
 superset load_examples
+```
 
-# Create default roles and permissions
+Create default roles and permissions
+```
 superset init
+```
 
-# Start the web server on port 8088, use -p to bind to another port
+Start the web server on port 8088, use -p to bind to another port
+```
 superset runserver -p 8099
+```
 
-# add databases:
-# postgresql
+add databases:
+```
+postgresql:
 postgresql+psycopg2://username@/db
 
-# mysql
+mysql:
 mysql://username:password@localhost
+```
 
-# postgresql config: /etc/postgresql/9.6/main//pg_hba.conf
+postgresql config
+```
+/etc/postgresql/9.6/main//pg_hba.conf
+```
 
-
-#-------------------------------------------------------
-# Metabase
-#-------------------------------------------------------
+###### Metabase
+```
 java -jar metabase.jar
 
+```
+Location
+```
 http://localhost:3000 
+```
 
 
-#-------------------------------------------------------
-# FIXME: Ambari
-#-------------------------------------------------------
-# download and extract tarballs
+### FIXME: Ambari
+Download and extract tarballs
 
-# compile the source
+compile the source
+```
 cd apache-ambari-2.6.0-src
 mvn versions:set -DnewVersion=2.6.0.0.0
 
@@ -333,9 +420,12 @@ mvn versions:set -DnewVersion=2.6.0.0.0
 popd
 
 mvn -B clean install package jdeb:jdeb -DnewVersion=2.6.0.0.0 -DskipTests -Dpython.ver="python >= 2.6"
-# To fix compile error: change version number from storm-1.1.0-SNAPSHOT to storm-1.1.0 in pom.xml
+```
 
-# add these to pom.xml if errors are found:
+To fix compile error: change version number from storm-1.1.0-SNAPSHOT to storm-1.1.0 in pom.xml
+
+Add these to pom.xml if errors are found:
+```
 +      <plugin>
 +        <groupId>org.vafer</groupId>
 +        <artifactId>jdeb</artifactId>
@@ -357,55 +447,72 @@ mvn -B clean install package jdeb:jdeb -DnewVersion=2.6.0.0.0 -DskipTests -Dpyth
 +          <controlDir>${project.basedir}/../src/main/package/deb/control</controlDir>
 +        </configuration>
 +      </plugin>
+```
 
-# install ambari server
+Install ambari server
+```
 cd ./ambari-server/target
 sudo apt-get install ./ambari-server*.deb
+```
 
-# login as root
+Login as root
+```
 su
 export buildNumber=2.6.0.0
 ambari-server setup
 ambari-server start
+```
 
-# install ambari agent
+Install ambari agent
+```
 cd ./ambari-agent/target
 sudo apt-get install ./ambari-agent*.deb
+```
 
-# Edit /etc/ambari-agent/ambari.ini
+Edit /etc/ambari-agent/ambari.ini
+```
 [server]
 hostname=localhost
 
 ambari-agent start
+```
 
-# web UI:
+web UI:
+```
 localhost:8080.
+```
 
-# start ambari agent
+start ambari agent
+```
 ambari-agent start
+```
 
-# login / password: admin
+Default login / password: admin
 
-#-------------------------------------------------------
-# HBase
-#-------------------------------------------------------
-# download and extract tarballs
+### HBase
+1. Download and extract tarballs
 
+```
 sudo ln -s /usr/local/hbase-xxx /usr/local/hbase
-
 sudo chown fra:hdgrp -R /usr/local/hbase
+```
 
-# edit .bashrc
+2. Edit .bashrc
+```
 export HBASE_HOME=/usr/local/hbase
 export PATH=$PATH:$HBASE_HOME/bin
+```
 
-# edit /usr/local/hbase/conf/hbase-env.sh
+3. Edit /usr/local/hbase/conf/hbase-env.sh
+```
 export JAVA_HOME=/usr/java/latest
 export HBASE_SSH_OPTS="-p 2882"
+```
 
+4. Edit hbase-site.xml
+* the port 8088 must be matched with the hadoop hdfs port
 
-# edit hbase-site.xml
-# the port 8088 must be matched with the hadoop hdfs port
+```
 <configuration>
 
      <property>
@@ -419,255 +526,340 @@ export HBASE_SSH_OPTS="-p 2882"
      </property>
 
 </configuration>
+```
 
-# starting hbase
+5. starting hbase
+```
 /usr/local/Hbase/bin/start-hbase.sh
-# stop hbase
-bin/stop-hbase.sh
+```
 
-# start hadoop and hbase
+6. stop hbase
+```
+bin/stop-hbase.sh
+```
+
+7. start hadoop and hbase
+```
 start-dfs.sh
 start-yarn.sh
 start-hbase.sh
+```
 
-# check directory
+Check directory
+```
 hdfs dfs -ls /hbase
+```
 
-# must start zookeeper first
+Must start zookeeper first
+```
 zkServer.sh start
+```
 
-# shell CLI
+shell CLI
+```
 hbase shell
+```
 
-# UI??
+Default UI??
+```
 http://localhost:16010/
+```
 
 
-#-------------------------------------------------------
-# Kafka
-#-------------------------------------------------------
-# download and extract tarzip
+### Kafka
+1. Download and extract tarzip
 
-# create soft link
+2. Create soft link
+```
 sudo ln -s kafka_2.12-0.11.0.1/ /usr/local/kafka
-
 sudo chown -R fra:hdgrp kafka
+```
 
-# config kafka server
-# edit ~/kafka/config/server.properties:
-
-# uncomment the following:
+3. Config kafka server
+    * edit ~/kafka/config/server.properties:
+    * uncomment the following:
+```
 delete.topic.enable=true
+```
 
-# start kafka server
+4. Start kafka server
+```
 kafka-server-start.sh ~/kafka/config/server.properties
 nohup ~/kafka/bin/kafka-server-start.sh ~/kafka/config/server.properties
-
-# check
+```
+    * to check
+```
 netstat -nlpt
 jps
-
-# to stop
+```
+    * to stop
+```
 ../bin/kafka-server-stop.sh config/server.properties
+```
 
-# create topic
+5. Create topic
+```
 ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
-# check 
+```
+    * check 
+```
 ./bin/kafka-topics.sh --list --zookeeper localhost:2181
-
-# send some message
+```
+    * send some message
+```
 ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 (type some message)
+```
 
-# start a consumer
+    * start a consumer
+```
 ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+```
 
-# to send
+    * to send
+```
 echo "Hello, World" | ~/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic TutorialTopic > /dev/null
-# to receive
+```
+    * to receive
+```
 ./bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic TutorialTopic --from-beginning
+```
 
-# kafka python
+    * kafka python
+```
 sudo pip install kafka-python
+```
 
-#-------------------------------------------------------
-# TODO: Cassandra
-#-------------------------------------------------------
-# install debian package
-# add repository
+### TODO: Cassandra
+1. Install debian package
+
+2. Add repository
+```
 echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
-# add repository key
+```
+3. add repository key
+```
 curl https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
-# update
+```
+4. update
+```
 sudo apt-get update
-# add public key is there is an error
+```
+5. add public key is there is an error
+```
 sudo apt-key adv --keyserver pool.sks-keyservers.net --recv-key A278B781FE4B2BDA
+```
 
-# install
+6. install
+```
 sudo apt-get install cassandra
+```
 
-# check cassandra
+7. check cassandra
+```
 sudo service cassandra status
-
 nodetool status
+```
 
-# location:
+8. location:
+```
 /etc/cassandra
+```
+
+### TODO: Avro
 
 
-#-------------------------------------------------------
-# TODO: Avro
-#-------------------------------------------------------
+### TODO: Phoenix
 
+### Pig
+1. Download and extract tar zip file
 
-#-------------------------------------------------------
-# TODO: Phoenix
-#-------------------------------------------------------
-
-
-
-#-------------------------------------------------------
-# Pig
-#-------------------------------------------------------
-# download and extract tar zip file
-
-# create soft link
+2. create soft link
+```
 sudo ln -s /usr/local/pig-xxxx /usr/local/pig
+```
 
-# change ownership
+3. change ownership
+```
 sudo chown -R fra:hdgrp /usr/local/pig
+```
 
 
-# edit .bashrc
+4. edit .bashrc
+```
 export PIG_HOME=/usr/local/pig
 export PATH=$PATH:/usr/local/pig/bin
 export PIG_CLASSPATH=$HADOOP_HOME/etc/hadoop
+```
 
-# run command
+5. run command
+```
 pig -version
-# local mode
+```
+
+6. local mode
+```
 pig -x local
 pig
+```
 
 
-#-------------------------------------------------------
-# Zeppelin
-#-------------------------------------------------------
-# download and extract binary into:
+### Zeppelin
+1. Download and extract binary into:
 
-# create soft link
+2. Create soft link
+```
 sudo ln -s zeppelin-0.7.3-bin-netinst/ /usr/local/zeppelin
+```
 
-# change ownership
+3. Change ownership
+```
 sudo chown -R fra:hdgrp /usr/local/zeppelin
+```
 
-# to start
+4. To start
+```
 sudo bin/zeppelin-daemon.sh start
+```
 
-# edit server port in conf/zeppelin-site.xml
-# default port is 8080, but it is same as spark
+5. Edit server port in conf/zeppelin-site.xml
+    * default port is 8080, but it is same as spark
+```
 <property>
   <name>zeppelin.server.port</name>
   <value>9001</value>
   <description>Server port.</description>
 </property>
+```
 
-# link:
+    * link:
+```
 http://localhost:9001/
+```
 
-# start
+    * start
+```
 bin/zeppelin-daemon.sh start
+```
 
-# stop 
+    * stop 
+```
 bin/zeppelin-daemon.sh start
+```
 
-#---------------------------------------------------------------
-# list all interpreters:
+6. List all interpreters:
+```
 ./bin/install-interpreter.sh --list
+```
 
-# install interpreters:
+7. Install interpreters:
+```
 sudo ./bin/install-interpreter.sh --name shell,python
+```
 
-# user login:
-# edit conf/shiro.ini for login/password
+8. Edit conf/shiro.ini 
+
+    * login/password
+```
 cp conf/shiro.ini.template shiro.ini
+```
 
-# make sure this line is commented to prevent anonymous login
+    * make sure this line is commented to prevent anonymous login
+```
 #/** = anon
+```
 
-# login and passwords are listed in [users] section
-# default:
+    * login and passwords are listed in [users] section with default:
+```
 admin = password1, admin
 user1 = password2, role1, role2
 user2 = password3, role3
 user3 = password4, role2
+```
 
-#---------------------------------------------------------------
-# FIXME: jars conflict issue
-#---------------------------------------------------------------
-# if daemon start failed, check the ./log folder:
+9. FIXME: jars conflict issue
+
+    * if daemon start failed, check the ./log folder:
+```
 org.eclipse.jetty.util.resource.Resource.getAlias()Ljava/net/URL;
 java.lang.NoSuchMethodError: org.eclipse.jetty.util.resource.Resource.getAlias()Ljava/net/URL;
+```
 
-# to avoid jars conflict, reset the CLASSPATH in zeppelin:
-# copy startup shell script:
+    * to avoid jars conflict, reset the CLASSPATH in zeppelin, copy startup shell script:
+```
 cp zeppelin-daemon.sh zeppelin-dumb-dameon.sh
+```
 
-# replace this line
+    * replace this line
+```
 CLASSPATH+=":${ZEPPELIN_CLASSPATH}"
 with
 CLASSPATH=":${ZEPPELIN_CLASSPATH}"
+```
 
-# root out:
+    * root out:
+```
 ZEPPELIN_CLASSPATH: ::/usr/local/zeppelin-0.7.3-bin-netinst/lib/interpreter/*:/usr/local/zeppelin-0.7.3-bin-netinst/lib/*:/usr/local/zeppelin-0.7.3-bin-netinst/*::/usr/local/zeppelin-0.7.3-bin-netinst/conf
+```
 
-# fra '=' replace
+    * fra '=' replace
+```
 ZEPPELIN_CLASSPATH: ::/usr/local/zeppelin/lib/interpreter/*:/usr/local/zeppelin/lib/*:/usr/local/zeppelin/*::/usr/local/zeppelin/conf
+```
 
-# fra
+    * fra
+```
 ZEPPELIN_CLASSPATH: :./:/usr/local/lib/java:/home/fra/FraDir/learn/introcs/src/stdlib-package.jar:/home/fra/FraDir/learn/introcs/src/stdlib.jar:/home/fra/FraDir/learn/LearnJava/simsimplified/pj2.jar:/usr/local/hadoop/lib/*:/usr/local/hive/lib/*:/usr/local/hive/conf/*:/usr/local/derby/lib/*:/usr/local/zeppelin/lib/interpreter/*:/usr/local/zeppelin/lib/*:/usr/local/zeppelin/*::/usr/local/zeppelin/conf
-
-# fra re-arranged
+```
+    * fra re-arranged
+```
 ZEPPELIN_CLASSPATH: :/usr/local/zeppelin/lib/interpreter/*:/usr/local/zeppelin/lib/*:/usr/local/zeppelin/*::/usr/local/zeppelin/conf:./:/usr/local/lib/java:/home/fra/FraDir/learn/introcs/src/stdlib-package.jar:/home/fra/FraDir/learn/introcs/src/stdlib.jar:/home/fra/FraDir/learn/LearnJava/simsimplified/pj2.jar:/usr/local/hadoop/lib/*:/usr/local/hive/lib/*:/usr/local/hive/conf/*:/usr/local/derby/lib/*
+```
 
-
-
-#---------------------------------------------------------------
-# optional: create new file /etc/init/zeppelin.conf
-#---------------------------------------------------------------
+###### optional: create new file /etc/init/zeppelin.conf
+```
 description "zeppelin"
-
 start on (local-filesystems and net-device-up IFACE!=lo)
 stop on shutdown
+```
 
-# Respawn the process on unexpected termination
+Respawn the process on unexpected termination
+```
 respawn
+```
 
-# respawn the job up to 7 times within a 5 second period.
-# If the job exceeds these values, it will be stopped and marked as failed.
+Respawn the job up to 7 times within a 5 second period.
+If the job exceeds these values, it will be stopped and marked as failed.
+```
 respawn limit 7 5
+```
 
-# zeppelin was installed in /usr/local/zeppelin in this example
+zeppelin was installed in /usr/local/zeppelin in this example
+```
 chdir /usr/local/zeppelin
 exec bin/zeppelin-daemon.sh upstart
+```
 
+### Storm
+1. Download and extract tar ball
 
-
-#-------------------------------------------------------
-# Storm
-#-------------------------------------------------------
-# download and extract tar ball
-
-# create soft link
+2. Create soft link
+```
 sudo ln -s /usr/local/apache-storm-xxxx /usr/local/storm
+```
 
-# create data directory
+3. Create data directory
+```
 mkdir /var/storm
+```
 
-# change ownership
+4. Change ownership
+```
 chown fra:hdgrp /var/storm
+```
 
-# edit conf/storm.yaml
+5. Edit conf/storm.yaml
+```
 storm.zookeeper.servers:
  - "localhost"
 storm.local.dir: “/var/storm”
@@ -677,21 +869,28 @@ supervisor.slots.ports:
  - 6701
  - 6702
  - 6703
+```
 
-
-# start zookeeper
+6. start zookeeper
+```
 /usr/local/zookeeper/bin/zkServer.sh start
+```
 
-# start nimbus
+7. start nimbus
+```
 bin/storm nimbus
+```
 
-# start supervisor
+8. start supervisor
+```
 bin/storm supervisor
+```
 
-# start UI
+9. start UI
+```
 /bin/storm ui
-
 http://localhost:8080
+```
 
 
 

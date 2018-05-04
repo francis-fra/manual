@@ -1,94 +1,128 @@
-------------------------------------------------------------------
-# Pre-installation actions
-------------------------------------------------------------------
-# Verify the system has a CUDA-capable GPU
+### Pre-installation actions
+1. Verify the system has a CUDA-capable GPU
+```
 lspci | grep -i nvidia
+```
 
-# Verify the system is running a supported version of Linux.
+2. Verify the system is running a supported version of Linux.
+```
 uname -m && cat /etc/*release
+```
 
-# Verify the system has gcc installed.
+3. Verify the system has gcc installed.
+```
 gcc --version
+```
 
-# Verify the system has the correct kernel headers and development packages installed.
+3. Verify the system has the correct kernel headers and development packages installed.
+```
 uname -r
+```
 
-# install the header if not available
+4. install the header if not available
+```
 sudo apt-get install linux-headers-$(uname -r)
+```
 
-# checksum
+5. checksum
+```
 md5sum <file>
+```
 
-# Download the NVIDIA CUDA Toolkit
+6. Download the NVIDIA CUDA Toolkit
+```
 https://developer.nvidia.com/cuda-downloads
-# For Ubuntu 16.04, the downloaded file should be:
-# cuda-repo-ubuntu1404_7.5-18_amd64.deb
+```
+For Ubuntu 16.04, the downloaded file should be:
+```
+cuda-repo-ubuntu1404_7.5-18_amd64.deb
+```
 
-# to check nvidia
+7. to check nvidia
+```
 nvidia-settings
+```
 
-
-------------------------------------------------------------------
-# Download sites
-------------------------------------------------------------------
+###### Download sites
+```
 http://developer.download.nvidia.com/compute/cuda/repos/
 https://developer.nvidia.com/cuda-downloads
+```
 
-------------------------------------------------------------------
-# install from packages
-------------------------------------------------------------------
-# Package Manager (Ubuntu)
-# install the downloaded deb file
-# sudo dpkg -i cuda-repo-<distro>_<version>_<architecture>.deb
-# e.g. sudo dpkg -i cuda-repo-ubuntu1404_7.5-18_amd64.deb
+### install from packages
+* Package Manager (Ubuntu)
+* install the downloaded deb file
+```
+sudo dpkg -i cuda-repo-<distro>_<version>_<architecture>.deb
+e.g. sudo dpkg -i cuda-repo-ubuntu1404_7.5-18_amd64.deb
+```
 
+```
 sudo apt-get update
 sudo apt-get install cuda
+```
 
-# optional: cuda dev library (??)
-# sudo apt-get install -y cuda
+* optional: cuda dev library (??)
+```
+sudo apt-get install -y cuda
+```
 
-# ubuntu repository
-# sudo apt install nvidia-cuda-dev nvidia-cuda-toolkit
+* ubuntu repository
+```
+sudo apt install nvidia-cuda-dev nvidia-cuda-toolkit
+```
 
-
-# alternatively, install from run file
+* alternatively, install from run file
+```
 sudo sh cuda_xxx_linux.run
+```
 
-
-------------------------------------------------------------------
-# post-installation
-------------------------------------------------------------------
-# edit .profile file
-# environment variables
+### post-installation
+1. edit .profile file
+```
 export PATH=/usr/local/cuda-8.0/bin${PATH:+:${PATH}}
 export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+```
+optional:
+```
+export CUDA_HOME=/usr/local/cuda-8.0
+PATH=${CUDA_HOME}/bin:${PATH} 
+export PATH
+```
 
-#export CUDA_HOME=/usr/local/cuda-8.0
-#PATH=${CUDA_HOME}/bin:${PATH} 
-#export PATH
-
-# To install writable samples
-# In order to modify, compile, and run the samples, the samples must be installed with write permissions
+2. install writable samples
+```
 cuda-install-samples-7.5.sh <dir>
-# e.g. ~/FraDir/cuda_samples
+e.g. ~/FraDir/cuda_samples
+```
+In order to modify, compile, and run the samples, the samples must be installed with write permissions
 
-# check the driver version
+3. check the driver version
+```
 cat /proc/driver/nvidia/version
 NVRM version: NVIDIA UNIX x86_64 Kernel Module  367.57  Mon Oct  3 20:37:01 PDT 2016
 GCC version:  gcc version 5.4.0 20160609 (Ubuntu
 5.4.0-6ubuntu1~16.04.4)
+```
 
-# check CUDA Toolkit version
+4. check CUDA Toolkit version
+```
 nvcc -V
+```
 
-# compile the samples
+5. compile the samples
+```
 cd <dir>/NVIDIA_CUDA-8.0_Samples && make
+```
 
-# To verify installation with CUDA SDK samples
+6. To verify installation with CUDA SDK samples
+```
 cd <dir>/NVIDIA_CUDA-8.0_Samples 
 ./deviceQuery 
+```
 
+###### Sample Outupt
+```
  CUDA Device Query (Runtime API) version (CUDART static linking)
 
 Detected 1 CUDA Capable device(s)
@@ -128,12 +162,15 @@ Device 0: "GeForce GT 750M"
 
 deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 8.0, CUDA Runtime Version = 8.0, NumDevs = 1, Device0 = GeForce GT 750M
 Result = PASS
+```
 
-
-# 
+Bandwidth Test
+```
 cd <cuda_samples folder>/NVIDIA_CUDA-8.0_Samples/bin/x86_64/linux/release
 ./bandwidthTest
-
+```
+Sample Output
+```
  Device 0: GeForce GT 750M
  Quick Mode
 
@@ -153,139 +190,168 @@ cd <cuda_samples folder>/NVIDIA_CUDA-8.0_Samples/bin/x86_64/linux/release
    33554432			45181.0
 
 Result = PASS
+```
 
+###### Others (not used)
+```
+apt-get install nvidia-cuda-toolkit
+```
 
+setup GPU and CUDA
+```
+sudo wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1404_6.5-14_amd64.deb
+sudo apt-get update
+sudo apt-get install -y cuda # this takes a while
+echo -e "\nexport PATH=/usr/local/cuda-6.5/bin:$PATH\n\nexport LD_LIBRARY_PATH=/usr/local/cuda-6.5/lib64" >> .bashrc
+sudo reboot
+```
 
-------------------------------------------------------------------
-# Others (not used)
-------------------------------------------------------------------
-#apt-get install nvidia-cuda-toolkit
-
-
-# setup GPU and CUDA
-#sudo wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1404/x86_64/cuda-repo-ubuntu1404_6.5-14_amd64.deb
-#sudo dpkg -i cuda-repo-ubuntu1404_6.5-14_amd64.deb
-#sudo apt-get update
-#sudo apt-get install -y cuda # this takes a while
-#echo -e "\nexport PATH=/usr/local/cuda-6.5/bin:$PATH\n\nexport LD_LIBRARY_PATH=/usr/local/cuda-6.5/lib64" >> .bashrc
-#sudo reboot
-
-
-------------------------------------------------------------------
-# Uninstall
-------------------------------------------------------------------
+### Uninstall
 Use the following command to uninstall a Toolkit runfile installation:
-$ sudo /usr/local/cuda-X.Y/bin/uninstall_cuda_X.Y.pl
+```
+sudo /usr/local/cuda-X.Y/bin/uninstall_cuda_X.Y.pl
+```
 
 Use the following command to uninstall a Driver runfile installation:
-$ sudo /usr/bin/nvidia-uninstall
+```
+sudo /usr/bin/nvidia-uninstall
+```
 
 Use the following commands to uninstall a RPM/Deb installation:
-$ sudo yum remove <package_name>                      # Redhat/CentOS
-$ sudo dnf remove <package_name>                      # Fedora
-$ sudo zypper remove <package_name>                   # OpenSUSE/SLES
-$ sudo apt-get --purge remove <package_name>          # Ubuntu
+```
+sudo yum remove <package_name>                      # Redhat/CentOS
+sudo dnf remove <package_name>                      # Fedora
+sudo zypper remove <package_name>                   # OpenSUSE/SLES
+sudo apt-get --purge remove <package_name>          # Ubuntu
+```
 
-
-#-------------------------------------------------------------------
-# install cuDNN
-#-------------------------------------------------------------------
-# check CUDA location
+### install cuDNN
+1. Check CUDA location
+```
 ldconfig -p | grep cuda
+```
 
-# download and extract
+2. Download and extract
 
-# copy to the CUDA directory
+3. copy to the CUDA directory
+```
 tar xvzf cudnn-8.0-linux-x64-v5.1.tgz
 cd cuda
 sudo cp include/cudnn.h /usr/local/cuda-8.0/include/
 sudo cp lib64/* /usr/local/cuda-8.0/lib64/
+```
 
-# usage
-# <installpath> is /usr/local/cuda-8.0/lib64/
-Add <installpath> to your build and link process by adding -I<installpath> to your compile
+4. usage
+    * <installpath> is /usr/local/cuda-8.0/lib64/
+    * Add <installpath> to your build and link process by adding -I<installpath> to your compile
 line and -L<installpath> -lcudnn to your link line.
 
 
-
-#-------------------------------------------------------------------
-# install Bazel (Optional)
-#-------------------------------------------------------------------
+###### install Bazel (Optional)
+```
 echo "deb [arch=amd64] http://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
 curl https://storage.googleapis.com/bazel-apt/doc/apt-key.pub.gpg | sudo apt-key add -
 sudo apt-get update && sudo apt-get install bazel
 sudo apt-get upgrade bazel
+```
 
 
-#-------------------------------------------------------------------
-# install caffe
-#-------------------------------------------------------------------
+###### install caffe
+```
 git clone https://github.com/BVLC/caffe.git
 cd caffe/python/
 for req in $(cat requirements.txt); do sudo -H pip install $req --upgrade; done
-
 sudo -H pip install python-dateutil --upgrade
+```
 
-# linux basic dependency
+###### linux basic dependency
+```
 sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler
 sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev
 sudo apt-get install --no-install-recommends libboost-all-dev
+```
 
-# BLAS
+###### BLAS
+```
 sudo apt-get install libatlas-base-dev
+```
 
 
-# edit the make file
+###### Edit the make file
+* Copy make file
+```
 cp Makefile.config.example Makefile.config
+```
 
-For CPU & GPU accelerated Caffe, no changes are needed.
-For cuDNN acceleration using NVIDIA’s proprietary cuDNN software, uncomment the USE_CUDNN := 1 switch in Makefile.config. 
-cuDNN is sometimes but not always faster than Caffe’s GPU acceleration.
+* For CPU & GPU accelerated Caffe, no changes are needed.
+* For cuDNN acceleration using NVIDIA’s proprietary cuDNN software, uncomment the 
+```
+USE_CUDNN := 1 
+```
+switch in Makefile.config. 
+* cuDNN is sometimes but not always faster than Caffe’s GPU acceleration.
 
-uncomment:
+* uncomment:
+```
 USE_CUDNN := 1
 WITH_PYTHON_LAYER := 1
+```
 
-TODO: ckeck -- change:
+* TODO: ckeck -- change:
+```
 CUDA_DIR := /usr/local/cuda-8.0
-# default is python 2
-#PYTHON_INCLUDE := /usr/include/python2.7 /usr/lib/python2.7/dist-packages/numpy/core/include
-# switch to python 3
+```
+
+* default is python 2
+```
+PYTHON_INCLUDE := /usr/include/python2.7 /usr/lib/python2.7/dist-packages/numpy/core/include
+```
+* to switch to python 3
+```
 PYTHON_LIBRARIES := boost_python-py35 python3.5m
 PYTHON_INCLUDE := /usr/include/python3.5m /usr/lib/python3.5/dist-packages/numpy/core/include
-
 INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial
 LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/hdf5/serial
+```
 
-
-# to compile
-# Adjust Makefile.config (for example, if using Anaconda Python, or if cuDNN is desired)
+* to compile, adjust Makefile.config (for example, if using Anaconda Python, or if cuDNN is desired)
+```
 make all
 make test
 make runtest
+```
 
-# to compile the python wrappers
+* to compile the python wrappers
+```
 make pycaffe
+```
 
-# set python path in .profile
+* set python path in .profile
+```
 export PYTHONPATH=/path/to/caffe/python:$PYTHONPATH
+```
 
-
-#-------------------------------------------------------------------
-# install Theano
-#-------------------------------------------------------------------
+### install Theano
+1. Install
+```
 sudo apt-get install python-numpy python-scipy python-dev python-pip python-nose g++ libopenblas-dev git
 sudo -H pip install nose2 nose-parameterized
 sudo pip install Theano
+```
 
-# check config
+2. check config
+```
 python3 -c 'import theano; print(theano.config)' | less
+```
 
-
-# testing (for python 2)
+3. testing (for python 2)
+```
 nosetests theano
+```
 
-# configurations
+4. configurations
+```
 Create ~/.theanorc file with the following content:
        [global]
        device = gpu
@@ -302,18 +368,18 @@ Create ~/.theanorc file with the following content:
        #flags=-D_FORCE_INLINES
        [cuda]
        root = /usr/local/cuda-8.0
+```
 
-# run tests
-Run python test_theano.py:
+5. run tests
+Run python test_theano.py
 
-
+```
 from theano import function, config, shared, sandbox
 import theano.tensor as T
 import numpy
 import time            
 vlen = 10 * 30 * 768  # 10 x #cores x # threads per core
 iters = 1000            
-
 rng = numpy.random.RandomState(22)
 x = shared(numpy.asarray(rng.rand(vlen), config.floatX))
 f = function([], T.exp(x))
@@ -324,81 +390,88 @@ for i in range(iters):
 t1 = time.time()
 print ('Looping %d times took' % iters, t1 - t0, 'seconds')
 print ('Result is', r)
-if numpy.any([isinstance(x.op, T.Elemwise) and ('Gpu' not in type(x.op).__name__)
-                  for x in f.maker.fgraph.toposort()]):
+if numpy.any([isinstance(x.op, T.Elemwise) and 
+            ('Gpu' not in type(x.op).__name__) 
+            for x in f.maker.fgraph.toposort()]):
     print('Used the cpu')
 else:
     print('Used the gpu')
 
-#-------------------------------------------------------------------
-# install Tensorflow
-#-------------------------------------------------------------------
-# install dependencies
+```
+
+### Tensorflow
+1. install dependencies
+```
 sudo apt-get install libcupti-dev
+```
 
-# need pip version 8.1 or later
-# pip install tensorflow (cpu)
+2. need pip version 8.1 or later
+```
+#pip install tensorflow (cpu)
 pip install tensorflow-gpu
+```
 
-# testing tensorflow
-$ cd tensorflow/models/image/mnist
-$ python convolutional.py
+3. testing tensorflow
+```
+cd tensorflow/models/image/mnist
+python convolutional.py
+```
+Start and close a session:
+```
+import tensorflow as tf
+sess = tf.InteractiveSession()
+sess.close()
+```
+Do some calculations
+```
+import tensorflow as tf
+hello = tf.constant('Hello, TensorFlow!')
+sess = tf.Session()
+print(sess.run(hello))
+a = tf.constant(10)
+b = tf.constant(32)
+print(sess.run(a + b))
+```
 
-
-$ import tensorflow as tf
-$ sess = tf.InteractiveSession()
-$ sess.close()
-
->>> import tensorflow as tf
->>> hello = tf.constant('Hello, TensorFlow!')
->>> sess = tf.Session()
->>> print(sess.run(hello))
->>> a = tf.constant(10)
->>> b = tf.constant(32)
->>> print(sess.run(a + b))
-
-#--------------------------------------------------------------------------------------------------
-# Deep Learning libraries
-#--------------------------------------------------------------------------------------------------
-# Keras
+### Deep Learning libraries
+Keras
+```
 sudo pip3 install keras
+```
 
-
-
-#--------------------------------------------------------------------------------------------------
-# others (not used)
-#--------------------------------------------------------------------------------------------------
-Configure and build openblas:
+###### others (not used)
+* Configure and build openblas:
+```
 sudo apt-get install gfortran
 git clone https://github.com/xianyi/OpenBLAS
 cd OpenBLAS
 make FC=gfortran
 sudo make PREFIX=/usr/local install
+```
 
-		
-# alternatively	
-#sudo pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git
-#echo -e "\n[global]\nfloatX=float32\ndevice=gpu\n[mode]=FAST_RUN\n\n[nvcc]\nfastmath=True\n\n[cuda]\nroot=/usr/local/cuda" >> ~/.theanorc
+alternatively	
+```
+sudo pip install --upgrade --no-deps git+git://github.com/Theano/Theano.git
+echo -e "\n[global]\nfloatX=float32\ndevice=gpu\n[mode]=FAST_RUN\n\n[nvcc]\nfastmath=True\n\n[cuda]\nroot=/usr/local/cuda" >> ~/.theanorc
+```
 
-# ubuntu 16.04 with cuda 8 only
+* ubuntu 16.04 with cuda 8 only
 
 
-# cuda 7.5 don't support the default g++ version. Install an supported version and make it the default.
+* cuda 7.5 don't support the default g++ version. Install an supported version and make it the default.
+```
 sudo apt-get install g++-4.9
-
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.9 20
 sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 10
-
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.9 20
 sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 10
-
 sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc 30
 sudo update-alternatives --set cc /usr/bin/gcc
-
 sudo update-alternatives --install /usr/bin/c++ c++ /usr/bin/g++ 30
 sudo update-alternatives --set c++ /usr/bin/g++
+```
 
-# Work around a glibc bug
+* Work around a glibc bug
 echo -e "\n[nvcc]\nflags=-D_FORCE_INLINES\n" >> ~/.theanorc
 
 
