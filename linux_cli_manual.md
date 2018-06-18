@@ -1,3 +1,93 @@
+### Shell Script
+
+Current environment
+```
+export -p
+```
+
+Append multiple files (e.g. sample*.txt)
+```
+for f in sample*.txt
+do
+    tr -d ',' < $f >> new_file.txt
+done
+```
+
+Remove all newline carriage
+```
+tr -d '\n' < $1 > $2
+```
+
+Select fields from text file (assuming delimter is :)
+```
+cut -d : -f 1,5 <txt_file>
+```
+or
+```
+awk -F: -v 'OFS=,' '{ print $1, $5 }' <txt_file>
+awk 'BEGIN { FS = ":" ; OFS = "," }
+    { print $1, $5 }' mypasswd.txt
+```
+
+Swap fields
+```
+# You love me
+echo "I love you" | sed -f love_cmd_script
+# I love you
+echo "You love me" | sed -f love_cmd_script
+```
+
+SQL like merge data
+```
+# remove comments
+sed '/^#/d;' quota.dat | sort > quota.sorted
+sed '/^#/d;' sales.dat | sort > sales.sorted
+
+# join
+join quota.sorted sales.sorted
+
+# remove tmp files
+rm quota.sorted
+rm sales.sorted
+```
+
+Count word frequency
+```
+tr -cs A-Za-z\' '\n' |
+    # change lower case
+    tr A-Z a-z |
+    # count unique words
+    sort |
+    uniq -c |
+    # sort by frequency (col 1 then col 2)
+    sort -k1,1nr -k2 |
+    sed ${1:-25}q |
+    # show nicely in 4 columns
+    pr -c4 -w80 -t
+```
+
+Solving puzzles
+```
+FILES="
+    /usr/share/dict/american-english
+      "
+pattern="$1"
+
+egrep -h -i "$pattern" $FILES 2> /dev/null | sort -u -f
+```
+
+Get sub-directories
+```
+find /usr/share -type d
+```
+
+Finding files
+```
+locate <files>
+which <files>
+
+```
+
 ### Mongodb startup
 
 To start mongo daemon and mongo client
@@ -101,7 +191,7 @@ To grant permission
 <user>=# GRANT <privilege> TO <user>;
 ```
 
-###### Basic commands
+###### Basic Postgres SQL commands
 To list all tables
 ```
 \dt

@@ -1266,7 +1266,7 @@ npm uninstall <package>
 
 5. list package
 ```
-npm list
+npm list [-g]
 ```
 
 6. alternatively:
@@ -1274,16 +1274,48 @@ npm list
 sudo apt-get nodejs-legacy npm
 ```
 
+### TypeScript
+To Install
+```
+npm install -g typescript
+```
+Check version
+```
+tsc --version
+```
 
 ### Node packages
 * FIXME:
 ```
 npm install dstools -g
 ```
-* jquery
+* Key packages
 ```
-npm install jquery
+npm install -g express-generator
+npm install -g express
+npm install -g eslint
+npm install -g jquery
+npm install -g awesome-typescript-loader
+npm install -g source-map-loader
+npm install -g webpack
+npm install -g ts-node
 ```
+* Gulp task automation
+```
+npm install -g gulp-cli
+npm install -g tslint
+npm install -g gulp-typescript
+```
+
+### TODO: Gulp.js
+
+
+### React.js
+* Installation
+```
+npm install -g create-react-app
+```
+
 
 ### nodejs - ubuntu
 ```
@@ -1309,6 +1341,21 @@ sudo apt-get install nodejs
 sudo apt-get install erlang
 ```
 
+### Crystal
+* Download and run setup
+```
+curl https://dist.crystal-lang.org/apt/setup.sh | sudo bash
+```
+* Configure repository
+```
+apt-key adv --keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54
+echo "deb https://dist.crystal-lang.org/apt crystal main" > /etc/apt/sources.list.d/crystal.list
+apt-get update
+```
+* Install
+```
+sudo apt-get install crystal
+```
 
 ### Mahout
 * git clone from source

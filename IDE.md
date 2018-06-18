@@ -1,3 +1,50 @@
+### Visual Studio Code
+* Download deb file
+```
+sudo dpkg -i <file>.deb
+sudo apt-get update
+sudo apt-get install code
+```
+* Install plugins, e.g. Excel Viewer, Rust, Code Runner...etc
+* Configure Integrated Terminal
+```
+Preferences -> Keyboard shortcuts
+Run Active File at Terminal
+```
+##### Node.js Setup
+* Edit jsconfig.json
+```
+{
+    "compilerOptions": {
+        "target": "ES6"
+    },
+    "exclude": [
+        "node_modules",
+        "**/node_modules/*"
+    ]
+}
+```
+
+##### TypeScript Project Setup
+* Edit tsconfig.json
+```
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true
+    }
+}
+```
+* TypeScript build
+```
+Task -> Run Build Task
+```
+* Configure Default Build Task
+```
+Task -> Configure Default Buid Task
+```
+
 
 ### Eclipse - Debian
 * Download installer for Java Developer
@@ -166,7 +213,13 @@ check kernel list
 ipython kernelspec list
 ```
 
-
+### Visual Code
+Download the deb file, and run install
+```
+sudo dpkg -i <file>.deb
+sudo apt-get update
+sudo apt-get install code
+```
 
 ### Intellij
 
