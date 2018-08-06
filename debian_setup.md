@@ -292,10 +292,14 @@ sudo apt-get install splint
 ```
 
 ### h2o (java)
-Download and extract tar ball
+* Download and extract tar ball
 ```
-cd <h20 folder>
-java -jar h2o.jar
+sudo mv h2o-3.xxx /usr/local/lib/java
+sudo ln -s /usr/local/lib/java/h2o-3.xxx /usr/local/lib/java/h2o
+```
+* Run jar library
+```
+java -jar /usr/local/lib/java/h2o/h2o.jar
 ```
 
 ### h2o - python

@@ -166,6 +166,22 @@ make
 make install
 ```
 
+### BeakerX
+* Pip Install
+```
+pip install beakerx --user
+```
+* If local jupyter repository is used, need to create link to local:
+```
+sudo ln -s /home/fra/.local/share/jupyter/ /usr/share/jupyter
+sudo ln -s /home/fra/.local/etc/jupyter/ /usr/etc/jupyter
+sudo ln -s /home/fra/.local/etc/ipython/ /usr/etc/ipython
+```
+* run install:
+```
+beakerx install
+```
+
 ### Pixel Dust
 * python 2 only
 ```

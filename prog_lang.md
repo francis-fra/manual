@@ -238,6 +238,14 @@ make test       # (optional)
 make install
 ```
 
+### Kotlin
+* using SDKMAN!
+```
+curl -s get.sdkman.io | bash
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+sdk install kotlin
+```
+
 ### Groovy
 * using SDKMAN!
 ```
@@ -917,6 +925,18 @@ To send diagnostic commands to a specified JVM
 * jdb
 Java debugger
 
+* Show GC info
+```
+java -XX:+UseSerialGC -XX:+PrintGCDetails -version
+java -XshowSettings:vm -version
+```
+
+* Set heap size
+e.g. 120MB
+```
+java -Xmx120m -XshowSettings:vm -version
+```
+
 
 ### Mongodb
 1. add key
@@ -1172,6 +1192,45 @@ to run in emacs
 ```
 M-x run-scheme
 ```
+
+### Erlang
+Add signing Key
+```
+wget -O - 'https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc' | sudo apt-key add -
+```
+Set up apt repository, create repository file at:
+```
+/etc/apt/sources.list.d/bintray.erlang.list
+```
+Type the following in the file:
+```
+deb http://dl.bintray.com/rabbitmq/debian stretch erlang
+```
+Install Erlang packages
+```
+sudo apt-get update
+sudo apt-get install erlang-nox
+```
+
+### RabbitMQ
+Add signing Key
+```
+wget -O - 'https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc' | sudo apt-key add -
+```
+Set up apt repository, create repository file at:
+```
+/etc/apt/sources.list.d/bintray.rabbitmq.list
+```
+Type the following in the file:
+```
+deb http://dl.bintray.com/rabbitmq/debian stretch main
+```
+Install RabbitMQ packages
+```
+sudo apt-get update
+sudo apt-get install rabbitmq-server
+```
+
 
 
 ### Lua Torch
