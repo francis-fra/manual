@@ -1299,7 +1299,15 @@ npm install -g awesome-typescript-loader
 npm install -g source-map-loader
 npm install -g webpack
 npm install -g ts-node
+npm install -g @types/node
 ```
+* To use global package at local
+```
+npm link <package>
+e.g. npm link @types/node
+```
+
+
 * Gulp task automation
 ```
 npm install -g gulp-cli
