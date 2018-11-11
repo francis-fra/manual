@@ -372,3 +372,17 @@ Settings -> keymap -> cursive -> Send form before caret to REPL
 ```
 run/debug configuration -> Clojure REPL
 ```
+
+### Code:Blocks
+* add the following lines in file:
+/etc/apt/sources.list/code-blocks.list
+```
+deb [arch=amd64] https://apt.jenslody.de/stable stretch main
+deb-src https://apt.jenslody.de/stable stretch main
+```
+* update
+```
+sudo apt-get update
+sudo apt-get install jens-lody-debian-keyring
+sudo apt-get install codeblocks
+```
