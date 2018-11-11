@@ -569,6 +569,11 @@ To explore data using R
 data/iris.csv Rio -e 'summary(df)'
 ```
 
+Find files and Combine into one
+```
+find data/ -name '*.json' -exec cat {} \; > uber.json
+```
+
 Data visualization
 examples:
 ```

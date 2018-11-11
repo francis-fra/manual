@@ -19,7 +19,7 @@ sudo apt-get install libatlas3-base
 ```
 
 ```
-sudo chmod o+w /usr/local/lib/R/site-library
+sudo chmod o+w /usr/local/lib/R/site-libray
 sudo chmod o+w -R /usr/lib/R/site-library
 sudo chmod o+w -R /usr/lib/R/library
 ```
@@ -144,6 +144,27 @@ nuget Fslab
 ```
 mono paket.exe install
 ```
+
+### GWT
+1. Download the zip file and unzip to /opt
+2. Make the script executable
+```
+ln -s /opt/gwt-2.8.2 /opt/gwt
+cd /opt/gwt
+chmod u+x webAppCreator
+```
+3. Add to the source path
+4. Test
+```
+webAppCreator -out MyWebApp com.mycompany.mywebapp.MyWebApp
+cd MyWebApp
+ant devmode
+```
+5. Compile and RUn in production mode
+```
+ant build
+```
+
 
 ### Rust
 Download and run install script
@@ -835,6 +856,33 @@ to run: (need to add the current path)
 java -cp ./:../stdlib.jar RandomSeq 10
 ```
 
+##### Gradle
+Install via SDKMAN
+```
+sdk install grade 4.9
+```
+check version
+```
+gradle -v
+```
+Update PATH
+```
+export PATH=$PATH:/home/fra/.sdkman/candidates/gradle/current/bin
+```
+To start a gradle build project
+```
+gradle init --type java-application
+```
+To run application
+```
+./gradlew bootRun
+```
+To build JAR
+```
+./gradlew build
+```
+
+
 ###### Maven
 To create folder structure:
 ```
@@ -915,6 +963,26 @@ e.g.
 jar cvfe package/Hello.jar pacakge.HelloWorld package/HelloWorld.class
 ```
 
+### Setting MANIFEST file
+* MANIFEST.MF example:
+note that a new line must be present at the end of file
+```
+Main-Class: com.mycompany.app.Main
+Class-Path: ../lib/commons-lang3-3.1.jar
+```
+* run at ./build
+```
+java com.mycompany.app.Main
+```
+* Create a MANIFESTMF file and then package into a jar file
+```
+jar cvmf ../dist/MANIFEST.MF ../dist/example.jar  com/mycompany/app/Main.class
+
+```
+* run jar file at ./dist
+```
+java -jar example.jar
+```
 
 ### java tools
 * To generate documentation of codes
@@ -1273,6 +1341,13 @@ sudo apt-get update
 sudo apt-get install rabbitmq-server
 ```
 
+Download Java client library (jar)
+```
+amqp-client-5.30.jar
+``
+copy to the CLASSPATH
+
+
 ### LLVM
 Set up apt repository
 ```
@@ -1295,6 +1370,7 @@ Verify installation
 ```
 clang-6.0 --version
 ```
+
 
 ### SFML
 Install via apt-get
@@ -1402,6 +1478,14 @@ npm list [-g]
 sudo apt-get nodejs-legacy npm
 ```
 
+### npm project
+* Set up project
+```
+npm init -y
+```
+* package.json file is created
+
+
 ### TypeScript
 To Install
 ```
@@ -1446,6 +1530,35 @@ npm install -g @types/mocha @types/chai
 ```
 
 ### TODO: Gulp.js
+
+
+### Babel
+Install packages:
+```
+npm install babel-cli -g
+npm install babel-core -g
+npm install babel-preset-env -g
+```
+Create a file called .babelrc, and add:
+```
+{
+  "presets": ["env"]
+}
+```
+* To run es6 javascript, make sure to local link:
+```
+npm link babel-cli
+npm link babel-preset-env
+```
+* Run the file by:
+```
+babel-node file.js
+```
+
+Compile using babel
+```
+npx babel file.js -o out.js
+```
 
 
 ### React.js

@@ -221,7 +221,6 @@ install plugin from:
 https://github.com/amix/vimrc
 ```
 
-
 ### Heroku
 run:
 ```

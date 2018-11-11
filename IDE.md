@@ -221,6 +221,18 @@ sudo apt-get update
 sudo apt-get install code
 ```
 
+### Android
+1. Download zip file from android website
+2. Extract and copy to /opt/
+3. Link it with
+```
+sudo ln -s /opt/android-studio/bin/studio.sh /usr/local/bin/
+```
+4. Install the pre-requisite package
+```
+sudo apt-get install libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386
+```
+
 ### Intellij
 
 ###### Installation
