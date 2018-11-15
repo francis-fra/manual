@@ -877,18 +877,78 @@ To create folder structure:
 ```
 mkdir -p src/main/java/hello
 ```
-
 Project setup file: create a pom.xml in the same folder as src
 
-compile
+There are a number of phrases:
+* validate
+* compile
+* test
+* package
+* integration-test
+* verify
+* install
+* deploy
+
+To compile, the byte code is stored at target/classes
 ```
 mvn compile
 ```
-
-install
+To build, either
 ```
+mvn install
 mvn clean install
 ```
+Maven assembly plugin example
+```
+<!-- Maven Assembly Plugin -->
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-assembly-plugin</artifactId>
+  <version>3.1.0</version>
+  <configuration>
+	  <!-- get all project dependencies -->
+	  <descriptorRefs>
+		  <descriptorRef>jar-with-dependencies</descriptorRef>
+	  </descriptorRefs>
+	  <!-- MainClass in mainfest make a executable jar -->
+	  <archive>
+	    <manifest>
+		  <mainClass>com.mycompany.app.Main</mainClass>
+	    </manifest>
+	  </archive>
+
+  </configuration>
+  <executions>
+    <execution>
+	  <id>make-assembly</id>
+	  <!-- bind to the packaging phase -->
+	  <phase>package</phase> 
+	  <goals>
+		  <goal>single</goal>
+	  </goals>
+    </execution>
+  </executions>
+</plugin>
+
+```
+Maven jar plugin example
+```
+<plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-jar-plugin</artifactId>
+      <version>3.1.0</version>
+      <configuration>
+	  <archive>
+	  <manifest>
+	      <addClasspath>true</addClasspath>
+	      <mainClass>com.mycompany.app.Main</mainClass>
+	  </manifest>
+	  </archive>
+    </configuration>
+</plugin>
+```
+
+
 
 Package structure
 If the java class is part of a package
@@ -926,6 +986,11 @@ java introcs.Newton
 To view contents a JAR file
 ```
 jar tf <jar file>
+```
+To view contents of the fiel inside JAR
+```
+unzip -p <file.jar> <file_to_view>
+
 ```
 
 to extract contents a JAR file

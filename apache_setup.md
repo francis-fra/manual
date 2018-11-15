@@ -63,7 +63,7 @@ sudo chown -R fra:hdgrp /usr/local/hive
 
 edit .bashrc
 ```
-export HIVE_HOME="/usr/local/hive" 
+export HIVE_HOME="/usr/local/hive"
 export PATH=$PATH:$HIVE_HOME/bin
 
 export CLASSPATH=$CLASSPATH:/usr/local/hadoop/lib/*:.
@@ -80,7 +80,7 @@ sbin/start-dfs.sh
 sbin/start-yarn.sh
 ```
 
-Create Hive warehouse directory 
+Create Hive warehouse directory
 ```
 hadoop fs -mkdir /tmp
 hadoop fs -mkdir /user/hive
@@ -106,7 +106,7 @@ export HADOOP_HOME=/usr/local/hadoop
 export HADOOP_HEAPSIZE=512
 ```
 
-Optional: multiple SLF4J exists 
+Optional: multiple SLF4J exists
 ```
 rm lib/log4j-slf4j-impl-*.jar
 ```
@@ -207,7 +207,7 @@ Edit config file: (hive-site.xml)
       For example, jdbc:postgresql://myhost/db?ssl=true for postgres database.
     </description>
   </property>
-  
+
   <property>
     <name>hive.downloaded.resources.dir</name>
     <!-- <value>${system:java.io.tmpdir}/${hive.session.id}_resources</value> -->
@@ -403,7 +403,7 @@ java -jar metabase.jar
 ```
 Location
 ```
-http://localhost:3000 
+http://localhost:3000
 ```
 
 
@@ -601,7 +601,7 @@ jps
 ```
 ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
 ```
-    * check 
+    * check
 ```
 ./bin/kafka-topics.sh --list --zookeeper localhost:2181
 ```
@@ -665,6 +665,92 @@ nodetool status
 ```
 /etc/cassandra
 ```
+
+### Tomcat
+1. Download the bin distribution, e.g.
+```
+http://apache.mirror.serversaustralia.com.au/tomcat/tomcat-9/v9.0.12/bin/apache-tomcat-9.0.12.tar.gz
+```
+2. Extract the tarball and create a soft link
+```
+sudo mkdir /opt/tomcat
+sudo tar xzvf apache-tomcat-9*tar.gz -C /opt
+sudo ln -s /opt/tomcat/apache-tomcat-xxxx /opt/tomcat
+```
+3. Setup new group and user
+```
+sudo groupadd tomcat
+sudo useradd -s /bin/false -g tomcat -d /opt/tomcat tomcat
+```
+4. Set up folder permission
+```
+sudo chgrp -R tomcat /opt/tomcat
+sudo chown -R tomcat: /opt/tomcat
+```
+5. Create the configure file:
+```
+sudo nano /etc/systemd/system/tomcat.service
+```
+Modify the values like JAVA_HOME etc...
+```
+[Unit]
+Description=Apache Tomcat Web Application Container
+After=network.target
+
+[Service]
+Type=forking
+
+Environment=JAVA_HOME=/usr/java/latest
+Environment=CATALINA_PID=/opt/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME=/opt/tomcat
+Environment=CATALINA_BASE=/opt/tomcat
+Environment='CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart=/opt/tomcat/bin/startup.sh
+ExecStop=/opt/tomcat/bin/shutdown.sh
+
+User=tomcat
+Group=tomcat
+UMask=0007
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+6. Reload and restart the systemd daemon
+```
+sudo systemctl daemon-reload
+sudo systemctl start tomcat
+```
+7. Check the status
+```
+sudo systemctl status tomcat
+```
+8. Optional: Make sure the firewall allows traffic at port 8080
+```
+localhost:8080
+```
+If it is blocked:
+```
+sudo ufw allow 8080
+```
+9. Optional: Enable tomcat service
+```
+sudo systemctl enable tomcat
+```
+10. Configure Tomcat Web Management interface
+```
+sudo nano /opt/tomcat/conf/tomcat-users.xml
+```
+add admin username and password inside tomcat-users
+```
+<tomcat-users . . .>
+    <user username="admin" password="password" roles="manager-gui,admin-gui"/>
+</tomcat-users>
+```
+
 
 ### TODO: Avro
 
@@ -742,7 +828,7 @@ http://localhost:9001/
 bin/zeppelin-daemon.sh start
 ```
 
-    * stop 
+    * stop
 ```
 bin/zeppelin-daemon.sh start
 ```
@@ -757,7 +843,7 @@ bin/zeppelin-daemon.sh start
 sudo ./bin/install-interpreter.sh --name shell,python
 ```
 
-8. Edit conf/shiro.ini 
+8. Edit conf/shiro.ini
 
     * login/password
 ```
@@ -891,7 +977,3 @@ bin/storm supervisor
 /bin/storm ui
 http://localhost:8080
 ```
-
-
-
-
