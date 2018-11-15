@@ -129,8 +129,14 @@ npm run build-ext
 jupyter console --kernel nodejs
 ```
 
+### iTypescript
+* Install kernel locally
+```
+npm install -g itypescript
+its --ts-install=local
+```
 
-### jupyter + pyspark
+### Jupyter + pyspark
 * edit /.local/share/jupyter/kernels/python2/kernel.json
 
 * add these to the file
@@ -141,6 +147,23 @@ jupyter console --kernel nodejs
      "SPARK_CONF_DIR": "/usr/lib/spark/conf"
  }
 ```
+
+### iRuby
+* Install dependencies
+```
+sudo apt install libtool libffi-dev ruby ruby-dev make
+sudo apt install libzmq3-dev libczmq-dev
+```
+* Instal Ruby gem
+```
+sudo gem install cztop iruby
+iruby regestier --force
+```
+* gem library location:
+```
+/var/lib/gems/2.3.0
+```
+
 
 ### Haskell jupyter
 ```
@@ -155,6 +178,21 @@ pip3 install -r requirements.txt --user
 stack install gtk2hs-buildtools
 stack install --fast
 ihaskell install --stack
+```
+
+### Ruby jupyter
+```
+gem install cztop
+gem install iruby
+iruby register --force
+```
+* For windows, install Msys2, then install packages
+```
+pacman -Syu
+pacman -Su
+pacman -S --needed base-devel mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain
+pacman -S --needed git subversion mercurial mingw-w64-i686-cmake mingw-w64-x86_64-cmake
+pacman -S --needed mingw-w64-x86_64-zeromq
 ```
 
 

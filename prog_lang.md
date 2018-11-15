@@ -1,3 +1,11 @@
+### SDL Development library
+```
+sudo apt-get install libsdl2-image-dev
+sudo apt-get install libsdl2-ttf-dev
+sudo apt-get install libsdl2-mixer-dev
+
+```
+
 ### R -- Debian
 ```
 sudo apt-get update
@@ -680,39 +688,42 @@ sudo add-apt-repository ppa:longsleep/golang-backports
 sudo apt-get update
 sudo apt-get install golang-go
 ```
-alternatively
+for Ubuntu:
 ```
 sudo add-apt-repository ppa:ubuntu-lxc/lxd-stable
 sudo apt-get update
 sudo apt-get install golang
 ```
-
-2. alternative ppa:
+alternative ppa:
 ```
 sudo add-apt-repository ppa:longsleep/golang-backports
 sudo apt-get update
 sudo apt-get install golang-go
 ```
+Alternatively, download and extract Linux tarballs:
+```
+sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
+```
 
-3. create a workspace by
+2. create a workspace by
 ```
 mkdir $HOME/work
 ```
 
-4. add these lines to .profile
+3. add these lines to .profile
 ```
 export GOPATH=$HOME/Project/GoProj
 export PATH=$PATH:$GOPATH/bin
 ```
 
-5. GoCliipse
+4. GoCliipse
 update site:
 ```
 http://goclipse.github.io/releases/
 ```
 choose only Goclipse
 
-6. Download Tools:
+5. Download Tools:
 these will be installed in $GOPATH/bin
 ```
 gocode:
@@ -723,7 +734,7 @@ godef:
 go get github.com/rogpeppe/godef
 ```
 
-7. Setup
+6. Setup
     * Under preferences, enter the path for gofmt as: /usr/bin/gofmt
     * set the GOROOT as: /usr/
     * Run configurations, set environment -> select -> check GOPATH
@@ -1327,6 +1338,37 @@ M-x run-scheme
 ```
 
 ### Erlang
+Set up apt repository, create repository file at:
+```
+/etc/apt/sources.list.d/erlang-solutions.erlang.list
+```
+Type the following in the file:
+```
+deb https://packages.erlang-solutions.com/debian stretch contrib
+```
+Add signing key
+'''
+wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
+sudo apt-key add erlang_solutions.asc
+'''
+Install Erlang packages
+```
+sudo apt-get update
+sudo apt-get install esl-erlang
+```
+alternatively,
+```
+sudo apt-get install erlang-base-hipe
+```
+
+
+### Elixir
+```
+sudo apt-get install elixir
+```
+
+
+### Erlang (bintray repository)
 Add signing Key
 ```
 wget -O - 'https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc' | sudo apt-key add -
@@ -1363,12 +1405,43 @@ Install RabbitMQ packages
 sudo apt-get update
 sudo apt-get install rabbitmq-server
 ```
+
 Download Java client library (jar)
 ```
 amqp-client-5.30.jar
 ``
 copy to the CLASSPATH
 
+
+### LLVM
+Set up apt repository
+```
+/etc/apt/sources.list.d/llvm-6-stretch.list
+
+For Debian 9 (stretch), add the following line:
+```
+deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-6.0 main
+```
+Add GPG key:
+```
+sudo wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+```
+Install
+```
+sudo apt-get update
+sudo apt-get install clang-6.0 lldb-6.0 lld-6.0
+```
+Verify installation
+```
+clang-6.0 --version
+```
+
+
+### SFML
+Install via apt-get
+```
+sudo apt-get install libsfml-dev
+```
 
 ### Lua Torch
 Install LuaJIT + Torch
@@ -1503,12 +1576,22 @@ npm install -g awesome-typescript-loader
 npm install -g source-map-loader
 npm install -g webpack
 npm install -g ts-node
+npm install -g @types/node
 ```
-* Gulp task automation
+* To use global package at local
+```
+npm link <package>
+e.g. npm link @types/node
+```
+
+
+* Gulp task automation and test runner
 ```
 npm install -g gulp-cli
 npm install -g tslint
 npm install -g gulp-typescript
+npm install -g mocha chai
+npm install -g @types/mocha @types/chai
 ```
 
 ### TODO: Gulp.js
@@ -1549,6 +1632,16 @@ npx babel file.js -o out.js
 npm install -g create-react-app
 ```
 
+### Boost library
+```
+sudo apt-get install libboost-all-dev
+```
+
+### GSL & GNUPlot library
+```
+sudo apt-get install gsl-bin libgsl-dbg libgsl-dev libgsl2
+sudo apt-get install gnuplot
+```
 
 ### nodejs - ubuntu
 ```

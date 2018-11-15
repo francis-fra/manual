@@ -263,6 +263,40 @@ sudo dpkg -i xxx.deb
 sudo apt-get update
 sudo apt-get install vagrant
 ```
+### Emscripten
+* Download from github
+```
+git clone https://github.com/juj/emsdk.git
+```
+* Copy the folder to:
+```
+sudo mv emsdk /opt
+```
+* Run
+```
+./emsdk install latest
+./emsdk activate latest
+```
+* setup environment variables by:
+'''
+source ./emsdk_env.sh
+'''
+* To make it permanently modifying .bashrc:
+'''
+# EMSDK
+export EMSDK=/opt/emsdk
+export EM_CONFIG=/home/fra/.emscripten
+export LLVM_ROOT=/opt/emsdk/clang/e1.38.10_64bit
+export EMSCRIPTEN_NATIVE_OPTIMIZER=/opt/emsdk/clang/e1.38.10_64bit/optimizer
+export BINARYEN_ROOT=/opt/emsdk/clang/e1.38.10_64bit/binaryen
+export EMSDK_NODE=/opt/emsdk/node/8.9.1_64bit/bin/node
+export EMSCRIPTEN=/opt/emsdk/emscripten/1.38.10
+
+export PATH=$PATH:$EMSDK
+export PATH=$PATH:$EMSDK/clang/e1.38.10_64bit
+export PATH=$PATH:$EMSDK/node/8.9.1_64bit/bin
+export PATH=$PATH:$EMSDK/emscripten/1.38.10
+'''
 
 ### key applications
 * FFMPEG
@@ -271,8 +305,18 @@ sudo apt-get install ffmpeg
 ```
 
 * flash player
+auto install:
 ```
 sudo apt-get install flashplugin-installer
+```
+manual install:
+Download and extract tar.gz file from Adobe
+
+For firefox:
+copy the extracted file to these locations:
+```
+sudo cp libflashplayer.so /usr/lib/mozilla/plugins/
+sudo cp -r usr/* /usr
 ```
 
 * VLC
