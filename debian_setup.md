@@ -569,6 +569,93 @@ import csv
 .import <filename> <tablename>
 ```
 
+### Mongodb
+Import public key
+```
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+```
+Update repository
+```
+echo "deb http://repo.mongodb.org/apt/debian stretch/mongodb-org/4.0 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+```
+Update and install
+```
+sudo apt-get update
+sudo apt-get install -y mongodb-org
+```
+Default MongoDB instance
+```
+data files in /var/lib/mongodb
+log files in /var/log/mongodb
+```
+
+Verify status
+```
+sudo systemctl status mongod
+```
+Check database version, address and port
+```
+mongo --eval 'db.runCommand({ connectionStatus: 1 })'
+```
+
+Start mongodb
+```
+sudo service mongod start
+```
+Stop / restart mongodb
+```
+sudo service mongod stop
+sudo service mongod restart
+```
+
+### Redis
+Install
+```
+sudo apt install redis-server
+```
+Edit config file
+```
+sudo nano /etc/redis/redis.conf
+```
+change this line:
+```
+supervised systemd
+```
+
+create Redis user and group (optional)
+```
+adduser --system --group --no-create-home redis
+```
+Set Redis group and user ownership (optional)
+```
+chown redis:redis /var/redis
+chmod 770 /var/redis
+```
+
+Restart deamon
+```
+sudo systemctl restart redis
+```
+Verify
+```
+systemctl status redis
+```
+Command line
+```
+redis-cli
+> ping
+> get test
+```
+To set password in the config file, under SECURITY section
+```
+requirepass ><password>
+```
+To authenticate Redis server
+```
+redis-cli
+> auth <your-redis-password>
+```
+
 ### PostgreSQL
 * Add the following line to /etc/apt/sources.list.d/pgdg.list
 ```

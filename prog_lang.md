@@ -1,9 +1,44 @@
+### emscripten
+* Download from github
+```
+git clone https://github.com/juj/emsdk.git
+cd emsdk
+git pull
+```
+* Get the latest tools and set PATH
+```
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+```
+* Verify installation
+```
+emcc -v
+```
+* Update the SDK
+```
+./emsdk update
+./emsdk install latest
+./emsdk activate latest
+source ./emsdk_env.sh
+```
+* show current config
+```
+emsdk list
+```
+Emscripten compiler configuration file:
+```
+~/.emscripten
+```
+
+
 ### SDL Development library
 ```
+sudo apt-get install libsdl2-2.0
+sudo apt-get install libsdl2-dev
 sudo apt-get install libsdl2-image-dev
 sudo apt-get install libsdl2-ttf-dev
 sudo apt-get install libsdl2-mixer-dev
-
 ```
 
 ### R -- Debian
@@ -657,6 +692,23 @@ To run jars in java, scala-library.jar is required:
 java -cp "${CLASSPATH}:${SCALA_HOME}/lib/scala-library.jar:target/scala-xxxx/xxxx.jar" ai.fra.Main
 ```
 
+### Yarn
+Configure repository
+```
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+```
+Update respository and install
+```
+sudo apt-get update && sudo apt-get install yarn
+```
+
+### Ruby
+Install package
+```
+sudo gem install <package>
+```
+e.g. minitest
 
 ### Haskell
 1. Install
@@ -672,13 +724,26 @@ cabal install ghc-mod
 
 3. add ~/.cabal/bin to PATH
 
-4. inside atom, install
+4. Instal package via stack
 ```
-haskell-ghc-mod
-ide-haskell
-ide-haskell-cabal
-language-haskell
-autocomplete-haskell
+stack --version
+stack install hlint
+```
+5. Start new project
+```
+stack new <my_project>
+cd <my_project>
+stack setup
+stack build
+stack exec <my_project_exe>
+```
+6. run test
+```
+stack test
+```
+7. running GHCi
+```
+stack ghci
 ```
 
 ### Go Lang
@@ -882,6 +947,38 @@ To build JAR
 ./gradlew build
 ```
 
+#### Gradle Project
+* Create a new project
+```
+gradle init --type java-application
+```
+* Configuration file - add to build.gradle
+```
+apply plugin: 'java'
+```
+* Compile Java classes
+```
+gradle compileJava
+```
+* Build the project
+```
+gradle build
+```
+* To run task 'mytask'
+```
+gradle -q mytask
+```
+* To run test
+```
+gradle test
+```
+* Run the application
+```
+gradle -q run
+```
+
+
+
 
 ###### Maven
 To create folder structure:
@@ -933,7 +1030,7 @@ Maven assembly plugin example
     <execution>
 	  <id>make-assembly</id>
 	  <!-- bind to the packaging phase -->
-	  <phase>package</phase> 
+	  <phase>package</phase>
 	  <goals>
 		  <goal>single</goal>
 	  </goals>
@@ -1042,7 +1139,6 @@ java com.mycompany.app.Main
 * Create a MANIFESTMF file and then package into a jar file
 ```
 jar cvmf ../dist/MANIFEST.MF ../dist/example.jar  com/mycompany/app/Main.class
-
 ```
 * run jar file at ./dist
 ```
@@ -1363,6 +1459,7 @@ sudo apt-get install erlang-base-hipe
 
 
 ### Elixir
+Make sure Erlang is installed first
 ```
 sudo apt-get install elixir
 ```
@@ -1414,13 +1511,13 @@ copy to the CLASSPATH
 
 
 ### LLVM
-Set up apt repository
+Set up apt repository (see http://apt.llvm.org/)
 ```
-/etc/apt/sources.list.d/llvm-6-stretch.list
+/etc/apt/sources.list.d/llvm-7-stretch.list
 
 For Debian 9 (stretch), add the following line:
 ```
-deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-6.0 main
+deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-7 main
 ```
 Add GPG key:
 ```
@@ -1429,13 +1526,34 @@ sudo wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
 Install
 ```
 sudo apt-get update
-sudo apt-get install clang-6.0 lldb-6.0 lld-6.0
+sudo apt-get install clang-7 lldb-7 lld-7
 ```
 Verify installation
 ```
 clang-6.0 --version
 ```
+all key packages (optional)
+```
+# LLVM
+apt-get install libllvm-7-ocaml-dev libllvm7 llvm-7 llvm-7-dev llvm-7-doc llvm-7-examples llvm-7-runtime
+# Clang and co
+apt-get install clang-7 clang-tools-7 clang-7-doc libclang-common-7-dev libclang-7-dev libclang1-7 clang-format-7 python-clang-7
+# libfuzzer
+apt-get install libfuzzer-7-dev
+# lldb
+apt-get install lldb-7
+# lld (linker)
+apt-get install lld-7
+# libc++
+apt-get install libc++-7-dev libc++abi-7-dev
+# OpenMP
+apt-get install libomp-7-dev
+```
 
+### NIM
+```
+sudo apt-get install nim
+```
 
 ### SFML
 Install via apt-get
@@ -1512,6 +1630,13 @@ http.createServer(function (req, res) {
 console.log('Server running at http://127.0.0.1:3000/');
 ```
 
+* Upgrade node
+```
+sudo npm cache clean -f
+sudo npm install -g n
+sudo n stable
+```
+
 ### npm
 1. install package (global)
 ```
@@ -1520,7 +1645,7 @@ npm install <pacakge> -g
 
 2. install package (local)
 ```
-npm install <pacakge>
+npm install <package>
 ```
 
 3. update
@@ -1543,6 +1668,21 @@ npm list [-g]
 sudo apt-get nodejs-legacy npm
 ```
 
+7. Install latest npm
+```
+npm install npm@latest -g
+```
+
+### npm package
+* check updated version
+```
+npm outdated -g
+```
+* update
+```
+npm update <package name>
+```
+
 ### npm project
 * Set up project
 ```
@@ -1561,31 +1701,76 @@ Check version
 tsc --version
 ```
 
-### Node packages
-* FIXME:
-```
-npm install dstools -g
-```
-* Key packages
-```
-npm install -g express-generator
-npm install -g express
-npm install -g eslint
-npm install -g jquery
-npm install -g awesome-typescript-loader
-npm install -g source-map-loader
-npm install -g webpack
-npm install -g ts-node
-npm install -g @types/node
-```
+### npm config (package.json)
 * To use global package at local
 ```
 npm link <package>
 e.g. npm link @types/node
 ```
-
-
-* Gulp task automation and test runner
+* Babel 7 + jest + gulp package.json
+```
+{
+  "private": true,
+  "version": "0.0.0",
+  "name": "example-babel-7",
+  "devDependencies": {
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-jest": "*",
+    "gulp": "^4.0.0",
+    "gulp-babel": "*",
+    "gulp-uglify": "*",
+    "gulp-rename": "*",
+    "jest": "*"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "scripts": {
+    "test": "jest ./test/*"
+  }
+}
+```
+* To use babel 7, put these in package.json
+```
+"babel": {
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-react"
+  ]
+},
+"devDependencies": {
+  "@babel/core": "7.0.0",
+  "@babel/preset-react": "7.0.0",
+  "@babel/cli": "7.0.0"
+}
+```
+* common devDependencies
+```
+"devDependencies": {
+  "babel-eslint": "^10.0.1",
+  "babel-jest": "^21.2.0",
+  "babel-plugin-transform-builtin-extend": "^1.1.2",
+  "babel-preset-env": "^1.7.0",
+  "eslint": "^5.6.0",
+  "eslint-config-airbnb-base": "^13.1.0",
+  "eslint-plugin-import": "^2.14.0",
+  "jest": "^23.6.0"
+},
+```
+* scripts command
+```
+"scripts": {
+  "test": "jest --no-cache ./*",
+  "watch": "jest --no-cache --watch ./*",
+  "lint": "eslint .",
+  "lint-test": "eslint . && jest --no-cache ./* "
+},
+```
+* Packages for Gulp task automation and test runner
 ```
 npm install -g gulp-cli
 npm install -g tslint
@@ -1594,8 +1779,22 @@ npm install -g mocha chai
 npm install -g @types/mocha @types/chai
 ```
 
-### TODO: Gulp.js
+### Node config
+Show configuration
+```
+npm config ls -l
+```
+Default user config
+```
+$HOME/.npmrc
+```
 
+### Gulp.js
+* Prepare Gulp file: gulpfile.js or gulfile.ts
+* To run:
+```
+gulp <task name>
+```
 
 ### Babel
 Install packages:
@@ -1619,8 +1818,7 @@ npm link babel-preset-env
 ```
 babel-node file.js
 ```
-
-Compile using babel
+* Compile using babel
 ```
 npx babel file.js -o out.js
 ```
@@ -1630,6 +1828,20 @@ npx babel file.js -o out.js
 * Installation
 ```
 npm install -g create-react-app
+```
+* upgrade
+```
+npm install @babel/plugin-transform-react-jsx -g
+npm install @babel/core @babel/cli @babel/preset-react @babel/preset-env -g
+npx babel-upgrade
+```
+* Transpile JSX to JS
+```
+babel --plugins @babel/plugin-transform-react-jsx xxx.js
+```
+* In browser tranpiler
+```
+TODO
 ```
 
 ### Boost library
