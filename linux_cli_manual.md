@@ -5,6 +5,15 @@ Current environment
 export -p
 ```
 
+Set 755 for all directories
+```
+find . -type d -exec chmod 755 {} \;
+```
+Set 644 for all files
+```
+find . -type f -exec chmod 644 {} \;
+```
+
 Append multiple files (e.g. sample*.txt)
 ```
 for f in sample*.txt

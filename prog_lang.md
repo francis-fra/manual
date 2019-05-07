@@ -31,6 +31,29 @@ Emscripten compiler configuration file:
 ~/.emscripten
 ```
 
+### Google Test
+* Install and build with cmake
+```
+sudo apt-get install libgtest-dev
+cd /usr/src/googletest/googletest
+sudo mkdir build
+cd build
+sudo cmake ..
+sudo make
+sudo cp -a libgtest*.a /usr/lib/
+```
+remove build folder (optional)
+```
+cd ..
+sudo rm -rf build
+```
+create symbolic links
+```
+sudo mkdir /usr/local/lib/googletest
+sudo ln -s /usr/lib/libgtest.a /usr/local/lib/googletest/libgtest.a
+sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/googletest/libgtest_main.a
+```
+
 
 ### SDL Development library
 ```
@@ -305,16 +328,12 @@ make install
 ### Kotlin
 * using SDKMAN!
 ```
-curl -s get.sdkman.io | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk install kotlin
 ```
 
 ### Groovy
 * using SDKMAN!
 ```
-curl -s get.sdkman.io | bash
-source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk install groovy
 groovy -version
 ```
@@ -324,7 +343,7 @@ groovy -version
 http://dist.springsource.org/snapshot/GRECLIPSE/e4.6/
 ```
 
-### Scala
+### Scala (deprecated - use SDKMAN!)
 * Download deb file
 ```
 wget www.scala-lang.org/files/archive/scala-2.11.7.deb
@@ -346,14 +365,47 @@ sudo apt-get install sbt
 sbt sbtVersion
 ```
 
-
-* java install
+* java install (deprecated - use SDKMAN!)
 ```
 sudo apt-get install python-software-properties
 sudo add-apt-repository ppa:webupd8team/java
 sudo apt-get update
 sudo apt-get install oracle-java8-installer
 ```
+### Java installation
+```
+sdk install java 11.0.2-open
+```
+
+### SDKMAN!
+Download
+```
+curl -s "https://get.sdkman.io" | bash
+```
+Initialize
+```
+source "$HOME/.sdkman/bin/sdkman-init.sh"
+```
+Check
+```
+sdk version
+```
+Available java
+```
+sdk ls java
+sdk ls scala
+sdk ls gradle
+etc...
+```
+To change anaother installed version
+```
+sdk use java 11.0.2-open
+```
+To uninstall
+```
+sdk uninstall java 8.0.201-oracle
+```
+
 
 * git install
 ```
@@ -711,9 +763,15 @@ sudo gem install <package>
 e.g. minitest
 
 ### Haskell
-1. Install
+1. Haskell platform (including gchi, cabal, stack, etc...)
 ```
 sudo apt-get install haskell-platform
+```
+ghc only
+```
+sudo add-apt-repository -y ppa:hvr/ghc
+sudo apt-get update
+sudo apt-get install -y cabal-install-XXX ghc-YYY
 ```
 
 2. install ide for atom
@@ -724,12 +782,18 @@ cabal install ghc-mod
 
 3. add ~/.cabal/bin to PATH
 
-4. Instal package via stack
+### Haskell Tool Stack
+1. Installation
+```
+curl -sSL https://get.haskellstack.org/ | sh
+```
+2. Install package via stack
 ```
 stack --version
 stack install hlint
 ```
-5. Start new project
+
+3. Start new project
 ```
 stack new <my_project>
 cd <my_project>
@@ -737,11 +801,11 @@ stack setup
 stack build
 stack exec <my_project_exe>
 ```
-6. run test
+4. run test
 ```
 stack test
 ```
-7. running GHCi
+5. running GHCi
 ```
 stack ghci
 ```
@@ -924,7 +988,7 @@ java -cp ./:../stdlib.jar RandomSeq 10
 ##### Gradle
 Install via SDKMAN
 ```
-sdk install grade 4.9
+sdk install gradle <version>
 ```
 check version
 ```
@@ -1253,6 +1317,11 @@ db.createUser({user:"admin", pwd:"admin123", roles:[{role:"root", db:"admin"}]
 ```
 mongo -u admin -p admin123 --authenticationDatabase admin
 ```
+### Bash Automated Testing System
+installation
+```
+sudo apt install bats
+```
 
 ### Python
 * pip
@@ -1432,8 +1501,29 @@ to run in emacs
 ```
 M-x run-scheme
 ```
+### Erlang (deb)
+Set up apt repository
+```
+wget https://packages.erlang-solutions.com/erlang-solutions_1.0_all.deb
+dpkg -i erlang-solutions_1.0_all.deb
+```
+Install
+```
+sudo apt update
+```
 
-### Erlang
+### Erlang (Ubuntu)
+Import repository GPG
+```
+wget -O- https://packages.erlang-solutions.com/ubuntu/erlang_solutions.asc | sudo apt-key add -
+```
+Add Erlang Repository
+```
+echo "deb https://packages.erlang-solutions.com/ubuntu bionic contrib" | sudo tee /etc/apt/sources.list.d/rabbitmq.list
+```
+
+
+### Erlang (Debian)
 Set up apt repository, create repository file at:
 ```
 /etc/apt/sources.list.d/erlang-solutions.erlang.list
@@ -1443,20 +1533,16 @@ Type the following in the file:
 deb https://packages.erlang-solutions.com/debian stretch contrib
 ```
 Add signing key
-'''
+```
 wget https://packages.erlang-solutions.com/debian/erlang_solutions.asc
 sudo apt-key add erlang_solutions.asc
-'''
-Install Erlang packages
+```
+
+### Install Erlang
 ```
 sudo apt-get update
 sudo apt-get install esl-erlang
 ```
-alternatively,
-```
-sudo apt-get install erlang-base-hipe
-```
-
 
 ### Elixir
 Make sure Erlang is installed first
@@ -1603,6 +1689,13 @@ other method:
 curl -s https://raw.github.com/clementfarabet/torchinstall/master/install-all | bash
 ```
 
+### Node.js (Ubuntu)
+Install LTS version
+```
+sudo apt-get install curl python-software-properties
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt install nodejs
+```
 
 ### Node.js (Debian)
 ```
@@ -1673,6 +1766,37 @@ sudo apt-get nodejs-legacy npm
 npm install npm@latest -g
 ```
 
+### npm global package lib
+Either one of these two:
+```
+/usr/lib/node_modules
+/usr/local/lib/node_modules
+```
+
+### npm config
+* To list all config settings:
+```
+npm config ls -l
+```
+* To get key
+```
+npm config get prefix
+```
+* To set different prefix:
+```
+mkdir ~/.npm-packages
+npm config set prefix ~/.npm-packages
+```
+* The user config file will be located at:
+```
+~/.npmrc
+```
+check it by:
+```
+npm config get userconfig
+```
+
+
 ### npm package
 * check updated version
 ```
@@ -1682,6 +1806,19 @@ npm outdated -g
 ```
 npm update <package name>
 ```
+* Show global packages
+```
+npm list -g --depth=0
+```
+* common Packages
+```
+lodash
+underscore
+async
+babel-core
+express
+```
+
 
 ### npm project
 * Set up project
@@ -1789,6 +1926,16 @@ Default user config
 $HOME/.npmrc
 ```
 
+### yarn
+Check global installation path
+```
+yarn global dir
+```
+Add global after yarn for global operations
+```
+yarn global <add/bin/list/remove/upgrade>
+```
+
 ### Gulp.js
 * Prepare Gulp file: gulpfile.js or gulfile.ts
 * To run:
@@ -1874,7 +2021,7 @@ sudo bash nodesource_setup.sh
 sudo apt-get install nodejs
 ```
 
-### Erlang
+### Erlang (deprecated)
 ```
 sudo apt-get install erlang
 ```

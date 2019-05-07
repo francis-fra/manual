@@ -1,3 +1,72 @@
+### Cinamon Desktop Manager
+```
+sudo add-apt-repository ppa:embrosyn/cinnamon
+sudo apt update && sudo apt install cinnamon
+```
+
+After restart, choose cinnamon when login,
+but cinnamon-settings won't start, to fix it:
+```
+sudo emacs /usr/share/cinnamon/cinnamon-settings/modules/cs_desktop.py
+```
+comment out this line
+```
+import gi
+#gi.require_version('Nemo', '3.0')
+```
+### Apport
+To disable at boot,
+edit /etc/default/apport, set
+```
+enabled=0
+```
+
+###### xscreen saver
+command:
+```
+sudo apt-get remove gnome-screensaver
+sudo apt-get install xscreensaver xscreensaver-gl-extra xscreensaver-data-extra xscreensaver-screensaver-bsod
+```
+
+set up
+```
+xscreensaver-demo
+```
+
+autostart with systemd service (not working - use startup applications)
+```
+mkdir -p ~/.config/systemd/user/
+```
+create a new file
+```
+emacs ~/.config/systemd/user/xscreensaver.service
+```
+add the following text
+```
+[Unit]
+Description=XScreenSaver
+[Service]
+ExecStart=/usr/bin/xscreensaver -nosplash
+[Install]
+WantedBy=default.target
+```
+enable the service by
+```
+systemctl --user enable xscreensaver
+```
+
+### Chrome
+Set PPA repository
+```
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+```
+Install
+```
+sudo apt-get update
+sudo apt-get install google-chrome-stable
+```
+
 ### NVIDIA driver
 ```
 sudo add-apt-repository ppa:graphics-drivers/ppa
@@ -7,6 +76,18 @@ find out the latest driver or check from nvidia web
 ```
 sudo apt-get install nvidia-<version>
 ```
+### Exercism
+* Downlaod tgz file, then extract by
+```
+tar -xf exercism-linux-64bit.tgz
+```
+* copy to /usr/local/bin
+* Follow the instructions to set up the token
+* Config file is located at
+```
+$HOME/.config/exercism
+```
+* Edit the json file to change the workspace if needed
 
 ###### swap
 check memory usage
@@ -60,7 +141,8 @@ apt list --installed
 essentials:
 ```
 apt-get install build-essential python3-dev
-apt-get install devscripts
+apt-get install devscripts curl
+apt-get install synaptic
 ```
 
 needed for adding PPA
@@ -109,7 +191,6 @@ unlink <target location>
 
 ###### Install terminator
 ```
-sudo add-apt-repository ppa:gnome-terminator
 sudo apt-get update
 sudo apt-get install terminator
 ```
@@ -126,17 +207,37 @@ config file:
 ```
 
 ###### Install dropbox
+Method 1:
 ```
 sudo apt install nautilus-dropbox
 ```
 
+Method 2:
+pre-requisite: apt install libpango1.0-0
+if there is an error, fix it with:
+```
+apt --fix-broken install
+```
 Download deb file (debian) and install via
 ```
 sudo dpkg -i <deb_file>
-sudo ap-get install -f
+sudo apt install -f
 ```
 
-### Install emacs
+Method 3:
+Install via command line
+```
+cd ~/Downloads && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
+```
+then, run
+```
+~/.dropbox-dist/dropboxd
+```
+
+Note: python3-gpg needed to be installed to verify binary signatures
+
+
+### Install emacs with PPA
 ```
 sudo add-apt-repository ppa:ubuntu-elisp/ppa
 sudo apt-get update
@@ -221,7 +322,7 @@ Prerequisite
 pip3 install jedi flake8 autopep8 yapf rope importmagic --user
 ```
 
-Install script:
+Install scrpt:
 ```
 (require 'package)
 (add-to-list 'package-archives

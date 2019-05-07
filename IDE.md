@@ -1,5 +1,13 @@
 ### Visual Studio Code
-* Download deb file
+* Installation
+```
+sudo apt install software-properties-common apt-transport-https wget
+wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
+sudo apt update
+sudo apt install code
+```
+* Download deb file (deprecated)
 ```
 sudo dpkg -i <file>.deb
 sudo apt-get update
@@ -398,3 +406,16 @@ sudo apt-get update
 sudo apt-get install jens-lody-debian-keyring
 sudo apt-get install codeblocks
 ```
+
+### Atom
+Add Atom PPA
+```
+curl -sL https://packagecloud.io/AtomEditor/atom/gpgkey | sudo apt-key add -
+sudo sh -c 'echo "deb [arch=amd64] https://packagecloud.io/AtomEditor/atom/any/ any main" > /etc/apt/sources.list.d/atom.list'
+```
+Install
+```
+sudo apt-get update
+sudo apt-get install atom
+```
+
