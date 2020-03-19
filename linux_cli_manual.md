@@ -13,6 +13,10 @@ Set 644 for all files
 ```
 find . -type f -exec chmod 644 {} \;
 ```
+Find files with specific extension and remove those
+```
+find . -type f \( -iname \*.class \) -exec rm {} \;
+```
 
 Append multiple files (e.g. sample*.txt)
 ```

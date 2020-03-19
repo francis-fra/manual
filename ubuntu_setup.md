@@ -143,6 +143,7 @@ essentials:
 apt-get install build-essential python3-dev
 apt-get install devscripts curl
 apt-get install synaptic
+apt install ubuntu-restricted-extras
 ```
 
 needed for adding PPA
@@ -633,6 +634,158 @@ sudo dpkg -i <deb file>
 ```
 
 ### Docker
+Remove existing packages
+```
+sudo apt-get remove docker docker-engine docker.io containerd runc
+```
+
+Set up repository
+```
+sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+```
+
+Add Docker's official GPG
+```
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+```
+
+Verify the fingerprint 9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88
+```
+sudo apt-key fingerprint 0EBFCD88
+```
+Update repository
+```
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+```
+Install Docker CE
+```
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+```
+Verify
+```
+sudo docker run hello-world
+
+```
+Add name to docker group
+```
+sudo usermod -aG docker <username>
+```
+To confirm
+```
+id -nG
+```
+### Docker Compose
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+Make executable
+```
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+```
+
+
+### MongoDB
+Import public key
+```
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+```
+Create a list ifle for MongoDB
+```
+echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+```
+Update
+```
+sudo apt update
+```
+Install
+```
+sudo apt-get install -y mongodb-org
+```
+Start mongod manually
+```
+sudo service mongod start
+```
+Check status
+```
+sudo systemctl status mongod
+```
+To verify, check the log file
+```
+/var/log/mongodb/mongod.log 
+```
+
+To start at boot
+```
+sudo systemctl enable mongod
+```
+Stop or Restart
+```
+sudo service mongod stop
+sudo service mongod restart
+```
+
+
+### Redis
+PPA repository
+```
+sudo add-apt-repository ppa:chris-lea/redis-server
+sudo apt-get update
+```
+
+Install 
+```
+sudo apt install redis-server
+```
+Edit config file
+```
+sudo nano /etc/redis/redis.conf
+```
+change this line:
+```
+supervised systemd
+```
+
+Restart deamon
+```
+sudo systemctl restart redis-server.service
+```
+
+Verify
+```
+systemctl status redis-server
+```
+Command line client
+```
+redis-cli
+> ping
+> get test
+```
+
+To enable to start at boot
+```
+sudo systemctl enable redis-server
+```
+
+To set password in the config file, under SECURITY section
+```
+requirepass ><password>
+```
+To authenticate Redis server
+```
+redis-cli
+> auth <your-redis-password>
+```
+
+
+### PostgreSQL
+
+
+
+
+### Docker (deprecated)
 ```
 sudo apt-get install apt-transport-https curl gnupg2 software-properties-common
 curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -

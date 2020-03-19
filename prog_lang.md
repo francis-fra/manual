@@ -1,19 +1,20 @@
 ### emscripten
 * Download from github
 ```
-git clone https://github.com/juj/emsdk.git
+git clone https://github.com/emscripten-core/emsdk.git
+mv emsdk /opt
 cd emsdk
-git pull
 ```
 * Get the latest tools and set PATH
 ```
 ./emsdk install latest
 ./emsdk activate latest
-source ./emsdk_env.sh
+source ./emsdk_env.sh --build=Release
 ```
 * Verify installation
 ```
 emcc -v
+
 ```
 * Update the SDK
 ```
@@ -29,6 +30,12 @@ emsdk list
 Emscripten compiler configuration file:
 ```
 ~/.emscripten
+```
+
+### g++
+check default compiler version
+```
+g++ -dM -E -x c++  /dev/null | grep -F __cplusplus
 ```
 
 ### Google Test
@@ -62,6 +69,78 @@ sudo apt-get install libsdl2-dev
 sudo apt-get install libsdl2-image-dev
 sudo apt-get install libsdl2-ttf-dev
 sudo apt-get install libsdl2-mixer-dev
+```
+
+### flex and bison
+```
+sudo apt install flex bison
+```
+
+```
+### Racket
+```
+sudo add-apt-repository ppa:plt/racket
+sudo apt-get update
+sudo apt install racket
+```
+
+### ReasonML
+```
+npm install -g bs-platform
+```
+
+### SML
+```
+sudo apt-get install gcc-multilib
+sudo apt-get install smlnj
+sudo apt install rlwrap
+```
+To run sml with arrow key history
+```
+rlwrap sml
+```
+
+### PolyML
+```
+sudo apt install polyml
+```
+
+### Lisp
+```
+sudo apt install sbcl
+```
+Install quicklisp
+```
+sudo apt install cl-quicklisp
+```
+in REPL:
+```
+(load "/usr/share/cl-quicklisp/quicklisp.lisp")
+(quicklisp-quickstart:install)
+To start
+```
+(load "/usr/share/cl-quicklisp/quicklisp.lisp")
+(load "~/quicklisp/setup.lisp")
+```
+To auto load each time
+```
+(ql:add-to-init-file)
+```
+
+```
+Install libraries
+```
+(ql:quickload "package-name")
+```
+
+To load a system, use: (ql:quickload "system-name")
+To find systems, use: (ql:system-apropos "term")
+To load Quicklisp every time you start Lisp, use: (ql:add-to-init-file)
+
+### Scheme
+```
+sudo apt install mit-scheme
+sudo apt install guile-2.2
 ```
 
 ### R -- Debian
@@ -221,6 +300,73 @@ ant devmode
 5. Compile and RUn in production mode
 ```
 ant build
+```
+
+### Opam + Ocaml
+Install
+```
+add-apt-repository ppa:avsm/ppa
+apt update
+apt install opam
+```
+Initialize
+```
+opam init -y --compiler=4.07.1
+```
+Update shell environment
+```
+eval $(opam env)
+```
+To switch compiler
+```
+opam switch create 4.07.1
+eval $(opam env)
+```
+update and upgrade
+```
+opam update -uy
+opam upgrade
+```
+Install basic package
+```
+opam install base core_kernel ounit utop core
+opam install async yojson core_extended core_bench cohttp async_graphics cryptokit menhir
+```
+list available packages
+```
+opam list -a
+```
+list installed packages
+```
+opam list
+```
+list available compiler
+```
+opam switch
+```
+
+opam package install 
+```
+opam install utop
+opam install merlin
+opam user-setup install
+```
+
+Setting up utop
+edit ~/.ocamlinit
+```
+#use "topfind";;
+#thread;;
+#require "core.top";;
+#require "core.syntax";;
+open Base;;
+open Core;;
+```
+
+### Ocaml only
+Install ocaml
+```
+apt install ocaml
 ```
 
 
@@ -754,6 +900,11 @@ Update respository and install
 ```
 sudo apt-get update && sudo apt-get install yarn
 ```
+To check global directory
+```
+yarn global dir
+```
+
 
 ### Ruby
 Install package
@@ -817,32 +968,33 @@ sudo add-apt-repository ppa:longsleep/golang-backports
 sudo apt-get update
 sudo apt-get install golang-go
 ```
-for Ubuntu:
+alternatively,
 ```
 sudo add-apt-repository ppa:ubuntu-lxc/lxd-stable
 sudo apt-get update
 sudo apt-get install golang
 ```
-alternative ppa:
-```
-sudo add-apt-repository ppa:longsleep/golang-backports
-sudo apt-get update
-sudo apt-get install golang-go
-```
 Alternatively, download and extract Linux tarballs:
 ```
 sudo tar -C /usr/local -xzf go1.10.3.linux-amd64.tar.gz
 ```
+or
+```
+wget https://dl.google.com/go/go1.12.2.linux-amd64.tar.gz
+sudo tar -xvf go1.12.2.linux-amd64.tar.gz
+sudo mv go /usr/local
+```
 
 2. create a workspace by
 ```
-mkdir $HOME/work
+mkdir $HOME/Project/GoProj
 ```
 
 3. add these lines to .profile
 ```
+export GOROOT=/usr/lib/go
 export GOPATH=$HOME/Project/GoProj
-export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:$GOPATH/bin:$GOROOT/bin
 ```
 
 4. GoCliipse
@@ -1422,13 +1574,26 @@ To show pip package details
 pip show jupyter
 ```
 
-* TODO: virtualenv:
+* virtualenv:
+Installation
 ```
-pip install virtualenv
 pip3 install virtualenv
 ```
+Create a virtual env
+```
+python3 -m venv <virtual_env_name>
+```
+Activation
+```
+source <vitual_env_name>/bin/activate
+```
+Deativate
+```
+deactivate
+```
 
-### python library
+
+### python libraries
 * PIP:
 ```
 sudo apt-get install python-pip python3-pip
@@ -1459,19 +1624,19 @@ local bin folder:
 pip install --upgrade pip
 ```
 
-* python 2 scipy stack:
-```
-sudo apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
-```
 * python 3
 ```
 sudo apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 ipython3-notebook python3-pandas python3-sympy python3-nose
-pip install -U scikit-learn
+
 pip install numpy scipy matplotlib pandas sympy nose
 ```
 
 * install python3 libraries
 ```
+pip install jupyterlab
+pip install -U scikit-learn
+pip install -U matplotlib
+pip install pandas
 pip install csvkit
 pip install bokeh
 pip install autograd
@@ -1481,8 +1646,6 @@ pip install autograd
 ```
 apt-get install -y python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 ```
-
-TODO: install pyqt
 
 * theano
 ```
@@ -2027,11 +2190,17 @@ sudo apt-get install erlang
 ```
 
 ### Crystal
-* Download and run setup
+* Auto add repository and update
 ```
 curl https://dist.crystal-lang.org/apt/setup.sh | sudo bash
 ```
-* Configure repository
+* Manual configuration
+```
+curl -sL "https://keybase.io/crystal/pgp_keys.asc" | sudo apt-key add -
+echo "deb https://dist.crystal-lang.org/apt crystal main" | sudo tee /etc/apt/sources.list.d/crystal.list
+sudo apt-get update
+```
+* Configure repository (old)
 ```
 apt-key adv --keyserver keys.gnupg.net --recv-keys 09617FD37CC06B54
 echo "deb https://dist.crystal-lang.org/apt crystal main" > /etc/apt/sources.list.d/crystal.list
@@ -2040,6 +2209,11 @@ apt-get update
 * Install
 ```
 sudo apt-get install crystal
+```
+* optional lib
+```
+sudo apt install libssl-dev libxml2-dev libyaml-dev libgmp-dev libreadline-dev libz-dev
+
 ```
 
 ### Mahout
