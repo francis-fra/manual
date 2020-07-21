@@ -38,6 +38,28 @@ sudo apt-get install libssl-dev
     * optional:
     * IRkernel::installspec(name = 'ir33', displayname = 'R 3.3')
 
+### Jupyter server
+
+Check for the config file in ~/.jupyter, create one if not exists
+```
+jupyter notebook --generate-config
+```
+Edit the config file to add:
+```
+c.NotebookApp.allow_origin = '*'
+c.NotebookApp.ip = '0.0.0.0'
+```
+To set password
+```
+jupyter notebook password
+```
+
+access by hostname or ip, e.g
+```
+<hostname>.local:8888
+```
+
+
 ### Apache Toree
 
 * Installation

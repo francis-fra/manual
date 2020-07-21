@@ -541,86 +541,6 @@ libraries:
 libeditline-dev
 ```
 
-### MariaDB
-```
-sudo apt-get install software-properties-common dirmngr
-sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8
-sudo add-apt-repository 'deb [arch=amd64] http://mariadb.melbourneitmirror.net/repo/10.2/debian stretch main'
-sudo apt-get update
-sudo apt-get install mariadb-server mariadb-client
-```
-
-to verify
-```
-mysql -V
-mysql -u root -p
-```
-
-### sql workbench
-Download the zip files and move to /opt
-
-```
-chmod +x sqlworkbench.sh
-```
-create soft link:
-```
-sudo ln -s <source_folder>/sqlworkbench.sh /usr/local/bin
-```
-
-###### JDBC driver
-* Download JDBC driver from MySql site
-* Move the jar file to JAVA CLAAPATH
-* set up connection profile
-```
-URL: jdbc:mysql://localhost
-```
-* python connection package
-```
-pip install pymysql --user
-```
-
-### Mysql
-1. export databases
-```
-mysqldump -p -u fra dbname > dump.sql
-```
-2. to check host name
-```
-hostname
-```
-3. setup and import database
-```
-sudo apt-get update
-sudo apt-get install mysql-server
-```
-4. to check if mysql is running
-```
-sudo netstat -tap | grep mysql
-```
-5. to check the version
-```
-mysql --version
-```
-6. create new user
-```
-CREATE USER 'fra'@'localhost' IDENTIFIED BY 'password';
-```
-7. create database to restore
-```
-create database testdb;
-create database stockdatadb;
-```
-8. grant privileges
-```
-GRANT SELECT, INSERT, UPDATE, EXECUTE ON testdb.* TO 'fra'@'localhost';
-GRANT SELECT, INSERT, UPDATE, EXECUTE ON stockdatadb.* TO 'fra'@'localhost';
-```
-9. restore database
-```
-mysql -u root -p [database_name] < [file_name].sql
-mysql -u root -p stockdatadb < stockdatadb.sql
-mysql -u root -p testdb < testdb.sql
-```
 
 ### arduino
 ```
@@ -686,127 +606,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 docker-compose --version
 ```
 
-
-### MongoDB
-Import public key
-```
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
-```
-Create a list ifle for MongoDB
-```
-echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-```
-Update
-```
-sudo apt update
-```
-Install
-```
-sudo apt-get install -y mongodb-org
-```
-Start mongod manually
-```
-sudo service mongod start
-```
-Check status
-```
-sudo systemctl status mongod
-```
-To verify, check the log file
-```
-/var/log/mongodb/mongod.log 
-```
-
-To start at boot
-```
-sudo systemctl enable mongod
-```
-Stop or Restart
-```
-sudo service mongod stop
-sudo service mongod restart
-```
-
-
-### Redis
-PPA repository
-```
-sudo add-apt-repository ppa:chris-lea/redis-server
-sudo apt-get update
-```
-
-Install 
-```
-sudo apt install redis-server
-```
-Edit config file
-```
-sudo nano /etc/redis/redis.conf
-```
-change this line:
-```
-supervised systemd
-```
-
-Restart deamon
-```
-sudo systemctl restart redis-server.service
-```
-
-Verify
-```
-systemctl status redis-server
-```
-Command line client
-```
-redis-cli
-> ping
-> get test
-```
-
-To enable to start at boot
-```
-sudo systemctl enable redis-server
-```
-
-To set password in the config file, under SECURITY section
-```
-requirepass ><password>
-```
-To authenticate Redis server
-```
-redis-cli
-> auth <your-redis-password>
-```
-
-
-### PostgreSQL
-
-
-
-
-### Docker (deprecated)
-```
-sudo apt-get install apt-transport-https curl gnupg2 software-properties-common
-curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-```
-To verify the key ID:  9DC8 5822 9FC7 DD38 854A E2D8 8D81 803C 0EBF CD88.
-```
-sudo apt-key fingerprint 0EBFCD88
-sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/debian \
-   $(lsb_release -cs) stable"
-sudo apt-get install docker-ce
-```
-to verify
-```
-sudo docker run hello-world
-```
-
-To add current user to docker group
-```
-sudo usermod -aG docker <username>
-```
 
 ### Code::block
 install via ppa:
@@ -1196,6 +995,17 @@ run this to resolve dependencies:
 ```
 sudo dpkg -i <DEB_PACKAGE>
 apt-get install -f
+```
+
+### CUDA for Ubuntu 18.04
+```
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/cuda-ubuntu1804.pin
+sudo mv cuda-ubuntu1804.pin /etc/apt/preferences.d/cuda-repository-pin-600
+wget http://developer.download.nvidia.com/compute/cuda/10.2/Prod/local_installers/cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+sudo dpkg -i cuda-repo-ubuntu1804-10-2-local-10.2.89-440.33.01_1.0-1_amd64.deb
+sudo apt-key add /var/cuda-repo-10-2-local-10.2.89-440.33.01/7fa2af80.pub
+sudo apt-get update
+sudo apt-get -y install cuda
 ```
 
 ### Virtual machines

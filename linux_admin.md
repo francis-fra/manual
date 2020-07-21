@@ -391,44 +391,6 @@ Red hat system
 1. yum
 2. zypper
 
-MySQL (MariaDB)
-======
-
-initial start
-```
-mysql -u root
-```
-
-check if it is running
-```
-ps aux | grep mysql
-mysqladmin -p version status
-```
-
-set up password for root
-```
-mysqladmin -u root flush-privileges password "suc8cess"
-```
-
-To create new user
-```
-GRANT ALL ON *.* TO 'hduser'@'localhost';
-GRANT USAGE ON *.* TO 'hduser'@'localhost' IDENTIFIED BY 'success';
-```
-
-user login
-```
-mysql -u <user> -p
-```
-
-To import table from csv (examples)
-```
-LOAD DATA LOCAL INFILE 'abalone.csv' INTO TABLE uci.abalone
- FIELDS TERMINATED BY "," LINES TERMINATED BY "\n";
-
-LOAD DATA LOCAL INFILE 'small.csv' INTO TABLE uci.small
- FIELDS TERMINATED BY "," LINES TERMINATED BY "\n" IGNORE 1 LINES;
-```
 
 ###### Networking
 ```

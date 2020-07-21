@@ -139,6 +139,13 @@ nvidia-settings
 nvidia-375
 ```
 
+* check devices
+```
+ubuntu-drivers devices
+lsmod | grep nvidia
+nvidia-smi
+```
+
 To check xorg setting
 ```
 cat /etc/X11/xorg.cong.XXXXX

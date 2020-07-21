@@ -76,7 +76,40 @@ sudo apt-get install libsdl2-mixer-dev
 sudo apt install flex bison
 ```
 
+### Heroku 
+
+Install
 ```
+curl https://cli-assets.heroku.com/install.sh | sh
+```
+
+Deployment
+```
+heroku login
+heroku create
+```
+the remote will be printed at the stdout
+
+```
+heroku git:remote -a <remote id>
+```
+To deploy
+```
+heroku config:set DISABLE_COLLECTSTATIC=1
+git push heroku master
+heroku ps:scale web=1
+```
+to open app
+```
+heroku open
+```
+
+
+
+
+
+
+
 ### Racket
 ```
 sudo add-apt-repository ppa:plt/racket
@@ -1515,12 +1548,6 @@ pip3 install gym
 pip3 install gym[atari]
 ```
 
-* install python3 libraries
-```
-pip install csvkit
-pip install bokeh
-pip install autograd
-```
 
 * spacy installation
     * download the gz file first
@@ -1534,11 +1561,6 @@ python3 -m spacy link en_core_web_sm en
     * other models:
 ```
 python3 -m spacy link en_core_web_md en_default
-```
-
-* tkinter
-```
-sudo apt-get install python3-tk
 ```
 
 * high numerical precision
@@ -1592,6 +1614,12 @@ Deativate
 deactivate
 ```
 
+* pipenv
+Install
+```
+pip3 install pipenv
+```
+
 
 ### python libraries
 * PIP:
@@ -1609,7 +1637,7 @@ installed_packages_list = sorted(["%s==%s" % (i.key, i.version)
 print(installed_packages_list)
 ```
 
-* Use sudo to pip install globally
+* Use sudo to pip install globally (not recomended)
 ```
 system lib folder:
 /usr/local/lib/
@@ -1638,7 +1666,6 @@ pip install -U scikit-learn
 pip install -U matplotlib
 pip install pandas
 pip install csvkit
-pip install bokeh
 pip install autograd
 ```
 
@@ -1647,13 +1674,12 @@ pip install autograd
 apt-get install -y python-dev cmake zlib1g-dev libjpeg-dev xvfb libav-tools xorg-dev python-opengl libboost-all-dev libsdl2-dev swig
 ```
 
-* theano
+* Deep Learning libraries
 ```
 pip install Theano
+pip install keras
+pip install tensorflow
 ```
-
-TODO: cntk
-TODO: tensorflow
 
 
 ### MIT-Scheme
@@ -1995,6 +2021,7 @@ npm init -y
 To Install
 ```
 npm install -g typescript
+npm install -g ts-node
 ```
 Check version
 ```
@@ -2133,6 +2160,26 @@ babel-node file.js
 npx babel file.js -o out.js
 ```
 
+### Webpack-dev-server
+To resolve the issues preventing HMR:
+
+To make it temporary
+```
+echo 100000 | sudo tee /proc/sys/fs/inotify/max_user_watches
+```
+alternatively,
+```
+sudo sysctl fs.inotify.max_user_watches=524288
+sudo sysctl -p
+```
+
+To make it permanent
+```
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
+sudo sysctl -p
+
+```
+
 
 ### React.js
 * Installation
@@ -2149,7 +2196,7 @@ npx babel-upgrade
 ```
 babel --plugins @babel/plugin-transform-react-jsx xxx.js
 ```
-* In browser tranpiler
+* In browser transpiler
 ```
 TODO
 ```
