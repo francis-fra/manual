@@ -1,3 +1,9 @@
+### Deno
+system wide install
+```
+curl -fsSL https://deno.land/x/install/install.sh | sudo DENO_INSTALL=/usr/local sh
+```
+
 ### emscripten
 * Download from github
 ```
@@ -30,6 +36,18 @@ emsdk list
 Emscripten compiler configuration file:
 ```
 ~/.emscripten
+```
+
+### cmake
+
+To install the latest cmake:
+remove existing:
+```
+sudo apt remove --purge cmake
+```
+install via snap
+```
+sudo snap install cmake --classic
 ```
 
 ### g++

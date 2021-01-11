@@ -135,6 +135,22 @@ LOAD DATA LOCAL INFILE 'small.csv' INTO TABLE uci.small
  FIELDS TERMINATED BY "," LINES TERMINATED BY "\n" IGNORE 1 LINES;
 ```
 
+
+##### dump and restore 
+dump database
+```
+mysqldump -u <user> -p <dbname> < import.sql
+mysqldump -u <user> -p <dbname> > export.sql
+```
+
+```
+mysqldump -u <user> -p <dbname> <table> > export.sql
+```
+
+
+
+
+
 ### MongoDB
 Import public key
 ```
@@ -178,7 +194,7 @@ sudo service mongod restart
 ### Robo 3T
 
 ```
-mkdir /user/local/bin/robomongo
+mkdir /usr/local/bin/robomongo
 sudo mv robo3t-1.2.1-linux-x86_64-3e50a65.tar.gz /usr/local/bin/robomongo
 cd /usr/local/bin/robomonog
 sudo tar -xvzf robo3t-1.2.1-linux-x86_64-3e50a65.tar.gz
@@ -279,8 +295,11 @@ sudo su - postgres
 
 then create user role (account) with createdb permission:
 ```
-create role fra LOGIN PASSWORD <password> createdb;
-\q
+create role <user> LOGIN PASSWORD <password> createdb;
+```
+to create a superuser
+```
+create role <user> LOGIN PASSWORD <password> SUPERUSER;
 ```
 
 With the user privilige:
@@ -304,13 +323,100 @@ edit /etc/postgresql/<version>/main/pg_hba.conf
 ```
 encrypted password
 local   all  all    md5
-or (not password needed)
+or (no password needed)
 local   all  all    trust
 ```
+
+default search path:
+```
+postgresql.conf
+```
+search_path = "$user", public;
 
 reload postgresql
 ```
 /etc/init.d/postgresql reload
+```
+
+##### basic commands
+start psql 
+```
+psql -U <user> -d <db>
+```
+
+list database
+```
+psql -l
+```
+
+help
+```
+\?
+```
+
+list current schemas 
+```
+\dn
+```
+list current tables
+```
+\dt
+```
+
+see all schemas
+```
+select schema_name from information_schema.schemata;
+```
+
+swtich database
+```
+\connect <dbname>
+\c <dbname>
+```
+
+run from sql file
+```
+psql -U <user> - d <dbname> -f <file>
+```
+
+```
+CREATE DATABASE mydb;
+CREATE SCHEMA my_extension;
+```
+
+Privilege
+```
+GRANT <privilege> TO <role>;
+```
+
+##### backup and restore
+restore table from tar
+```
+pg_restore -U <user> -d <dbname> <filename>
+```
+restore from sql file
+```
+psql -U <user> -d <db> -f <sql_file>
+```
+
+to create a compressed backup for a table or schema
+```
+pg_dump -U <user> -F c -b -v -f <outfile> --schema <schema> <db>
+pg_dump -U <user> -F c -b -v -f <outfile> --table <table> <db>
+```
+to create a compressed backup for whole dataabase
+```
+pg_dump -U <user> -F c -b -v -f <outfile> <db>
+```
+
+dump to sql file
+```
+pg_dump -U <user> -f <sql_file> <db>
+```
+
+drop schema
+```
+drop schema <schema_name>
 ```
 
 ### DBeaver
@@ -329,4 +435,18 @@ sudo dpkg -i dbeaver-<version>.deb
 check version
 ```
 apt policy  dbeaver-ce 
+```
+
+### python connections
+
+MySQL and PostgreSQL drivers installation
+```
+sudo apt install python3-dev libpq-dev
+pip install psycopg2
+pip install pymysql 
+```
+
+SQL Alchemy ORM
+```
+pip install sqlalchemy
 ```
