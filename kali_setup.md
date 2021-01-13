@@ -1,25 +1,17 @@
-### Downloads 
-* Download kali VM
+### Vulnerable Systems
 
 * Metasploitable 2
 ```
 http://sourceforge.net/projects/metasploitable/files/Metasploitable2/
 ```
-
-* linux distributions
-```
-http://www.distrowatch.com
-```
-
-### Vulnerable Systems
-* Metasploitable 2
 ```
 account: msfadmin
 passed: msfadmin
 ```
-* reboot
+
+* linux distributions
 ```
-sudo shutdown -r now
+http://www.distrowatch.com
 ```
 
 * OWASP Borken Web
@@ -52,23 +44,67 @@ http://hackxor.sourceforge.net/cgi-bin/index.pl
 http://www.dvwa.co.uk/
 ```
 
-### Kali setup
-* change password
+### kali post setup
+
+
+* set time
 ```
-passwd
+sudo date --set="10:37:00"
 ```
 
-* add a new user
+* miscellaneous
 ```
-sudo adduser <user_name>
-```
-
-* update image
-```
-apt-get update
-apt-get dist-upgrade
+sudo apt install xfce4-settings 
+sudo apt install dkms
 ```
 
+* vcode
+```
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" \\n | sudo tee /etc/apt/sources.list.d/vcode.list\n
+```
+
+* chrome
+```
+sudo apt install ./google-chrome-stable_current_amd64.deb
+cat /etc/apt/sources.list.d/google-chrome.list
+```
+
+### virtual box
+
+* install
+```
+echo "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $( lsb_release -cs ) contrib" \\n  | sudo tee /etc/apt/sources.list.d/virtualbox.list
+cat /etc/apt/sources.list.d/virtualbox.list
+```
+note: replace $(lsb_release -cs) i.e. kali-rooling with the current release, e.g. buster
+
+* to load vmware image to virtual box:
+
+1. Open VirtualBox and create a new virtual machine, or open an existing one.
+2. Click the "Settings" button.
+3. Click "Storage."
+4. Click "SATA Controller."
+5. Click "Add Hard Disk."
+6. Navigate to and double-click on the VDMK file.
+7. Click "OK" to save the setting.
+8. Click the green "Start" icon to open the VMDK file and boot the virtual machine.
+
+
+### postgresql
+
+enable serive to autorun at startup
+```
+systemctl enable --now postgresql.service
+```
+check status
+```
+service postgresql status
+systemctl status postgresql.service
+systemctl is-enabled postgresql
+```
+
+
+### Metasploit
 * setup Metasploit database
 
 * setting static IP
@@ -157,7 +193,4 @@ https://www.cybrary.it/0p3n/create-complete-virtual-environment-penetration-test
 http://resources.infosecinstitute.com/building-your-own-pentesting-environment/
 ```
 
-laptop:
-* win7 / linux (CentOS) victim (dual boot)
-* Kali
 

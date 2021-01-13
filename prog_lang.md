@@ -50,6 +50,50 @@ install via snap
 sudo snap install cmake --classic
 ```
 
+### gcc
+
+* install gsl
+```
+sudo apt install pkg-config
+sudo apt install libgsl-dev
+```
+* other blas lib
+```
+sudo apt install libblas-dev liblapack-dev
+```
+
+* to locate lib/include files
+```
+locate gsl_rng.h
+find /usr -name gsl_rng.h
+find /usr -name libgsl.so
+```
+
+* Linking
+1. compile to executable
+```
+gcc -L/usr/lib/x86_64-linux-gnu gsl_test.c -lgsl -lgslcblas -lm 
+```
+
+2. compile to object
+```
+gcc -L/usr/lib/x86_64-linux-gnu -c gsl_test.c -lgsl -lgslcblas -lm 
+
+```
+
+* system evn
+-L path can be omitted if the path is exported to system env
+* edit .bash_profile
+```
+export LIBRARY_PATH=$LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
+
+```
+* compile statically
+```
+gcc -static gsl_test.o -lgsl -lgslcblas -lm
+```
+
 ### g++
 check default compiler version
 ```
@@ -121,12 +165,6 @@ to open app
 ```
 heroku open
 ```
-
-
-
-
-
-
 
 ### Racket
 ```
@@ -1445,81 +1483,6 @@ java -Xmx120m -XshowSettings:vm -version
 ```
 
 
-### Mongodb
-1. add key
-```
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
-```
-
-2. create sources.list
-```
-echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
-```
-
-3. install
-```
-sudo apt-get update
-sudo apt-get install -y mongodb-org
-```
-
-4. For 16.04 only
-Create a new file at /lib/systemd/system/mongod.service with the following contents:
-
-```
-[Unit]
-Description=High-performance, schema-free document-oriented database
-After=network.target
-Documentation=https://docs.mongodb.org/manual
-
-[Service]
-User=mongodb
-Group=mongodb
-ExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf
-
-[Install]
-WantedBy=multi-user.target
-
-```
-
-5. Administration
-    * manually start mongodb
-```
-sudo service mongod start
-```
-    * to manual stop
-```
-sudo service mongod stop
-```
-    * to manual restart
-```
-sudo service mongod restart
-```
-
-    * to check if mongo is running
-```
-service mongod status
-```
-    * check the log
-```
-/var/log/mongodb/mongod.log
-```
-
-    * mongo shell
-```
-mongo
-```
-
-    * create a user inside shell
-    * to create root user
-```
-use admin
-db.createUser({user:"admin", pwd:"admin123", roles:[{role:"root", db:"admin"}]
-```
-
-    * to login with root
-```
-mongo -u admin -p admin123 --authenticationDatabase admin
-```
 ### Bash Automated Testing System
 installation
 ```
@@ -2325,9 +2288,8 @@ mahout spark-shell
 https://www.slf4j.org/index.html
 ```
 
-* copy these jar
+* copy these jar to /usr/local/lib/java
 ```
 slf4j-log4j12-1.7.25.jar
 slf4j-jdk14-1.7.25.jar
 ```
-to /usr/local/lib/java

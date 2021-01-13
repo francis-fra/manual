@@ -191,6 +191,46 @@ sudo service mongod stop
 sudo service mongod restart
 ```
 
+    * Administration
+manually start mongodb
+```
+sudo service mongod start
+```
+    * to manual stop
+```
+sudo service mongod stop
+```
+    * to manual restart
+```
+sudo service mongod restart
+```
+
+    * to check if mongo is running
+```
+service mongod status
+```
+    * check the log
+```
+/var/log/mongodb/mongod.log
+```
+
+    * mongo shell
+```
+mongo
+```
+
+    * create a user inside shell
+    * to create root user
+```
+use admin
+db.createUser({user:"admin", pwd:"admin123", roles:[{role:"root", db:"admin"}]
+```
+
+    * to login with root
+```
+mongo -u admin -p admin123 --authenticationDatabase admin
+```
+
 ### Robo 3T
 
 ```
