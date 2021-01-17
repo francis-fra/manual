@@ -50,6 +50,40 @@ install via snap
 sudo snap install cmake --classic
 ```
 
+### Unity: C Unit Testing Framework
+* build using cmake/make
+```
+git clone https://github.com/ThrowTheSwitch/Unity
+cd Unity
+mkdir build
+cd build
+cmake ..
+make
+```
+* install files to /usr/local/lib and /usr/local/include
+```
+make install
+-- Install configuration: ""
+-- Installing: /usr/local/lib/libunity.a
+-- Installing: /usr/local/include/unity/unity.h
+-- Installing: /usr/local/include/unity/unity_internals.h
+-- Installing: /usr/local/lib/cmake/unity/unityTargets.cmake
+-- Installing: /usr/local/lib/cmake/unity/unityTargets-noconfig.cmake
+-- Installing: /usr/local/lib/cmake/unity/unityConfig.cmake
+-- Installing: /usr/local/lib/cmake/unity/unityConfigVersion.cmake
+```
+* set c include path in .bash_profile
+```
+export C_INCLUDE_PATH=$C_INCLUDE_PATH:/usr/local/include/unity
+```
+
+* check
+```
+ls /usr/local/lib/libunity.a
+ls /usr/local/include
+```
+
+
 ### gcc
 
 * install gsl
@@ -93,6 +127,82 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/x86_64-linux-gnu
 ```
 gcc -static gsl_test.o -lgsl -lgslcblas -lm
 ```
+
+
+* supply macro at command line
+e.g. define TEST
+```
+gcc -DTEST <source file>
+```
+e.g. define NUM as 100
+```
+gcc -DNUM=100 <source file>
+```
+
+#### Compile and link
+1. compile preprocess only
+```
+gcc -E hello.c > hello.i
+```
+alternatively
+```
+cpp  hello.c > hello.i
+```
+2. compile to assembly language
+outcome has suffix .s
+```
+gcc -S hello.i
+```
+3. generate object file
+```
+as hello.s -o hello.o
+```
+4. generate executable file
+```
+gcc hello.o -o hello
+```
+5. examine file
+```
+file hello.i
+file hello.s
+file hello.o
+file hello
+```
+6. create object dump
+```
+objdump -D hello.o > hello.txt
+```
+
+#### 64-bit register
+e.g.
+```
+(gdb) i r
+rax            0x555555555125      93824992235813
+rbx            0x0                 0
+rcx            0x7ffff7fc3718      140737353889560
+rdx            0x7fffffffdd48      140737488346440
+rsi            0x7fffffffdd38      140737488346424
+rdi            0x1                 1
+rbp            0x7fffffffdc40      0x7fffffffdc40
+rsp            0x7fffffffdc40      0x7fffffffdc40
+r8             0x0                 0
+r9             0x7ffff7fe2180      140737354015104
+r10            0x3                 3
+r11            0x2                 2
+r12            0x555555555040      93824992235584
+r13            0x0                 0
+r14            0x0                 0
+r15            0x0                 0
+rip            0x555555555129      0x555555555129 <main+4>
+eflags         0x246               [ PF ZF IF ]
+cs             0x33                51
+ss             0x2b                43
+ds             0x0                 0
+es             0x0                 0
+fs             0x0                 0
+gs             0x0                 0
+```
+
 
 ### g++
 check default compiler version
