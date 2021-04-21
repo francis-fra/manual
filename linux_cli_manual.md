@@ -101,6 +101,13 @@ which <files>
 
 ```
 
+### wget Download 
+Download using wildcards
+```
+wget -r --no-parent -A 'bar.*.tar.gz' http://url/dir/
+
+```
+
 ### Mongodb startup
 
 To start mongo daemon and mongo client

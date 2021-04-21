@@ -1,4 +1,5 @@
 ### Docker
+* install
 ```
 sudo apt-get remove docker docker-engine docker.io
 ```
@@ -26,14 +27,26 @@ sudo apt-get install docker-ce
 
 * verfiy installation
 ```
-sudo docker version
-sudo docker -D info
-sudo docker run hello-world
+docker version
+docker -D info
+docker run hello-world
 ```
-
-* TODO: Download docker image
+### Docker Hub
+* Build image, prepare a Dockerfile, and run:
 ```
-sudo docker pull <image>, e.g. sudo docker pull busybox
+docker build -t <image_name>
+```
+* Publish image, login first
+```
+docker login
+```
+then publish:
+```
+docker push <image_name>
+```
+* Download docker image
+```
+docker pull <image>
 ```
 
 * to run
@@ -42,115 +55,142 @@ sudo docker run busybox echo "hello"
 ```
 
 ### Basic
-Start a container from image
+* Start a container from image
 ```
 docker run <image>
 ```
-Check docker status
+* Check docker status
 ```
 service docker status
 ```
-Check available images
+* Check Docker Server and Client Info
+```
+docker info
+```
+### Docker images
+* Check available local images
 ```
 docker images
 ```
-Get image from docker hub
+* Get image from docker hub
 ```
 docker pull <image>
 ```
-Search image from docker hub
+* Search image from docker hub
 ```
 docker search <image>
-
 ```
-Check running image
+### Containers
+* Check running Cointainers
 ```
 docker ps
 ```
-Show all running or stopped containes
+* Show all running or stopped containes
 ```
 docker ps -a
 ```
-Run ubuntu
+* show all stopped containers
+```
+docker ps -aq -f status=exited
+```
+* cleaning stopped containers
+```
+docker rm <id>
+```
+* one liner
+```
+docker rm $(docker ps -aq -f status=exited)
+```
+### attach running container
+```
+docker attach <id>
+```
+### Run a command in a running container
+* same as docker attach, execute command, and then exit
+```
+docker exec [option] <id> <command>
+```
+### Start / Stop containers
+```
+docker start <id>
+docker stop <id>
+```
+* image info in json
+```
+docker inspect <id>
+```
+* Logs 
+```
+docker logs <id>
+```
+Get help
+```
+docker --help
+docker run --help
+```
+### Running docker
+* Run ubuntu
+flag i: interactive
+flag t: tty (shell)
 ```
 docker run -it ubuntu bash
 ```
-Clean up containers
+* Clean up containers
 ```
 docker rm `docker ps -aq --no-trunc`
 docker rm -v $(docker ps -aq -f status=exited)
 docker ps -aq -f status=exited | xargs docker rm
 ```
-Get previously run container
+* Get previously run container
 ```
 docker ps -q -l
 ```
-Continue stopped container
-```
-docker start `docker ps -ql`
-docker attach `docker ps -ql`
-```
-Information
-```
-docker info
-```
-Commit container and save as images
+* Commit container and save as images
 ```
 docker commit <id> <new_image>
 ```
-Logs / inspect
-```
-docker logs <id>
-docker inspect <id>
-```
-Version
-```
-docker version
-```
-Run with commands
+* Run with commands
 ```
 docker run <container> <command> <arg>
 docker run test/cowsay-dockerfile /usr/games/cowsay "hello"
 ```
 
-Remove image
+### Clean Up
+* Remove image
 ```
 docker rmi Image <image_name>
 ```
-To make sure dangling images are removed
+* To make sure dangling images are removed
 ```
 docker images -f dangling=true
 ```
-
-Build image, prepare a Dockerfile, and run:
-```
-docker build -t <image_name>
-```
-
-Publish image, login first
-```
-docker login
-```
-then publish:
-```
-docker push <image_name>
-```
-
-Remove dangling images
+* Remove dangling images
 ```
 docker images -qf dangling=true | xargs docker rmi
 ```
-
-Example:
-Run in the background (-d)
+* Auto remove containers when exit
+```
+docker run --rm <id>
+```
+### Run in background
+* flag -d
 ```
 docker run --name myredis -d redis
 ```
-Launch a new container with cli and connect with the running redis
-We rename myredis as redis when connected:
+* Launch a new container with cli and connect with the running redis
 ```
 docker run --rm -it --link myredis:redis redis /bin/bash
 redis-cli -h redis -p 6379
+```
+### Miscelleous
+* Examine local volume name
+* in /var/lib/docker/volumnes by default
+```
+docker volume ls
+```
+* show image layers
+```
+docker history <image>
 ```
 
 ### Tensor Flow

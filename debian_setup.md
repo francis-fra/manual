@@ -1,3 +1,21 @@
+### Install Debian without firmware
+* Go to Debian site and search for lwlwifi
+* Download the required dev file
+* extract by
+```
+dpkg-deb --extract <deb_filename> .
+```
+* Copy the firmware folder to USB
+* During installation, press <CTRL>+<ALT>+<F2> when asked for the firmware
+* insert the USB and to find the dev name by typing
+```
+blkid
+mkdir /lib/firmware
+mount <dev_path, e.g. /dev/sdc1> /lib/firmware
+```
+* press <CTRL>+<ALT>+<F5> to continue installation
+
+
 ### Common Applications
 
 ###### Check installed packages:

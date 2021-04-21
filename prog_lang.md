@@ -1,7 +1,27 @@
 ### Deno
-system wide install
+* system wide install
 ```
 curl -fsSL https://deno.land/x/install/install.sh | sudo DENO_INSTALL=/usr/local sh
+```
+* upgrade
+```
+sudo deno upgrade
+```
+
+### dotnet 5.0
+
+* install via apt
+```
+wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt update
+sudo apt-get install -y apt-transport-https 
+sudo apt-get install -y dotnet-sdk-5.0
+```
+
+### dotnet CLI
+```
+dotnet add package <name>
 ```
 
 ### emscripten
@@ -516,12 +536,12 @@ Update shell environment
 ```
 eval $(opam env)
 ```
-To switch compiler
+To switch (or install) compiler
 ```
 opam switch create 4.07.1
 eval $(opam env)
 ```
-update and upgrade
+update and upgrade packages
 ```
 opam update -uy
 opam upgrade
@@ -560,6 +580,20 @@ edit ~/.ocamlinit
 #require "core.syntax";;
 open Base;;
 open Core;;
+```
+
+### Dune
+init project
+```
+dune init exe <proj_name>
+```
+Edit dune file, then build project
+```
+dune build <exe_name>
+```
+run project
+```
+dune exec <proj_name>
 ```
 
 ### Ocaml only
@@ -1123,14 +1157,18 @@ sudo add-apt-repository -y ppa:hvr/ghc
 sudo apt-get update
 sudo apt-get install -y cabal-install-XXX ghc-YYY
 ```
-
-2. install ide for atom
+2. upgrade stack
 ```
-cabal update
-cabal install ghc-mod
+stack upgrade
 ```
 
 3. add ~/.cabal/bin to PATH
+
+4. edit config file
+```
+~/.stack/config.yaml
+```
+
 
 ### Haskell Tool Stack
 1. Installation
@@ -1158,6 +1196,11 @@ stack test
 5. running GHCi
 ```
 stack ghci
+```
+
+6. check installed packages
+```
+stack exec ghc-pkg -- list
 ```
 
 ### Go Lang
