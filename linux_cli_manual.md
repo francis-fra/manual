@@ -98,7 +98,12 @@ Finding files
 ```
 locate <files>
 which <files>
+```
 
+### AWS CLI
+Download from s3
+```
+aws s3api get-object --bucket <bucket-name> --key <file-name> <out-file-name>
 ```
 
 ### wget Download 
@@ -107,6 +112,13 @@ Download using wildcards
 wget -r --no-parent -A 'bar.*.tar.gz' http://url/dir/
 
 ```
+
+### EC2
+connect ssh command
+```
+ssh -i <pem-file> <instance-user-name>@<instance-public-name>
+```
+for amazon linux,use ec2-user as username
 
 ### Mongodb startup
 

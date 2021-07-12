@@ -134,6 +134,17 @@ LOAD DATA LOCAL INFILE 'abalone.csv' INTO TABLE uci.abalone
 LOAD DATA LOCAL INFILE 'small.csv' INTO TABLE uci.small
  FIELDS TERMINATED BY "," LINES TERMINATED BY "\n" IGNORE 1 LINES;
 ```
+17. If fails
+check and set the gobal variable
+```
+show global variables like 'local_infile';
+set global local_infile=true;
+```
+log out and login with the local-inflie flag
+```
+mysql -u <username> <db> -p --local-infile=1
+
+```
 
 
 ##### dump and restore 
@@ -147,7 +158,26 @@ mysqldump -u <user> -p <dbname> > export.sql
 mysqldump -u <user> -p <dbname> <table> > export.sql
 ```
 
-
+### UNIX ODBC
+```
+odbcinst -j
+```
+set ODBC parameters at /etc/odbc.ini, eg.
+```
+[mysql]
+Description     = Data source MySQL
+Driver          = MySQL ODBC 8.0 Driver
+Server          = 192.168.1.80
+Host            = 192.168.1.80
+Database        = test
+Port            = 3306
+User            = user1
+Password        = 123456
+```
+test
+```
+isql mysql
+```
 
 
 
@@ -406,6 +436,19 @@ list current tables
 see all schemas
 ```
 select schema_name from information_schema.schemata;
+```
+list all databases
+```
+\l
+```
+
+show all schemas
+```
+SHOW search_path;
+```
+set schema to search path
+```
+SET search_path TO <schame>;
 ```
 
 swtich database

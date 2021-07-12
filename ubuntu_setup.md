@@ -54,6 +54,17 @@ enable the service by
 ```
 systemctl --user enable xscreensaver
 ```
+### AWS CLI
+```
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+```
+by default, the binary is installed to /usr/local/aws-cli
+```
+aws --version
+aws configure
+```
 
 ### Chrome
 Set PPA repository
@@ -89,7 +100,7 @@ $HOME/.config/exercism
 ```
 * Edit the json file to change the workspace if needed
 
-###### swap
+### swap
 check memory usage
 ```
 cat /proc/meminfo
@@ -121,7 +132,7 @@ To check debian release version
 cat /etc/os-release
 ```
 
-###### install & upgrade packages:
+### install & upgrade packages:
 ```
 sudo apt-get update
 sudo apt-get upgrade
@@ -207,7 +218,23 @@ config file:
 ~/.config/terminator/config
 ```
 
-###### Install dropbox
+### Install virtual box 
+Download and register keys
+```
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+```
+edit /etc/apt/sources.list
+```
+deb [arch=amd64] https://download.virtualbox.org/virtualbox/debian focal contrib
+```
+install
+```
+sudo apt-get update
+sudo apt-get install virtualbox-6.1
+```
+
+### Install dropbox
 Method 1:
 ```
 sudo apt install nautilus-dropbox

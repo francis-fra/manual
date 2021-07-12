@@ -59,6 +59,67 @@ access by hostname or ip, e.g
 <hostname>.local:8888
 ```
 
+### .Net Interactive
+Installation for .net 5 sdk
+
+```
+dotnet tool install -g --add-source "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json" Microsoft.dotnet-interactive
+
+```
+check to find dotnet interactive
+```
+dotnet tool list -g
+```
+To install the kernel
+```
+dotnet interactive jupyter install
+```
+
+### EvCxR
+Install 
+```
+rustup component add rust-src
+sudo apt install libzmq3-dev
+cargo install evcxr_jupyter
+evcxr_jupyter --install
+```
+
+### ijavascript
+Install
+```
+npm install ijavascript -g
+ijsinstall
+```
+
+### iHaskell
+assuming stack and jupyter are installed
+```
+sudo apt-get install -y python3-pip git libtinfo-dev libzmq3-dev libcairo2-dev libpango1.0-dev libmagic-dev libblas-dev liblapack-dev
+git clone https://github.com/gibiansky/IHaskell
+```
+check the stack config.yaml file if the param is missing
+```
+cd IHaskell
+stack install --fast
+ihaskell install --stack
+```
+
+if stack and jupyter are not installed:
+```
+curl -sSL https://get.haskellstack.org/ | sh
+git clone https://github.com/gibiansky/IHaskell
+cd IHaskell
+pip3 install -r requirements.txt --user
+remove for now: stack install gtk2hs-buildtools
+stack install --fast
+ihaskell install --stack
+```
+
+to run:
+```
+stack exec jupyter -- notebook
+```
+
 
 ### Apache Toree
 
@@ -187,20 +248,6 @@ iruby regestier --force
 ```
 
 
-### Haskell jupyter
-```
-sudo apt-get install -y python3-pip git libtinfo-dev libzmq3-dev libcairo2-dev libpango1.0-dev libmagic-dev libblas-dev liblapack-dev
-```
-To start
-```
-curl -sSL https://get.haskellstack.org/ | sh
-git clone https://github.com/gibiansky/IHaskell
-cd IHaskell
-pip3 install -r requirements.txt --user
-stack install gtk2hs-buildtools
-stack install --fast
-ihaskell install --stack
-```
 
 ### Ruby jupyter
 ```

@@ -631,6 +631,21 @@ sudo /usr/local/lib/rustlib/uninstall.sh
 rustup self uninstall
 ```
 
+### Rust REPL
+Update rust if necessary
+```
+rustup update
+```
+Install
+```
+rustup component add rust-src
+cargo install evcxr_repl
+```
+Run: Evaluator (Ev) Context (cx) for Rust (r)
+```
+evcxr
+```
+
 ### Clojure
 ```
 curl -O https://download.clojure.org/install/linux-install-1.9.0.358.sh
@@ -1652,7 +1667,21 @@ sudo apt-get install python-dev python3-dev
 * To upgrade:
 ```
 pip install --upgrade pip
-pip3 install --upgrade pip
+python3 -m pip install --upgrade pip
+```
+* To list/freeze from different path
+```
+pip3 list --path xxxx/lib/python3.6/site-packages/
+
+```
+* install from requirements
+```
+pip freeze > requirements.txt
+pip install -r requirements.txt
+```
+* remove requirements.txt without version
+```
+sed -i 's/=.*//' requirements.txt
 ```
 
 * to check sys.path:
@@ -1660,20 +1689,6 @@ pip3 install --upgrade pip
 python -m site
 ```
 
-* python 2 scipy stack:
-```
-apt-get install python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose
-```
-* for python 3
-```
-apt-get install python3-numpy python3-scipy python3-matplotlib ipython3 ipython3-notebook python3-pandas python3-sympy python3-nose
-```
-
-* machine learning libraries
-```
-pip install numpy scipy matplotlib pandas sympy nose scikit-learn --user
-pip3 install numpy scipy matplotlib pandas sympy nose scikit-learn --user
-```
 
 * Open ai gym
 ```
@@ -1752,6 +1767,63 @@ deactivate
 Install
 ```
 pip3 install pipenv
+```
+
+### pyenv
+install
+```
+git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+```
+place these lines in .profile (before sourcing .bashrc)
+```
+export PYENV_ROOT=$HOME/.pyenv
+export PATH=$PYENV_ROOT/bin:$PATH
+```
+and then place this line at the end of .profile
+```
+eval "$(pyenv init --path)"
+```
+check available versions
+```
+pyenv install --list
+```
+check installed versions
+```
+pyenv versions
+```
+check current python path
+```
+pyenv which python
+```
+
+### pyenv-virtualenv
+Download plugin
+```
+git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+```
+put this line in .bashrc
+```
+eval "$(pyenv virtualenv-init -)"
+```
+To create virtual environment  
+```
+pyenv virtualenv <python_verson> <environment_name>
+```
+Make the current folder using the environment
+```
+pyenv local <environment_name>
+```
+unset local version
+```
+pyenv local --unset
+```
+remove a virtual environment
+```
+pyenv uninstall <environment_name>
+```
+list virtual env
+```
+pyenv virtualenvs
 ```
 
 
@@ -2011,6 +2083,26 @@ other method:
 ```
 curl -s https://raw.github.com/clementfarabet/torchinstall/master/install-all | bash
 ```
+
+### Node.js (nvm)
+Install nvm
+```
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+source ~/.bashrc
+```
+To check installed version
+```
+nvm list
+```
+To Install
+```
+nvm install <version>
+```
+Upgrade npm
+```
+nvm install-latest-npm
+```
+
 
 ### Node.js (Ubuntu)
 Install LTS version

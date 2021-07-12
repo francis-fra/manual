@@ -67,6 +67,15 @@ service docker status
 ```
 docker info
 ```
+
+### Install docker-compose
+```
+sudo curl -L "https://github.com/docker/compose/releases/download/<version>/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+```
+
+
 ### Docker images
 * Check available local images
 ```
@@ -191,6 +200,54 @@ docker volume ls
 * show image layers
 ```
 docker history <image>
+```
+
+### Jupyter notebook
+run jupyter noteobook and mount local drive to container
+```
+docker run --rm -v <absolute-local-path>:/home/jovyan -p 8888:8888 jupyter/all-spark-notebook 
+```
+
+### Confluence Kafka 
+to start (may need to keep running until all states are up)
+```
+docker-compose up -d
+```
+check if all running
+```
+docker-compose ps
+```
+web interface
+```
+http://localhost:9021/clusters
+```
+Stop
+```
+docker-compose stop
+```
+
+### Airflow
+Download
+```
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.1.1/docker-compose.yaml'
+```
+set up local environment
+```
+mkdir ./dags ./logs ./plugins
+echo -e "AIRFLOW_UID=$(id -u)\nAIRFLOW_GID=0" > .env
+```
+initialize (set up database, user account)
+```
+docker-compose up airflow-init
+```
+run
+```
+docker-compose up
+```
+Download CLI script
+```
+curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.1.1/airflow.sh'
+chmod +x airflow.sh
 ```
 
 ### Tensor Flow
