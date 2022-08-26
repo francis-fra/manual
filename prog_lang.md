@@ -1,3 +1,62 @@
+### Optimization packages
+* SCIP
+
+Download binary from scipopt.org
+'''
+sudo dpkg -i SCIPOptSuite-8.0.0-Linux-ubuntu.deb 
+```
+if dependecies are missing
+```
+sudo apt-get -f install
+'''
+python wrapper
+```
+pip install pyscripopt
+```
+* CVXOPT
+
+```
+pip install cvxopt
+```
+* CBC
+
+install
+```
+sudo apt-get install  coinor-cbc coinor-libcbc-dev
+```
+install python wrapper
+```
+pip install cylp
+```
+
+### Julia
+
+Download the lastest version and link
+```
+wget https://julialang-s3.julialang.org/bin/linux/x64/1.7/julia-1.7.3-linux-x86_64.tar.gz
+tar -xvf julia-1.7.3-linux-x86_64.tar.gz
+sudo mv julia-1.7.3/ /opt/
+sudo ln -s /opt/julia-1.7.3/bin/julia /usr/local/bin/julia
+```
+
+setup startup file
+to prevent precompile error with system env
+```
+mkdir ./julia/config
+echo 'println("Greetings! 你好!")' >> ~/.julia/config/startup.jl
+echo 'ENV["LD_LIBRARY_PATH"] = ""' >> ~/.julia/config/startup.jl
+
+```
+
+### Prolog
+
+add ppa
+```
+sudo apt-add-repository ppa:swi-prolog/stable
+sudo apt-get update
+sudo apt-get install swi-prolog
+```
+
 ### Deno
 * system wide install
 ```
@@ -17,6 +76,20 @@ sudo dpkg -i packages-microsoft-prod.deb
 sudo apt update
 sudo apt-get install -y apt-transport-https 
 sudo apt-get install -y dotnet-sdk-5.0
+```
+
+check install sdk
+```
+dotnet --list-sdks
+```
+
+### install dotnet 6.0
+```
+wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt-get update
+sudo apt-get install -y dotnet-sdk-6.0
+
 ```
 
 ### dotnet CLI
@@ -362,7 +435,7 @@ sudo apt install mit-scheme
 sudo apt install guile-2.2
 ```
 
-### R -- Debian
+### R -- Debian - deprecated
 ```
 sudo apt-get update
 sudo apt-get install r-base r-base-dev
@@ -387,8 +460,65 @@ sudo apt-get install libxml2-dev
 sudo apt-get install libssl-dev
 sudo apt-get install libnlopt-dev
 ```
+###### Install R and R Studio
+1. add GPG key
+```
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+```
+2. add repository
+```
+sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+sudo apt update
+```
 
-###### Install R -- Ubuntu
+3. Download the latest deb file
+'''
+sudo apt install gdebi-core
+sudo gdebi rstudio-1.2.5019-amd64.deb
+'''
+
+4. additional packages for RCurl:
+```
+sudo apt-get install libcurl4-openssl-dev
+sudo apt-get install libxml2-dev
+sudo apt-get install libssl-dev
+sudo apt-get install libnlopt-dev
+```
+
+###### Install R jupyter kernel
+
+install packages and register kernel
+```
+install.packages('IRkernel')
+IRkernel::installspec()
+```
+###### Install Rstan
+Add Michael Rutter's c2d4u4.0 PPA (and rrutter4.0 for CRAN builds too)
+```
+sudo add-apt-repository ppa:marutter/rrutter4.0
+sudo add-apt-repository ppa:c2d4u.team/c2d4u4.0+
+sudo apt update
+sudo apt install r-cran-rstan
+```
+Install
+```
+remove.packages("rstan")
+if (file.exists(".RData")) file.remove(".RData")
+Sys.setenv(DOWNLOAD_STATIC_LIBV8 = 1) # only necessary for Linux without the nodejs library / headers
+install.packages("rstan", repos = "https://cloud.r-project.org/", dependencies = TRUE)
+```
+To test if ok:
+```
+example(stan_model, package = "rstan", run.dontrun = TRUE)
+```
+
+###### Install jags
+```
+sudo apt install jags
+```
+
+
+###### Install R -- deprecated
 1. To use the CRAN repository:
 ```
 add apt key:
@@ -1989,46 +2119,17 @@ Download Java client library (jar)
 amqp-client-5.30.jar
 ``
 copy to the CLASSPATH
+```
 
-
-### LLVM
-Set up apt repository (see http://apt.llvm.org/)
+### LLVM (Ubuntu)
+Default packages
 ```
-/etc/apt/sources.list.d/llvm-7-stretch.list
-
-For Debian 9 (stretch), add the following line:
+apt install clang-format clang-tidy clang-tools clang clangd libc++-dev libc++1 libc++abi-dev libc++abi1 libclang-dev libclang1 liblldb-dev libllvm-ocaml-dev libomp-dev libomp5 lld lldb llvm-dev llvm-runtime llvm python3-clang
 ```
-deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch-7 main
+check
 ```
-Add GPG key:
-```
-sudo wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
-```
-Install
-```
-sudo apt-get update
-sudo apt-get install clang-7 lldb-7 lld-7
-```
-Verify installation
-```
-clang-6.0 --version
-```
-all key packages (optional)
-```
-# LLVM
-apt-get install libllvm-7-ocaml-dev libllvm7 llvm-7 llvm-7-dev llvm-7-doc llvm-7-examples llvm-7-runtime
-# Clang and co
-apt-get install clang-7 clang-tools-7 clang-7-doc libclang-common-7-dev libclang-7-dev libclang1-7 clang-format-7 python-clang-7
-# libfuzzer
-apt-get install libfuzzer-7-dev
-# lldb
-apt-get install lldb-7
-# lld (linker)
-apt-get install lld-7
-# libc++
-apt-get install libc++-7-dev libc++abi-7-dev
-# OpenMP
-apt-get install libomp-7-dev
+clang --version
+clang++ --version
 ```
 
 ### NIM

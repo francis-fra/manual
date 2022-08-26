@@ -119,6 +119,13 @@ docker attach <id>
 ```
 docker exec [option] <id> <command>
 ```
+e.g
+```
+docker exec -it 7ab /bin/bash
+
+```
+
+
 ### Start / Stop containers
 ```
 docker start <id>
@@ -202,6 +209,16 @@ docker volume ls
 docker history <image>
 ```
 
+### Container IP
+find IP of container
+```
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container_name_or_id>
+```
+find the host gateway
+```
+docker inspect <container_name> -f '{{ .NetworkSettings.Gateway }}'
+```
+
 ### Jupyter notebook
 run jupyter noteobook and mount local drive to container
 ```
@@ -248,6 +265,20 @@ Download CLI script
 ```
 curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.1.1/airflow.sh'
 chmod +x airflow.sh
+```
+
+### jupyter all spark
+To connect host postgres, add the following config:
+```
+from pyspark.conf import SparkConf
+
+conf = SparkConf()  
+conf.set("spark.jars", "/home/jovyan/work/jars/postgresql-42.2.23.jar")  # set the spark.jars
+conf.set("spark.driver.extraClassPath", "/home/jovyan/work/jars/org.postgresql_postgresql-42.2.23.jar")
+```
+need to put the jar file in host and link the volume to the container, run docker with:
+```
+docker run -p 8888:8888 -v "${PWD}":/home/jovyan/work jupyter/all-spark-notebook 
 ```
 
 ### Tensor Flow

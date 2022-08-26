@@ -59,6 +59,14 @@ access by hostname or ip, e.g
 <hostname>.local:8888
 ```
 
+### IJulia
+
+Installation
+inside Pkg command prompt:
+```
+add IJulia
+```
+
 ### .Net Interactive
 Installation for .net 5 sdk
 
@@ -120,6 +128,17 @@ to run:
 stack exec jupyter -- notebook
 ```
 
+### GopherNotes
+
+```
+  go install github.com/gopherdata/gophernotes@v0.7.5
+  mkdir -p ~/.local/share/jupyter/kernels/gophernotes
+  cd ~/.local/share/jupyter/kernels/gophernotes
+  cp "$(go env GOPATH)"/pkg/mod/github.com/gopherdata/gophernotes@v0.7.5/kernel/*  "."
+  chmod +w ./kernel.json # in case copied kernel.json has no write permission
+  sed "s|gophernotes|$(go env GOPATH)/bin/gophernotes|" < kernel.json.in > kernel.json
+
+```
 
 ### Apache Toree
 
@@ -276,17 +295,10 @@ make install
 ### BeakerX
 * Pip Install
 ```
-pip install beakerx --user
-```
-* If local jupyter repository is used, need to create link to local:
-```
-sudo ln -s /home/fra/.local/share/jupyter/ /usr/share/jupyter
-sudo ln -s /home/fra/.local/etc/jupyter/ /usr/etc/jupyter
-sudo ln -s /home/fra/.local/etc/ipython/ /usr/etc/ipython
-```
-* run install:
-```
+pip install beakerx
+pip install beakerx-kernel-java
 beakerx install
+beakerx_kernel_java instal
 ```
 
 ### Pixel Dust

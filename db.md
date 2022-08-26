@@ -502,6 +502,33 @@ drop schema
 drop schema <schema_name>
 ```
 
+##### postgres config
+Show location of config file
+```
+psql -U postgres -c 'SHOW config_file'
+psql -U postgres -c 'SHOW hba_file'
+```
+Show listened address
+```
+psql -U postgres -c 'SHOW listen_addresses'
+```
+To add non-local listen address
+Edit pg_hba.conf
+```
+host	all		all		127.0.0.1/32	md5
+host	all		all		172.17.0.0/16	md5
+```
+then restart
+```
+sudo service postgresql stop
+sudo service postgresql start
+```
+alternatively, edit postgresql.conf
+```
+listen_addresses = '*'
+```
+
+
 ### DBeaver
 Install Ubuntu PPA
 ```
@@ -532,4 +559,56 @@ pip install pymysql
 SQL Alchemy ORM
 ```
 pip install sqlalchemy
+```
+
+### connect script
+postgresql
+```
+import psycopg2
+
+conn = psycopg2.connect(
+    host="localhost",
+    database="testdb",
+    user="fra",
+    password="xxx")
+
+cur = conn.cursor()
+        
+# execute a statement
+cur.execute('SELECT * from mytable.users')
+data = cur.fetchall()
+data
+
+import psycopg2 as pg
+import pandas as pd
+conn = pg.connect("dbname=testdb user=fra")
+df = pd.read_sql("SELECT * FROM mytable.users", conn)
+df.head()
+
+# ORM
+from sqlalchemy import create_engine
+
+engine = create_engine('postgresql://fra:xxx@localhost:5432/testdb')
+conn = engine.connect()
+df = pd.read_sql("select * from mytable.users", conn)
+df.head()
+```
+mysql
+```
+import mysql.connector
+cnx = mysql.connector.connect(user='fra', database='testdb', password='xxx')
+cursor = cnx.cursor()
+query = "select * from users"
+cursor.execute(query)
+data = cursor.fetchall()
+data
+
+df = pd.read_sql(query, cnx)
+df.head()
+
+mysqlEngine = create_engine('mysql+mysqlconnector://fra:xxx@localhost/testdb')
+mysqlcon = mysqlEngine.connect()
+
+df = pd.read_sql("select * from users", mysqlcon)
+df.head()
 ```
